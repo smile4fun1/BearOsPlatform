@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Header } from "@/components/Header";
+import { ChatProvider } from "@/components/chat/ChatProvider";
+import { ImprovedDraggableChat } from "@/components/chat/ImprovedDraggableChat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +16,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bear Universe · KPI + Knowledge AI",
+  title: "Bear Universe · Intelligent Automation Ecosystem",
   description:
-    "Mock automation cockpit for Bearrobotics.ai – data curation, KPI panels, and training blueprints for 70B/120B models.",
+    "AI-powered operations platform for Bear Robotics featuring multi-agent orchestration, real-time telemetry, and intelligent task delegation across Seoul to Silicon Valley.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -28,7 +34,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#020511] text-white`}
       >
+        <ChatProvider>
+          <Header />
         {children}
+          <ImprovedDraggableChat />
+        </ChatProvider>
       </body>
     </html>
   );

@@ -5,31 +5,57 @@ import { ModelBlueprint, TrainingMilestone, TrainingPlan } from "./types";
 const totalTokens = (approxDocs: number, avgTokensPerDoc = 1200) =>
   `${Math.round((approxDocs * avgTokensPerDoc) / 1_000_000)}M tokens`;
 
-const dataAtlasBlueprint: ModelBlueprint = {
+const ursaMinorBlueprint: ModelBlueprint = {
+  id: "ursa-minor-40b",
+  name: "Ursa Minor",
+  size: "70B",
+  baseModel: "Llama 3.1 40B",
+  objective:
+    "Real-time assistant for Bear Universe operators—navigate dashboards, modify robot parameters, and execute commands with permission-based controls.",
+  datasets: [
+    "Bear Universe documentation",
+    "Robot parameter schemas",
+    "Command execution logs",
+    "User interaction patterns",
+  ],
+  tokens: totalTokens(180_000),
+  alignment: ["Tool-calling RLHF", "Permission-aware guardrails", "Context retention"],
+  evaluation: [
+    "Command accuracy",
+    "Parameter validation",
+    "Context coherence",
+  ],
+  deploymentTarget: "Universe chat interface + interactive assistant",
+  currentPhase: "offline-eval",
+};
+
+const ursaMajorBlueprint: ModelBlueprint = {
   id: "ursa-major-70b",
-  name: "Ursa Major Data Atlas",
+  name: "Ursa Major",
   size: "70B",
   baseModel: "Llama 3.1 70B",
   objective:
-    "Summarize Bear fleet telemetry, surface KPIs, and auto-draft diagnostic briefs.",
+    "Analyze Bear fleet telemetry, surface KPIs, auto-draft diagnostic briefs, and orchestrate multi-agent task delegation.",
   datasets: [
     "Fleet telemetry lake (anonymized)",
     "Mission sensor bundles",
     "Ops postmortems 2023-2025",
+    "Agent coordination protocols",
   ],
   tokens: totalTokens(680_000),
-  alignment: ["Goal-conditioned RLHF", "Toolformer call graph", "Guardrails"],
+  alignment: ["Goal-conditioned RLHF", "Toolformer call graph", "Agent orchestration", "Guardrails"],
   evaluation: [
     "Telemetry summarization",
     "Fleet incident triage",
+    "Multi-agent coordination",
     "Regression harness",
   ],
-  deploymentTarget: "Universe KPI panels + automation planners",
-  currentPhase: "alignment",
+  deploymentTarget: "Universe KPI panels + automation planners + task delegation",
+  currentPhase: "ready",
 };
 
 const bearLoreBlueprint: ModelBlueprint = {
-  id: "aurora-lore-110b",
+  id: "aurora-lore-120b",
   name: "Aurora Bear Lore",
   size: "120B",
   baseModel: "Mixtral 8x22B",
@@ -48,7 +74,7 @@ const bearLoreBlueprint: ModelBlueprint = {
   ],
   evaluation: ["Brand tone TTS", "Compliance Q/A", "Product marketing briefs"],
   deploymentTarget: "Universe knowledge graph + customer copilots",
-  currentPhase: "dataset-curation",
+  currentPhase: "alignment",
 };
 
 const milestonesFor = (
@@ -91,14 +117,24 @@ export const assembleTrainingPlans = (): TrainingPlan[] => {
   const telemetryDocs = operationsDataset.length;
   const knowledgeDocs = knowledgeBase.length * 120; // treat as aggregated collections
 
-  const atlasMilestones = milestonesFor(
+  const minorMilestones = milestonesFor(
     [
       "Dataset Curation",
       "Pretraining & Adaptation",
       "Alignment",
       "Offline Evaluation",
     ],
-    "Alignment",
+    "Offline Evaluation",
+  );
+
+  const majorMilestones = milestonesFor(
+    [
+      "Dataset Curation",
+      "Pretraining & Adaptation",
+      "Alignment",
+      "Offline Evaluation",
+    ],
+    "Offline Evaluation",
   );
 
   const loreMilestones = milestonesFor(
@@ -108,20 +144,32 @@ export const assembleTrainingPlans = (): TrainingPlan[] => {
       "Alignment",
       "Offline Evaluation",
     ],
-    "Dataset Curation",
+    "Alignment",
   );
 
   return [
     {
       model: {
-        ...dataAtlasBlueprint,
+        ...ursaMinorBlueprint,
+        tokens: totalTokens(180_000, 800),
+      },
+      milestones: minorMilestones,
+      telemetry: {
+        lastRun: dayjs().subtract(2, "hour").toISOString(),
+        validationScore: validationScore(ursaMinorBlueprint),
+        hallucinationRate: hallucinationRate(ursaMinorBlueprint),
+      },
+    },
+    {
+      model: {
+        ...ursaMajorBlueprint,
         tokens: totalTokens(telemetryDocs, 1800),
       },
-      milestones: atlasMilestones,
+      milestones: majorMilestones,
       telemetry: {
         lastRun: dayjs().subtract(1, "day").toISOString(),
-        validationScore: validationScore(dataAtlasBlueprint),
-        hallucinationRate: hallucinationRate(dataAtlasBlueprint),
+        validationScore: validationScore(ursaMajorBlueprint),
+        hallucinationRate: hallucinationRate(ursaMajorBlueprint),
       },
     },
     {

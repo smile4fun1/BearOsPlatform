@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { TrendPoint } from "@/lib/types";
 import {
   Area,
@@ -14,6 +15,32 @@ import {
 } from "recharts";
 
 export function TrendPanel({ data }: { data: TrendPoint[] }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#10142b]/80 via-[#0d1a2f]/70 to-[#081320]/80 p-6 shadow-[0_25px_80px_rgba(8,12,30,0.65)]">
+        <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-white">
+              Mission Throughput
+            </h2>
+            <p className="text-sm text-white/60">
+              Weekly automation output vs uptime + safety signals
+            </p>
+          </div>
+        </header>
+        <div className="mt-6 h-[300px] w-full flex items-center justify-center">
+          <div className="text-white/40">Loading chart...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#10142b]/80 via-[#0d1a2f]/70 to-[#081320]/80 p-6 shadow-[0_25px_80px_rgba(8,12,30,0.65)]">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -27,7 +54,7 @@ export function TrendPanel({ data }: { data: TrendPoint[] }) {
         </div>
       </header>
       <div className="mt-6 h-[300px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={300} minHeight={300}>
           <ComposedChart data={data}>
             <defs>
               <linearGradient id="throughput" x1="0" y1="0" x2="0" y2="1">

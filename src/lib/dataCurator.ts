@@ -175,7 +175,7 @@ export const buildAlerts = (): AlertInsight[] => {
     .map((point, index) => ({
       id: `alert-${point.id}`,
       title: `${point.facility} ${point.shift} spike`,
-      severity: point.incidents >= 4 ? "critical" : "high",
+      severity: (point.incidents >= 4 ? "critical" : "high") as "low" | "medium" | "high" | "critical",
       detail: `Detected ${point.incidents} interruptions for ${point.robotModel} handling ${point.vertical.toLowerCase()} loads.`,
       owner: index % 2 === 0 ? "Seoul Reliability Pod" : "US Fleet Ops",
       etaHours: 12 + index * 4,

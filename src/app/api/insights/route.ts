@@ -26,10 +26,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const response = await openaiClient.responses.create({
-      model: "gpt-4.1-mini",
-      reasoning: { effort: "medium" },
-      input: [
+    const response = await openaiClient.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
         {
           role: "system",
           content:
@@ -40,9 +39,11 @@ export async function POST(request: Request) {
           content: `Prompt: ${prompt}\n\nData Snapshot:\n${JSON.stringify(snapshot, null, 2)}`,
         },
       ],
+      temperature: 0.7,
+      max_tokens: 500,
     });
 
-    const text = response.output_text?.join("\n").trim() ?? "No response.";
+    const text = response.choices[0]?.message?.content?.trim() ?? "No response.";
     return NextResponse.json({ content: text });
   } catch (error) {
     console.error("OpenAI error", error);

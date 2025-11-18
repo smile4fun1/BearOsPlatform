@@ -11,11 +11,11 @@ const availabilityColor = {
 
 export function ApiSurfacePanel({ apis }: { apis: ApiSurface[] }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#060d1d] to-[#0a1428] p-6 text-white">
+    <div className="bear-card p-6 transition-all duration-500 hover:border-white/20 hover:shadow-[0_30px_90px_rgba(8,12,30,0.55)]">
       <header className="flex items-center gap-3">
-        <Globe className="size-6 text-sky-300" />
+        <Globe className="size-6 text-sky-400" />
         <div>
-          <h2 className="text-xl font-semibold">Bear Cloud Surfaces</h2>
+          <h2 className="text-xl font-bold text-white">Bear Cloud Surfaces</h2>
           <p className="text-sm text-white/60">
             APIs to plug into the universe
           </p>
@@ -28,7 +28,7 @@ export function ApiSurfacePanel({ apis }: { apis: ApiSurface[] }) {
             className="rounded-2xl border border-white/10 bg-white/5 p-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-lg font-semibold">{api.name}</h3>
+              <h3 className="text-lg font-bold text-white">{api.name}</h3>
               <span
                 className={`rounded-full border px-3 py-1 text-xs uppercase tracking-wide ${availabilityColor[api.availability]}`}
               >

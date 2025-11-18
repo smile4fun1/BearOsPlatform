@@ -61,11 +61,11 @@ export function InsightConsole() {
   };
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#080c1f] via-[#0c162c] to-[#05070f] p-6 text-white">
+    <div className="bear-card p-6 transition-all duration-500 hover:border-white/20 hover:shadow-[0_30px_90px_rgba(8,12,30,0.55)]">
       <header className="flex items-center gap-3">
-        <Sparkles className="size-6 text-amber-200" />
+        <Sparkles className="size-6 text-amber-300" />
         <div>
-          <h2 className="text-xl font-semibold">Insight Console</h2>
+          <h2 className="text-xl font-bold text-white">Insight Console</h2>
           <p className="text-sm text-white/60">
             Powered by ChatGPT until the Bear models take over
           </p>
@@ -78,7 +78,7 @@ export function InsightConsole() {
             className={`rounded-2xl border border-white/10 p-3 ${
               message.role === "assistant"
                 ? "bg-white/[0.07] text-white/90"
-                : "bg-slate-900/60 text-white"
+                : "bg-indigo-500/20 text-white/90"
             }`}
           >
             <p className="text-xs uppercase text-white/50">{message.role}</p>
@@ -91,12 +91,12 @@ export function InsightConsole() {
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder="Ask for KPI deltas, training cadence, or GTM copy..."
-          className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-sky-400/60"
+          className="flex-1 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-sky-400/60"
         />
         <button
           onClick={handleSend}
           disabled={isSubmitting}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-400 px-6 py-3 font-semibold text-white shadow-lg disabled:opacity-70"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-400 px-6 py-3 font-bold text-white shadow-lg disabled:opacity-70"
         >
           {isSubmitting && <Loader2 className="size-4 animate-spin" />}
           Send

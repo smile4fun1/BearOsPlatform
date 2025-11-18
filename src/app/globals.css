@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+/* Global user-select and drag prevention */
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Allow text selection in specific elements */
+input,
+textarea,
+[contenteditable="true"],
+.selectable {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+/* Prevent image and link dragging */
+img,
+a {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,4 +50,69 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.5);
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.7);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.5) rgba(0, 0, 0, 0.2);
+}
+
+/* Chat-specific scrollbar styling */
+.chat-content::-webkit-scrollbar,
+.chat-conversations::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-content::-webkit-scrollbar-track,
+.chat-conversations::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.chat-content::-webkit-scrollbar-thumb,
+.chat-conversations::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.6);
+  border-radius: 10px;
+}
+
+.chat-content::-webkit-scrollbar-thumb:hover,
+.chat-conversations::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.8);
+}
+
+/* Smooth scrolling */
+.chat-content,
+.chat-conversations {
+  scroll-behavior: smooth;
+}
+
+/* Bear Card - Premium dark card styling */
+.bear-card {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow: 0 25px 80px rgba(8, 12, 30, 0.45);
+  backdrop-filter: blur(20px);
 }

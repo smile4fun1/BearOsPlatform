@@ -153,11 +153,84 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
       (tc) => tc.name === "modify_parameter" || tc.name === "execute_command"
     );
 
-    // Provide a default message if content is null (e.g., when only making tool calls)
+    // Handle tool calls that can be auto-executed (navigation, queries)
     let responseContent = assistantMessage.content || "";
-    if (!responseContent && toolCalls.length > 0) {
-      responseContent = "I'm processing your request...";
+    
+    console.log("🐻 [API] Tool calls:", toolCalls.length);
+    console.log("🐻 [API] Original content:", responseContent);
+    
+    if (toolCalls.length > 0) {
+      for (const toolCall of toolCalls) {
+        const { name, parameters } = toolCall;
+        console.log(`🐻 [API] Processing tool: ${name}`, parameters);
+        
+        // Handle navigation tools (auto-execute)
+        if (name === "navigate" || name === "show_robot") {
+          let targetUrl = "";
+          let description = "";
+          
+          if (name === "navigate" && parameters.page) {
+            targetUrl = parameters.page;
+            const pageName = targetUrl.replace("/", "").replace("-", " ") || "Home";
+            description = `**Navigating to ${pageName}**...`;
+            console.log(`🐻 [API] Navigation to page: ${targetUrl}`);
+          } else if (name === "show_robot" && parameters.robot_id) {
+            targetUrl = `/robots/${parameters.robot_id}`;
+            const robotId = parameters.robot_id.toUpperCase();
+            description = `**Displaying Robot ${robotId}**...\n\nTaking you to the comprehensive dashboard with live telemetry, navigation map, and RFE diagnostic tools.`;
+            console.log(`🐻 [API] Navigation to robot: ${targetUrl}`);
+          }
+          
+          if (targetUrl) {
+            responseContent = `[NAVIGATE:${targetUrl}]\n\n${description}`;
+            console.log(`🐻 [API] Generated navigation response: ${responseContent}`);
+            break; // Only handle first navigation
+          }
+        }
+        
+        // Handle list/filter tools (use AI response with data)
+        if (name === "list_robots") {
+          console.log(`🐻 [API] List robots tool called with filters:`, parameters);
+          // AI will provide response using REAL DATA - no need to execute
+          if (!responseContent) {
+            const filters = [];
+            if (parameters.status) filters.push(`status: ${parameters.status}`);
+            if (parameters.facility) filters.push(`facility: ${parameters.facility}`);
+            if (parameters.has_errors) filters.push("with errors");
+            if (parameters.low_battery) filters.push("low battery");
+            responseContent = `Filtering robots${filters.length > 0 ? ' by ' + filters.join(', ') : ''}...`;
+          }
+        }
+        
+        // Handle analysis tools (use AI response with data)
+        if (name === "compare_robots" || name === "analyze_facility" || name === "check_incidents" || name === "suggest_maintenance") {
+          console.log(`🐻 [API] Analysis tool called: ${name}`, parameters);
+          // AI will provide detailed analysis using REAL DATA
+        }
+        
+        // Handle report generation (use AI response)
+        if (name === "generate_report") {
+          console.log(`🐻 [API] Report generation requested:`, parameters);
+          if (!responseContent) {
+            responseContent = `Generating ${parameters.report_type} report...`;
+          }
+        }
+        
+        // Handle query tools - use AI's natural language response
+        if (name === "query_telemetry") {
+          console.log(`🐻 [API] Query tool called: ${name}`);
+          // The AI should provide a natural language response with the queried data
+        }
+      }
     }
+    
+    // Final fallback if still no content
+    if (!responseContent) {
+      console.log("🐻 [API] No content generated, using final fallback");
+      responseContent = "I understand. How would you like me to proceed?";
+    }
+    
+    console.log("🐻 [API] Final response:", responseContent);
 
     return NextResponse.json({
       response: responseContent,

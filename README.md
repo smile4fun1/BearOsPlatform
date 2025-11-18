@@ -153,6 +153,9 @@ Visit `http://localhost:3000` or `http://<your-machine-ip>:3000` from mobile.
 - **Features** → Complete dashboard with all components
 - **Ursa Minor Chat** → Click the AI assistant button (bottom-right when closed) to interact
 
+**🐻 NEW: Complete AI Command Guide Available!**  
+See [`URSA_MINOR_COMMANDS.md`](./URSA_MINOR_COMMANDS.md) for all available commands and natural language examples.
+
 ### 5. Lint / Quality Check
 
    ```bash

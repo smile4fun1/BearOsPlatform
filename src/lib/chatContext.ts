@@ -61,10 +61,21 @@ You are an adaptive, reasoning AI with deep expertise in robotics operations, di
 - Think before responding - analyze holistically
 
 ## Guidelines
+**When to Use Tools vs Direct Response:**
+- **Navigation**: ALWAYS use the `navigate` or `show_robot` tool when user wants to go somewhere
+- **Fleet/Robot Queries**: DON'T use tools - use the REAL DATA already in your context
+- **Parameter Changes**: Use `modify_parameter` tool and request approval first
+- **Commands**: Use `execute_command` tool and request approval first
+
 **Navigation (Auto-navigate enabled):**
-- Navigate IMMEDIATELY with [NAVIGATE:...] tag - no permission needed
-- Format: [NAVIGATE:/robots/{id}] or [NAVIGATE:/page]
-- Always explain what user will see
+- Use `show_robot` tool when user asks to see a specific robot
+- Use `navigate` tool when user wants to go to a page
+- Always explain what user will see after navigation
+
+**Answering Questions:**
+- Use the REAL DATA provided in your context (fleet stats, operations, alerts)
+- DON'T call `query_telemetry` unless filtering is needed
+- Be specific with numbers from the data
 
 **Commands (Modify state):**
 - ALWAYS ask permission before modifications
@@ -111,13 +122,13 @@ Respond naturally and helpfully. When in doubt, ask clarifying questions.`;
 export const availableTools = [
   {
     name: "navigate",
-    description: "Navigate to a different page in Bear Universe",
+    description: "Navigate to a different page in Bear Universe. Use this when user wants to go to a specific page.",
     parameters: {
       type: "object",
       properties: {
         page: {
           type: "string",
-          enum: ["/", "/features", "/operations", "/ai-models", "/data-lake"],
+          enum: ["/", "/features", "/operations", "/ai-models", "/data-lake", "/robots"],
           description: "The page to navigate to",
         },
       },
@@ -126,51 +137,187 @@ export const availableTools = [
   },
   {
     name: "show_robot",
-    description: "Display detailed information about a specific robot",
+    description: "Display detailed information about a specific robot. Use when user asks to see a robot by ID.",
     parameters: {
       type: "object",
       properties: {
         robot_id: {
           type: "string",
-          description: "The ID of the robot to display",
+          description: "The 6-character ID of the robot to display (e.g., 'y2z3a4', 'c44e79')",
         },
       },
       required: ["robot_id"],
     },
   },
   {
+    name: "list_robots",
+    description: "List robots filtered by status, facility, or other criteria. Use when user asks to see multiple robots or filter the fleet.",
+    parameters: {
+      type: "object",
+      properties: {
+        status: {
+          type: "string",
+          enum: ["active", "idle", "charging", "error", "maintenance", "all"],
+          description: "Filter by robot status",
+        },
+        facility: {
+          type: "string",
+          description: "Filter by facility name (e.g., 'Seoul HQ', 'Tokyo')",
+        },
+        has_errors: {
+          type: "boolean",
+          description: "Filter robots with errors only",
+        },
+        low_battery: {
+          type: "boolean",
+          description: "Filter robots with battery below 20%",
+        },
+      },
+    },
+  },
+  {
+    name: "compare_robots",
+    description: "Compare performance metrics between two or more robots. Use when user wants to compare robots.",
+    parameters: {
+      type: "object",
+      properties: {
+        robot_ids: {
+          type: "array",
+          items: { type: "string" },
+          description: "Array of robot IDs to compare",
+        },
+      },
+      required: ["robot_ids"],
+    },
+  },
+  {
+    name: "analyze_facility",
+    description: "Analyze performance and status of a specific facility. Use when user asks about a facility.",
+    parameters: {
+      type: "object",
+      properties: {
+        facility: {
+          type: "string",
+          description: "Facility name (e.g., 'Seoul HQ', 'Tokyo Robotics Studio')",
+        },
+      },
+      required: ["facility"],
+    },
+  },
+  {
+    name: "check_incidents",
+    description: "Check recent incidents, alerts, or problems across the fleet. Use when user asks about issues or incidents.",
+    parameters: {
+      type: "object",
+      properties: {
+        severity: {
+          type: "string",
+          enum: ["critical", "high", "medium", "low", "all"],
+          description: "Filter by severity level",
+        },
+        time_range: {
+          type: "string",
+          description: "Time range (e.g., '1h', '24h', '7d')",
+        },
+      },
+    },
+  },
+  {
+    name: "suggest_maintenance",
+    description: "Suggest maintenance actions based on robot telemetry and patterns. Use when user asks for recommendations.",
+    parameters: {
+      type: "object",
+      properties: {
+        robot_id: {
+          type: "string",
+          description: "Robot ID to analyze (optional, analyzes all if not provided)",
+        },
+      },
+    },
+  },
+  {
     name: "modify_parameter",
-    description: "Modify a robot's parameter (requires user approval)",
+    description: "Modify a robot's parameter (requires user approval). Use when user wants to change robot settings.",
     parameters: {
       type: "object",
       properties: {
         robot_id: { type: "string", description: "Robot ID" },
-        parameter: { type: "string", description: "Parameter name" },
-        value: { description: "New value" },
+        parameter: { 
+          type: "string", 
+          enum: ["speed", "charging_threshold", "navigation_mode", "max_payload", "obstacle_sensitivity"],
+          description: "Parameter to modify" 
+        },
+        value: { description: "New value for the parameter" },
+        reason: { type: "string", description: "Reason for the change" },
       },
       required: ["robot_id", "parameter", "value"],
     },
   },
   {
-    name: "query_telemetry",
-    description: "Query operational telemetry data",
+    name: "schedule_task",
+    description: "Schedule a task for a robot (requires user approval). Use when user wants to schedule an action.",
     parameters: {
       type: "object",
       properties: {
-        facility: { type: "string", description: "Facility name (optional)" },
-        robot_model: { type: "string", description: "Robot model (optional)" },
-        time_range: { type: "string", description: "Time range (e.g., '24h', '7d')" },
+        robot_id: { type: "string", description: "Robot ID" },
+        task_type: {
+          type: "string",
+          enum: ["maintenance", "charging", "relocation", "diagnostic"],
+          description: "Type of task to schedule",
+        },
+        scheduled_time: { type: "string", description: "When to execute (e.g., 'in 2 hours', 'tomorrow 9am')" },
       },
+      required: ["robot_id", "task_type"],
+    },
+  },
+  {
+    name: "run_diagnostics",
+    description: "Run diagnostic tests on a robot (requires user approval). Use when user wants to diagnose problems.",
+    parameters: {
+      type: "object",
+      properties: {
+        robot_id: { type: "string", description: "Robot ID" },
+        test_type: {
+          type: "string",
+          enum: ["full", "sensors", "motors", "battery", "navigation", "connectivity"],
+          description: "Type of diagnostic test",
+        },
+      },
+      required: ["robot_id", "test_type"],
+    },
+  },
+  {
+    name: "generate_report",
+    description: "Generate a performance or operational report. Use when user wants a report or summary.",
+    parameters: {
+      type: "object",
+      properties: {
+        report_type: {
+          type: "string",
+          enum: ["fleet_summary", "facility_performance", "robot_history", "incident_analysis", "efficiency_trends"],
+          description: "Type of report to generate",
+        },
+        time_range: {
+          type: "string",
+          description: "Time period (e.g., 'today', 'this week', 'last month')",
+        },
+      },
+      required: ["report_type"],
     },
   },
   {
     name: "execute_command",
-    description: "Execute a system command (requires user approval)",
+    description: "Execute a system command (requires user approval). Use for critical operations like restarts.",
     parameters: {
       type: "object",
       properties: {
-        command: { type: "string", description: "Command to execute" },
-        params: { type: "object", description: "Command parameters" },
+        command: { 
+          type: "string",
+          enum: ["restart", "emergency_stop", "reset_navigation", "clear_errors", "recalibrate"],
+          description: "Command to execute" 
+        },
+        robot_id: { type: "string", description: "Robot ID (optional, applies to all if not specified)" },
+        params: { type: "object", description: "Additional command parameters" },
       },
       required: ["command"],
     },

@@ -59,7 +59,11 @@ export function ImprovedDraggableChat() {
   const [hasUnreadMessage, setHasUnreadMessage] = useState(false);
   const [latestAIMessage, setLatestAIMessage] = useState<string>("");
   const [showNotificationBubble, setShowNotificationBubble] = useState(false);
-  const [lastReadMessageId, setLastReadMessageId] = useState<string | null>(null);
+  const [lastReadMessageId, setLastReadMessageId] = useState<string | null>(() => {
+    // Load last read message ID from localStorage to persist across refreshes
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("bear-last-read-message-id") || null;
+  });
   const [iconPosition, setIconPosition] = useState({ x: 24, y: typeof window !== "undefined" ? window.innerHeight - 80 : 600 });
   const [isDraggingIcon, setIsDraggingIcon] = useState(false);
   const [iconDragStart, setIconDragStart] = useState({ x: 0, y: 0 });
@@ -196,6 +200,8 @@ export function ImprovedDraggableChat() {
         const lastMessage = messages[messages.length - 1];
         if (lastMessage.role === "assistant") {
           setLastReadMessageId(lastMessage.id);
+          // Persist to localStorage to survive page refreshes
+          localStorage.setItem("bear-last-read-message-id", lastMessage.id);
           console.log("✅ Message marked as read:", lastMessage.id);
         }
       }
@@ -683,6 +689,7 @@ export function ImprovedDraggableChat() {
                   const lastMessage = currentConversation.messages[currentConversation.messages.length - 1];
                   if (lastMessage.role === "assistant") {
                     setLastReadMessageId(lastMessage.id);
+                    localStorage.setItem("bear-last-read-message-id", lastMessage.id);
                   }
                 }
               }
@@ -711,11 +718,19 @@ export function ImprovedDraggableChat() {
                   const lastMessage = currentConversation.messages[currentConversation.messages.length - 1];
                   if (lastMessage.role === "assistant") {
                     setLastReadMessageId(lastMessage.id);
+                    localStorage.setItem("bear-last-read-message-id", lastMessage.id);
                   }
                 }
               }}
-              className="absolute left-16 top-0 w-64 bg-[#020511]/95 backdrop-blur-xl border border-white/20 rounded-xl p-3 shadow-2xl animate-in slide-in-from-left-2 fade-in duration-300 cursor-pointer hover:border-indigo-400/50 transition-all hover:scale-105"
-              style={{ zIndex: 10000 }}
+              className="absolute left-16 w-64 bg-[#020511]/95 backdrop-blur-xl border border-white/20 rounded-xl p-3 shadow-2xl animate-in slide-in-from-left-2 fade-in duration-300 cursor-pointer hover:border-indigo-400/50 transition-all hover:scale-105"
+              style={{ 
+                zIndex: 10000,
+                // Smart positioning: show above icon if icon is in bottom half, below if in top half
+                ...(iconPosition.y > (typeof window !== "undefined" ? window.innerHeight / 2 : 400)
+                  ? { bottom: "100%", marginBottom: "8px" } // Icon in bottom half - show above
+                  : { top: 0 } // Icon in top half - show below
+                )
+              }}
             >
               <div className="flex items-start gap-2">
                 <div className="flex-shrink-0 text-lg">🐻</div>

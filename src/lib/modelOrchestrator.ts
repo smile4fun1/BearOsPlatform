@@ -55,8 +55,8 @@ const ursaMajorBlueprint: ModelBlueprint = {
 };
 
 const bearLoreBlueprint: ModelBlueprint = {
-  id: "aurora-lore-120b",
-  name: "Aurora Bear Lore",
+  id: "grizzly-lore-120b",
+  name: "Grizzly",
   size: "120B",
   baseModel: "Mixtral 8x22B",
   objective:

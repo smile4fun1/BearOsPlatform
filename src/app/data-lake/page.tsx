@@ -1,9 +1,10 @@
-import { Database, FileText, Cpu, DollarSign, Zap, TrendingUp } from "lucide-react";
+import { Database, FileText, Cpu, DollarSign, Zap, TrendingUp, Activity } from "lucide-react";
 import { KnowledgePanel } from "@/components/universe/KnowledgePanel";
 import { ApiSurfacePanel } from "@/components/universe/ApiSurfacePanel";
 import { FinancialPanel } from "@/components/universe/FinancialPanel";
 import { composeCurationResponse } from "@/lib/dataCurator";
 import { operationsDataset } from "@/lib/mockData";
+import { Footer } from "@/components/Footer";
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,7 @@ export default async function DataLakePage() {
               Bear Data Lake
             </h1>
             <p className="mt-3 text-lg text-white/60">
-              Centralized repository of operational telemetry, knowledge base, and financial snapshots
+              Centralized repository of operational telemetry, robot fleet data, knowledge base, and analytics across Servi Plus, Carti 100, and Carti 600 deployments
             </p>
           </div>
           
@@ -105,12 +106,32 @@ export default async function DataLakePage() {
                 </div>
               </div>
               <p className="mt-4 text-sm text-white/60">
-                Shift-level telemetry including orders, uptime, NPS, incidents, and energy consumption across all facilities.
+                Shift-level telemetry including deliveries, uptime, NPS, incidents, battery performance, and energy consumption across global facilities.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs">16 weeks</span>
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">6 facilities</span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">8 facilities</span>
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs">4 shifts/day</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20">
+                  <Activity className="h-6 w-6 text-cyan-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Robot Fleet Telemetry</h3>
+                  <p className="text-sm text-white/50">Real-time data streams</p>
+                </div>
+              </div>
+              <p className="mt-4 text-sm text-white/60">
+                Live monitoring of Servi Plus, Carti 100, and Carti 600 robots including battery levels, location tracking, error states, and performance metrics.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">Servi Plus</span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">Carti 100</span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">Carti 600</span>
               </div>
             </div>
 
@@ -125,12 +146,12 @@ export default async function DataLakePage() {
                 </div>
               </div>
               <p className="mt-4 text-sm text-white/60">
-                Curated documentation covering Bear products, partnerships, GTM strategies, and technical specifications.
+                Curated documentation covering Servi Plus, Carti 100, Carti 600 specifications, operational best practices, and technical documentation.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">Products</span>
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">Partners</span>
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">GTM</span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">Robot Specs</span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">Operations</span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">Maintenance</span>
               </div>
             </div>
 
@@ -203,7 +224,7 @@ export default async function DataLakePage() {
                 </div>
               </div>
               <p className="mt-4 text-sm text-white/60">
-                Computed KPIs including orders automated, uptime percentages, NPS scores, and incident rates.
+                Computed KPIs including deliveries completed, fleet uptime percentages, battery health, NPS scores, and incident rates.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs">Real-time</span>
@@ -242,8 +263,8 @@ export default async function DataLakePage() {
               <div>
                 <h3 className="font-semibold text-lg">Data Ingestion</h3>
                 <p className="mt-2 text-white/60">
-                  Raw telemetry flows from Servi robots across all facilities via Bear Cloud API. 
-                  Data includes orders, uptime, NPS, incidents, and energy metrics collected at shift-level granularity.
+                  Raw telemetry flows from Servi Plus, Carti 100, and Carti 600 robots across 8 global facilities via Bear Cloud API. 
+                  Data includes deliveries, uptime, battery health, NPS, incidents, payload metrics, and energy consumption collected at shift-level granularity.
                 </p>
               </div>
             </div>
@@ -256,8 +277,8 @@ export default async function DataLakePage() {
                 <h3 className="font-semibold text-lg">Data Curation</h3>
                 <p className="mt-2 text-white/60">
                   The <code className="rounded bg-white/10 px-2 py-1 text-sm">dataCurator.ts</code> module 
-                  aggregates raw data into KPIs, computes momentum deltas, generates demand heatmaps, 
-                  and identifies incident patterns.
+                  aggregates raw data into actionable KPIs, computes momentum deltas, analyzes fleet performance by model (Servi Plus, Carti 100, Carti 600), 
+                  generates incident patterns, and tracks battery degradation trends.
                 </p>
               </div>
             </div>
@@ -284,13 +305,15 @@ export default async function DataLakePage() {
                 <h3 className="font-semibold text-lg">Frontend Visualization</h3>
                 <p className="mt-2 text-white/60">
                   React components powered by Recharts render interactive dashboards with KPI cards, 
-                  trend lines, heatmaps, and real-time alerts for executive decision-making.
+                  trend lines, incident radars with severity filtering, fleet status breakdowns, and AI-assisted troubleshooting 
+                  for field engineers and operations teams.
                 </p>
               </div>
             </div>
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { ChatProvider } from "@/components/chat/ChatProvider";
 import { ImprovedDraggableChat } from "@/components/chat/ImprovedDraggableChat";
+import { BearFunPopup } from "@/components/BearFunPopup";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -53,6 +54,7 @@ export default function RootLayout({
           <Header />
         {children}
           <ImprovedDraggableChat />
+          <BearFunPopup />
         </ChatProvider>
         <SpeedInsights />
         <Analytics />

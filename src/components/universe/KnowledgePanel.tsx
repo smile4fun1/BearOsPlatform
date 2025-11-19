@@ -13,7 +13,7 @@ export function KnowledgePanel({ slices }: { slices: BearKnowledgeSlice[] }) {
         <div>
           <h2 className="text-xl font-bold text-white">Bear Knowledge Core</h2>
           <p className="text-sm text-white/60">
-            What the Aurora Bear Lore model memorizes
+            What the Grizzly model memorizes
           </p>
         </div>
       </header>

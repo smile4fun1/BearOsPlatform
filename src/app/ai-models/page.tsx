@@ -1,6 +1,8 @@
 import { Brain, Zap, CheckCircle2, Clock, TrendingUp, AlertCircle } from "lucide-react";
 import { TrainingPanel } from "@/components/universe/TrainingPanel";
+import { DepartmentalModels } from "@/components/ai-models/DepartmentalModels";
 import { composeCurationResponse } from "@/lib/dataCurator";
+import { Footer } from "@/components/Footer";
 
 export const dynamic = 'force-dynamic';
 
@@ -233,6 +235,11 @@ export default async function AIModelsPage() {
           <TrainingPanel plans={universe.trainingPlans} />
         </div>
 
+        {/* Departmental Models */}
+        <div className="mb-10">
+          <DepartmentalModels />
+        </div>
+
         {/* Dataset Overview */}
         <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8">
           <h2 className="mb-6 text-2xl font-bold">Training Datasets</h2>
@@ -286,6 +293,7 @@ export default async function AIModelsPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

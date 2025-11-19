@@ -1,13 +1,14 @@
 import { Activity, TrendingUp, AlertTriangle, Clock } from "lucide-react";
 import { KPICardGrid } from "@/components/universe/KPICardGrid";
 import { TrendPanel } from "@/components/universe/TrendPanel";
-import { HeatmapPanel } from "@/components/universe/HeatmapPanel";
 import { InteractiveOpsTable } from "@/components/operations/InteractiveOpsTable";
 import { InteractiveIncidentRadar } from "@/components/incidents/InteractiveIncidentRadar";
 import { FleetPerformanceDashboard } from "@/components/operations/FleetPerformanceDashboard";
+import { RobotFleetStatus } from "@/components/operations/RobotFleetStatus";
 import { composeCurationResponse } from "@/lib/dataCurator";
 import { operationsDataset } from "@/lib/mockData";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { Footer } from "@/components/Footer";
 
 export const dynamic = 'force-dynamic';
 
@@ -127,10 +128,9 @@ export default async function OperationsPage() {
           <TrendPanel data={universe.trend} />
         </div>
 
-        {/* Heatmap */}
+        {/* Robot Fleet Status - Replaces Facility Heatmap */}
         <div className="mb-10">
-          <h2 className="mb-6 text-2xl font-bold">Facility Heatmap</h2>
-          <HeatmapPanel cells={universe.heatmap} />
+          <RobotFleetStatus />
         </div>
 
         {/* Interactive Operations Table */}
@@ -139,6 +139,7 @@ export default async function OperationsPage() {
           <InteractiveOpsTable operations={operationsDataset.slice(-50)} />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

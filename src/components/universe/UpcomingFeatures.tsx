@@ -1,39 +1,63 @@
 "use client";
 
-import { Rocket, Sparkles, Users, Globe } from "lucide-react";
+import { Rocket, Sparkles, Users, Globe, Cpu, Zap, Shield } from "lucide-react";
 
 const upcomingFeatures = [
   {
     icon: Rocket,
-    title: "Predictive Maintenance",
-    description: "AI-driven component health monitoring with automated service scheduling",
+    title: "Predictive Maintenance AI",
+    description: "Deep learning models analyze sensor patterns to predict component failures 48-72 hours in advance, with automated RMA workflows",
     status: "Q1 2026",
     color: "from-blue-500/20 to-indigo-500/10",
     iconColor: "text-blue-400"
   },
   {
-    icon: Sparkles,
-    title: "Natural Language Control",
-    description: "Voice commands and conversational AI for hands-free robot management",
+    icon: Cpu,
+    title: "Advanced Pathfinding Engine",
+    description: "Next-gen navigation with dynamic obstacle prediction, multi-robot coordination, and real-time traffic optimization",
     status: "Q2 2026",
+    color: "from-cyan-500/20 to-sky-500/10",
+    iconColor: "text-cyan-400"
+  },
+  {
+    icon: Shield,
+    title: "Autonomous Error Recovery",
+    description: "Self-healing systems that automatically diagnose and resolve common issues without human intervention, reducing downtime by 60%",
+    status: "Q2 2026",
+    color: "from-emerald-500/20 to-teal-500/10",
+    iconColor: "text-emerald-400"
+  },
+  {
+    icon: Sparkles,
+    title: "Ursa Minor Deep Integration",
+    description: "Expanded AI assistant capabilities with proactive anomaly detection, multi-step workflows, and predictive insights",
+    status: "Q3 2026",
     color: "from-purple-500/20 to-violet-500/10",
     iconColor: "text-purple-400"
   },
   {
-    icon: Users,
-    title: "Guest Interaction Mode",
-    description: "Enhanced customer engagement with personalized greetings and recommendations",
+    icon: Zap,
+    title: "Real-Time Fleet Orchestration",
+    description: "Dynamic task allocation and load balancing across entire robot fleets with ML-powered efficiency optimization",
     status: "Q3 2026",
+    color: "from-amber-500/20 to-orange-500/10",
+    iconColor: "text-amber-400"
+  },
+  {
+    icon: Users,
+    title: "Customer Experience Analytics",
+    description: "Enhanced sentiment tracking with NPS correlation, interaction heatmaps, and personalized service recommendations",
+    status: "Q4 2026",
     color: "from-rose-500/20 to-pink-500/10",
     iconColor: "text-rose-400"
   },
   {
     icon: Globe,
-    title: "Multi-Location Sync",
-    description: "Cross-facility insights with centralized fleet management and analytics",
+    title: "Global Fleet Command Center",
+    description: "Unified dashboard for cross-continental operations with timezone-aware analytics and regional performance benchmarking",
     status: "Q4 2026",
-    color: "from-emerald-500/20 to-teal-500/10",
-    iconColor: "text-emerald-400"
+    color: "from-indigo-500/20 to-blue-500/10",
+    iconColor: "text-indigo-400"
   }
 ];
 

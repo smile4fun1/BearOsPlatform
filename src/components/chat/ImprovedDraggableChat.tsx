@@ -47,7 +47,7 @@ export function ImprovedDraggableChat() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const [resizeCorner, setResizeCorner] = useState<"tl" | "tr" | "bl" | "br" | null>(null);
+  const [resizeCorner, setResizeCorner] = useState<"tl" | "tr" | "bl" | "br" | "t" | "r" | "b" | "l" | null>(null);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ width: 400, height: 600, x: 0, y: 0, posX: 0, posY: 0 });
   const [chatSize, setChatSize] = useState({ width: 400, height: 600 });
@@ -67,7 +67,22 @@ export function ImprovedDraggableChat() {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("bear-last-read-message-id") || null;
   });
-  const [iconPosition, setIconPosition] = useState({ x: 24, y: typeof window !== "undefined" ? window.innerHeight - 80 : 600 });
+  const [iconPosition, setIconPosition] = useState(() => {
+    // Load position from localStorage or use defaults
+    if (typeof window === "undefined") return { x: 160, y: 16 };
+    
+    const savedPosition = localStorage.getItem("bear-icon-position");
+    if (savedPosition) {
+      return JSON.parse(savedPosition);
+    }
+    
+    // Default positions: desktop = closer to logo, mobile = centered top
+    const isMobileDevice = window.innerWidth < 1024;
+    return {
+      x: isMobileDevice ? (window.innerWidth / 2) - 28 : 160, // Center on mobile, close to logo on desktop
+      y: 16, // Top of header for both
+    };
+  });
   const [isDraggingIcon, setIsDraggingIcon] = useState(false);
   const [iconDragStart, setIconDragStart] = useState({ x: 0, y: 0 });
   const [hasIconMoved, setHasIconMoved] = useState(false);
@@ -116,6 +131,29 @@ export function ImprovedDraggableChat() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // Keep chat and icon in bounds when window resizes
+  useEffect(() => {
+    const handleResize = () => {
+      // Constrain icon position
+      const iconSize = 56; // h-14 = 56px
+      setIconPosition(prev => ({
+        x: Math.max(0, Math.min(window.innerWidth - iconSize, prev.x)),
+        y: Math.max(0, Math.min(window.innerHeight - iconSize, prev.y)),
+      }));
+
+      // Constrain chat position
+      const chatWidth = isMinimized ? 280 : chatSize.width;
+      const chatHeight = isMinimized ? 60 : chatSize.height;
+      setPosition(prev => ({
+        x: Math.max(0, Math.min(window.innerWidth - chatWidth, prev.x)),
+        y: Math.max(0, Math.min(window.innerHeight - chatHeight, prev.y)),
+      }));
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isMinimized, chatSize, setPosition]);
 
   // Show welcome popup after 5 seconds (only once per session)
   useEffect(() => {
@@ -293,6 +331,8 @@ export function ImprovedDraggableChat() {
 
     const handleEnd = () => {
       setIsDraggingIcon(false);
+      // Save position to localStorage when drag ends
+      localStorage.setItem("bear-icon-position", JSON.stringify(iconPosition));
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -419,7 +459,7 @@ export function ImprovedDraggableChat() {
       let newX = position.x;
       let newY = position.y;
 
-      // Handle different corners
+      // Handle different corners and edges
       switch (resizeCorner) {
         case "br": // Bottom-right (default behavior)
           newWidth = resizeStart.width + deltaX;
@@ -440,6 +480,20 @@ export function ImprovedDraggableChat() {
           newHeight = resizeStart.height - deltaY;
           newX = resizeStart.posX + deltaX;
           newY = resizeStart.posY + deltaY;
+          break;
+        case "t": // Top edge
+          newHeight = resizeStart.height - deltaY;
+          newY = resizeStart.posY + deltaY;
+          break;
+        case "r": // Right edge
+          newWidth = resizeStart.width + deltaX;
+          break;
+        case "b": // Bottom edge
+          newHeight = resizeStart.height + deltaY;
+          break;
+        case "l": // Left edge
+          newWidth = resizeStart.width - deltaX;
+          newX = resizeStart.posX + deltaX;
           break;
       }
 
@@ -473,13 +527,17 @@ export function ImprovedDraggableChat() {
 
     // Prevent text selection while resizing
     document.body.style.userSelect = "none";
-    const cursorMap = {
+    const cursorMap: Record<string, string> = {
       br: "nwse-resize",
       tl: "nwse-resize",
       bl: "nesw-resize",
       tr: "nesw-resize",
+      t: "ns-resize",
+      r: "ew-resize",
+      b: "ns-resize",
+      l: "ew-resize",
     };
-    document.body.style.cursor = cursorMap[resizeCorner];
+    document.body.style.cursor = cursorMap[resizeCorner || ""];
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
@@ -489,7 +547,7 @@ export function ImprovedDraggableChat() {
     };
   }, [isResizing, resizeStart, resizeCorner, position, setPosition]);
 
-  const handleResizeStart = (corner: "tl" | "tr" | "bl" | "br") => (e: React.MouseEvent) => {
+  const handleResizeStart = (corner: "tl" | "tr" | "bl" | "br" | "t" | "r" | "b" | "l") => (e: React.MouseEvent) => {
     // Disable resizing on mobile
     if (isMobile) return;
     e.preventDefault();
@@ -951,11 +1009,11 @@ export function ImprovedDraggableChat() {
         >
           <div className="flex items-center gap-3">
             <div className={`flex items-center justify-center relative ${
-              isMinimized && !isMobile ? "h-10 w-10 text-3xl" : "h-8 w-8 text-2xl"
+              isMinimized && !isMobile ? "h-12 w-12 text-5xl" : "h-10 w-10 text-3xl"
             }`}>
               🐻
               {isMinimized && hasUnreadMessage && (
-                <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse" />
+                <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse" />
               )}
             </div>
             <div>
@@ -1302,36 +1360,59 @@ export function ImprovedDraggableChat() {
           </>
         )}
         
-        {/* Invisible Resize Handles - All Four Corners (DESKTOP ONLY) */}
+        {/* Invisible Resize Handles - Corners and Edges (DESKTOP ONLY) */}
         {!isMinimized && !isMobile && (
           <>
-            {/* Top-left corner */}
+            {/* Corner Handles */}
             <div
               onMouseDown={handleResizeStart("tl")}
-              className="absolute top-0 left-0 h-4 w-4 cursor-nwse-resize hover:bg-indigo-500/20 transition-colors"
+              className="absolute top-0 left-0 h-4 w-4 cursor-nwse-resize z-10"
               style={{ touchAction: 'none' }}
               title="Resize from top-left corner"
             />
-            {/* Top-right corner */}
             <div
               onMouseDown={handleResizeStart("tr")}
-              className="absolute top-0 right-0 h-4 w-4 cursor-nesw-resize hover:bg-indigo-500/20 transition-colors"
+              className="absolute top-0 right-0 h-4 w-4 cursor-nesw-resize z-10"
               style={{ touchAction: 'none' }}
               title="Resize from top-right corner"
             />
-            {/* Bottom-left corner */}
             <div
               onMouseDown={handleResizeStart("bl")}
-              className="absolute bottom-0 left-0 h-4 w-4 cursor-nesw-resize hover:bg-indigo-500/20 transition-colors"
+              className="absolute bottom-0 left-0 h-4 w-4 cursor-nesw-resize z-10"
               style={{ touchAction: 'none' }}
               title="Resize from bottom-left corner"
             />
-            {/* Bottom-right corner */}
             <div
               onMouseDown={handleResizeStart("br")}
-              className="absolute bottom-0 right-0 h-4 w-4 cursor-nwse-resize hover:bg-indigo-500/20 transition-colors"
+              className="absolute bottom-0 right-0 h-4 w-4 cursor-nwse-resize z-10"
               style={{ touchAction: 'none' }}
               title="Resize from bottom-right corner"
+            />
+            
+            {/* Edge Handles */}
+            <div
+              onMouseDown={handleResizeStart("t")}
+              className="absolute top-0 left-4 right-4 h-2 cursor-ns-resize"
+              style={{ touchAction: 'none' }}
+              title="Resize from top edge"
+            />
+            <div
+              onMouseDown={handleResizeStart("r")}
+              className="absolute right-0 top-4 bottom-4 w-2 cursor-ew-resize"
+              style={{ touchAction: 'none' }}
+              title="Resize from right edge"
+            />
+            <div
+              onMouseDown={handleResizeStart("b")}
+              className="absolute bottom-0 left-4 right-4 h-2 cursor-ns-resize"
+              style={{ touchAction: 'none' }}
+              title="Resize from bottom edge"
+            />
+            <div
+              onMouseDown={handleResizeStart("l")}
+              className="absolute left-0 top-4 bottom-4 w-2 cursor-ew-resize"
+              style={{ touchAction: 'none' }}
+              title="Resize from left edge"
             />
           </>
         )}

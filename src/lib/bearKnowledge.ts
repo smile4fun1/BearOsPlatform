@@ -166,7 +166,7 @@ export const BEAR_ROBOTICS_KNOWLEDGE = `
 - **Capabilities**: Multi-agent task delegation, KPI analysis
 - **Deployment**: Universe automation planners
 
-### Aurora Bear Lore (120B)
+### Grizzly (120B)
 - **Role**: Knowledge core
 - **Capabilities**: Product info, partnerships, compliance
 - **Deployment**: Customer copilots, executive briefings

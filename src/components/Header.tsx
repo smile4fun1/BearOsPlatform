@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useState, useRef } from "react";
 import { LiveStatusPopup } from "./LiveStatusPopup";
+import { SystemStatus } from "./SystemStatus";
 
 const navigation = [
   { name: "Home", href: "/", icon: Rocket },
@@ -28,6 +29,7 @@ export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [statusPopupOpen, setStatusPopupOpen] = useState(false);
+  const [systemStatusOpen, setSystemStatusOpen] = useState(false);
   const liveButtonRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -77,14 +79,14 @@ export function Header() {
           })}
         </div>
 
-        {/* Status Indicator */}
+        {/* Status Indicator - Opens System Status Modal */}
         <button
           ref={liveButtonRef}
-          onClick={() => setStatusPopupOpen(!statusPopupOpen)}
+          onClick={() => setSystemStatusOpen(true)}
           className="hidden items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400 transition-all hover:bg-emerald-500/20 hover:border-emerald-500/30 lg:flex"
         >
           <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span>Live</span>
+          <span>System Status</span>
         </button>
 
         {/* Mobile menu button */}
@@ -169,6 +171,12 @@ export function Header() {
       isOpen={statusPopupOpen}
       onClose={() => setStatusPopupOpen(false)}
       anchorRef={liveButtonRef as React.RefObject<HTMLElement>}
+    />
+    
+    {/* System Status Modal - Draggable & Resizable */}
+    <SystemStatus
+      isOpen={systemStatusOpen}
+      onClose={() => setSystemStatusOpen(false)}
     />
     </>
   );

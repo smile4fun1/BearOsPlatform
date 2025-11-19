@@ -108,6 +108,31 @@ export default async function Home() {
               </div>
             </div>
 
+            {/* Grizzly */}
+            <div className="rounded-3xl border border-rose-500/20 bg-gradient-to-br from-rose-500/10 to-rose-500/5 p-8 relative overflow-hidden group hover:border-rose-500/40 transition-all">
+              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-rose-500/10 blur-3xl transition-all group-hover:bg-rose-500/20" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500/30 to-rose-600/30">
+                    <Database className="h-6 w-6 text-rose-300" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">Grizzly</h3>
+                    <p className="text-sm text-white/50">Knowledge Core</p>
+                  </div>
+                </div>
+                <p className="text-white/70 leading-relaxed mb-4">
+                  Institutional memory for Bear Robotics. Answers questions about products, 
+                  partnerships, compliance, and brand voice with encyclopedic accuracy.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-full bg-rose-500/20 px-3 py-1 text-xs text-rose-300">120B params</span>
+                  <span className="rounded-full bg-rose-500/20 px-3 py-1 text-xs text-rose-300">Knowledge</span>
+                  <span className="rounded-full bg-rose-500/20 px-3 py-1 text-xs text-rose-300">Training</span>
+                </div>
+              </div>
+            </div>
+
             {/* Ursa Major */}
             <div className="rounded-3xl border border-sky-500/20 bg-gradient-to-br from-sky-500/10 to-sky-500/5 p-8 relative overflow-hidden group hover:border-sky-500/40 transition-all">
               <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-sky-500/10 blur-3xl transition-all group-hover:bg-sky-500/20" />
@@ -129,31 +154,6 @@ export default async function Home() {
                   <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs text-sky-300">70B params</span>
                   <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs text-sky-300">Multi-Agent</span>
                   <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs text-sky-300">Ready</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Aurora Bear Lore */}
-            <div className="rounded-3xl border border-rose-500/20 bg-gradient-to-br from-rose-500/10 to-rose-500/5 p-8 relative overflow-hidden group hover:border-rose-500/40 transition-all">
-              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-rose-500/10 blur-3xl transition-all group-hover:bg-rose-500/20" />
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500/30 to-rose-600/30">
-                    <Database className="h-6 w-6 text-rose-300" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold">Aurora Bear Lore</h3>
-                    <p className="text-sm text-white/50">Knowledge Core</p>
-                  </div>
-                </div>
-                <p className="text-white/70 leading-relaxed mb-4">
-                  Institutional memory for Bear Robotics. Answers questions about products, 
-                  partnerships, compliance, and brand voice with encyclopedic accuracy.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-rose-500/20 px-3 py-1 text-xs text-rose-300">120B params</span>
-                  <span className="rounded-full bg-rose-500/20 px-3 py-1 text-xs text-rose-300">Knowledge</span>
-                  <span className="rounded-full bg-rose-500/20 px-3 py-1 text-xs text-rose-300">Training</span>
                 </div>
               </div>
             </div>
@@ -341,7 +341,7 @@ export default async function Home() {
               </div>
               <h3 className="mt-6 text-xl font-semibold">AI Model Orchestration</h3>
               <p className="mt-3 text-white/60 leading-relaxed">
-                Track training progress for Ursa Minor, Ursa Major, and Aurora Bear Lore with milestone monitoring.
+                Track training progress for Ursa Minor, Ursa Major, and Grizzly with milestone monitoring.
               </p>
               <div className="mt-6 flex items-center text-sm font-medium text-[#5DADE2] transition-colors group-hover:text-[#85C1E9]">
                 Monitor Training
@@ -416,7 +416,7 @@ export default async function Home() {
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Link
                 href="/features"
-                className="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-500 to-rose-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/30 transition-all hover:shadow-sky-500/50 hover:scale-105"
+                className="group flex items-center justify-center gap-2 rounded-xl bg-[#5DADE2] hover:bg-[#3498DB] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#5DADE2]/30 transition-all hover:shadow-[#5DADE2]/50 hover:scale-105"
               >
                 Get Started
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -450,7 +450,8 @@ export default async function Home() {
               </div>
             </div>
             <div className="text-sm text-white/50">
-              © 2025 Bear Robotics Operations Platform.
+              <div>© 2025 Bear Robotics Operations Platform.</div>
+              <div className="mt-1">Developed by George Oprea</div>
             </div>
           </div>
         </div>

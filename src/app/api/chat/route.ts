@@ -332,7 +332,7 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
               const facilities = realData.operations.totalFacilities;
               description = `**Operations Dashboard**\n\n${activeRobots} robots monitored across ${facilities} facilities. Real-time telemetry updating every 30 seconds.`;
             } else if (targetUrl.includes("ai-model")) {
-              description = `**AI Models Training Center**\n\nMonitoring Ursa Minor (40B), Ursa Major (70B), and Aurora Bear Lore (120B) training pipelines.`;
+              description = `**AI Models Training Center**\n\nMonitoring Ursa Minor (40B), Ursa Major (70B), and Grizzly (120B) training pipelines.`;
             } else if (targetUrl.includes("data")) {
               description = `**Data Lake & Pipeline**\n\nStreaming telemetry from ${realData.fleet.totalRobots} active robots. Live ingestion monitoring.`;
             } else if (targetUrl === "/robots") {
@@ -747,7 +747,7 @@ Real-time telemetry updates every 30 seconds.`;
 
 **AI Models Training Center**
 
-Monitoring Ursa Minor (40B), Ursa Major (70B), and Aurora Bear Lore (120B) training pipelines.`;
+Monitoring Ursa Minor (40B), Ursa Major (70B), and Grizzly (120B) training pipelines.`;
     }
     if (lowerMessage.includes("data") || lowerMessage.includes("lake") || lowerMessage.includes("pipeline")) {
       const ingestRate = (Math.random() * 5 + 15).toFixed(1);
@@ -819,7 +819,7 @@ Comprehensive showcase of all Bear Universe capabilities.`;
   
   // AI model queries
   if (lowerMessage.includes("ursa") || lowerMessage.includes("aurora") || lowerMessage.includes("who are you")) {
-    return "I'm **Ursa Minor**, a 40B parameter AI assistant specifically trained for Bear Universe operations. I'm part of the Bear AI Constellation:\n\n**🐻 Ursa Minor (40B)** - That's me!\n• Interactive assistant for operators\n• Navigation, robot control, query answering\n• Permission-based command execution\n\n**🐻 Ursa Major (70B)**\n• Fleet orchestrator and automation planner\n• Multi-agent task delegation\n• KPI analysis and diagnostic briefs\n\n**🐻 Aurora Bear Lore (120B)**\n• Institutional knowledge core\n• Product info, partnerships, compliance\n• Customer support and executive briefings\n\nI'm currently at **offline-eval** phase, constantly learning from your interactions. How can I assist you today?";
+    return "I'm **Ursa Minor**, a 40B parameter AI assistant specifically trained for Bear Universe operations. I'm part of the Bear AI Constellation:\n\n**🐻 Ursa Minor (40B)** - That's me!\n• Interactive assistant for operators\n• Navigation, robot control, query answering\n• Permission-based command execution\n\n**🐻 Ursa Major (70B)**\n• Fleet orchestrator and automation planner\n• Multi-agent task delegation\n• KPI analysis and diagnostic briefs\n\n**🐻 Grizzly (120B)**\n• Institutional knowledge core\n• Product info, partnerships, compliance\n• Customer support and executive briefings\n\nI'm currently at **offline-eval** phase, constantly learning from your interactions. How can I assist you today?";
   }
   
   // Default helpful response

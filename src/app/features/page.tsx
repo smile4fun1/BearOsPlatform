@@ -1,6 +1,6 @@
 import { KPICardGrid } from "@/components/universe/KPICardGrid";
 import { TrendPanel } from "@/components/universe/TrendPanel";
-import { AlertsPanel } from "@/components/universe/AlertsPanel";
+import { InteractiveIncidentRadar } from "@/components/incidents/InteractiveIncidentRadar";
 import { KnowledgePanel } from "@/components/universe/KnowledgePanel";
 import { FinancialPanel } from "@/components/universe/FinancialPanel";
 import { ApiSurfacePanel } from "@/components/universe/ApiSurfacePanel";
@@ -8,6 +8,7 @@ import { TrainingPanel } from "@/components/universe/TrainingPanel";
 import { BearFeaturesGrid } from "@/components/universe/BearFeaturesGrid";
 import { UpcomingFeatures } from "@/components/universe/UpcomingFeatures";
 import { composeCurationResponse } from "@/lib/dataCurator";
+import { Footer } from "@/components/Footer";
 
 export default async function FeaturesPage() {
   const universe = composeCurationResponse();
@@ -19,7 +20,7 @@ export default async function FeaturesPage() {
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl space-y-5">
               <p className="animate-fade-in text-xs uppercase tracking-[0.4em] text-sky-300">
-                Bear Robotics · Seoul ↔ Silicon Valley
+                Bear Universe Platform
               </p>
               <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
                 Feature Showcase
@@ -28,12 +29,13 @@ export default async function FeaturesPage() {
                 </span>
               </h1>
               <p className="text-lg leading-relaxed text-white/70">
-                Explore the complete Bear Universe feature set: KPIs, trends, 
-                platform capabilities, AI training monitoring, financial insights, and more.
+                Explore the complete Bear Universe feature set: real-time KPIs, fleet trends, 
+                AI-powered incident detection, training monitoring, financial insights, and comprehensive analytics 
+                for Servi Plus, Carti 100, and Carti 600 deployments.
               </p>
               <div className="flex flex-wrap gap-3 text-sm text-white/60">
                 <span className="rounded-full border border-white/20 bg-white/5 px-4 py-2 backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/10">
-                  Servi fleets · {universe.financials.at(-1)?.deployments ?? 0}+
+                  Robot Fleet · {universe.financials.at(-1)?.deployments ?? 0}+ units
                 </span>
                 <span className="rounded-full border border-white/20 bg-white/5 px-4 py-2 backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/10">
                   APIs {universe.apiSurfaces.length}
@@ -69,10 +71,11 @@ export default async function FeaturesPage() {
 
         <KPICardGrid cards={universe.kpis} />
 
-        <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
+        <div className="grid gap-6 lg:grid-cols-1">
           <TrendPanel data={universe.trend} />
-          <AlertsPanel alerts={universe.alerts} />
         </div>
+
+        <InteractiveIncidentRadar />
 
         <BearFeaturesGrid />
 
@@ -88,6 +91,7 @@ export default async function FeaturesPage() {
           <ApiSurfacePanel apis={universe.apiSurfaces} />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

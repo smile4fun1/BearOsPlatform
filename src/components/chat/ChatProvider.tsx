@@ -83,7 +83,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const createConversation = useCallback((model: "ursa-minor" | "ursa-major" | "aurora-lore" = "ursa-minor") => {
     const newConv: Conversation = {
       id: crypto.randomUUID(),
-      title: `Chat with ${model === "ursa-minor" ? "Ursa Minor" : model === "ursa-major" ? "Ursa Major" : "Aurora Bear Lore"}`,
+      title: `Chat with ${model === "ursa-minor" ? "Ursa Minor" : model === "ursa-major" ? "Ursa Major" : "Grizzly"}`,
       messages: [],
       createdAt: dayjs().toISOString(),
       updatedAt: dayjs().toISOString(),

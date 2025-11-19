@@ -1,6 +1,6 @@
 /**
  * Realistic Robot Incident Data Generator
- * Based on real-world robot operations scenarios for Servi, Servi Plus, Servi Lift
+ * Based on real-world robot operations scenarios for Servi, Servi Plus, Carti 100, Carti 600
  */
 
 import { faker } from "@faker-js/faker";
@@ -200,6 +200,35 @@ const incidentTemplates = {
       resolutionTime: "Immediate (map update) + RFE inspection",
     },
   ],
+  performance: [
+    {
+      title: "Heavy Load Performance Degradation",
+      description: "Robot showing reduced speed and increased battery consumption under maximum payload. Travel time 35% longer than baseline. Motor temperature elevated.",
+      errorCode: "PERF-1001",
+      affectedSystems: ["Drive Motors", "Power Management", "Load Sensors"],
+      rootCause: "Motor controller tuning not optimized for sustained heavy loads. Battery cells showing voltage sag under high current draw (>45A). Possible overloading beyond rated capacity.",
+      actions: ["Verify actual payload weight vs. rated capacity", "Recalibrate load sensors", "Update motor controller parameters", "Enable battery cell balancing", "Reduce max speed under heavy load"],
+      resolutionTime: "45-60 minutes (calibration) or battery replacement",
+    },
+    {
+      title: "Payload Shift Detection",
+      description: "Load sensors detecting uneven weight distribution. Robot reporting center of gravity offset. Stability warnings triggered 8 times in past shift.",
+      errorCode: "PERF-1102",
+      affectedSystems: ["Load Sensors", "Gyroscope", "Stability Control"],
+      rootCause: "Cargo not properly secured causing dynamic load shifts during acceleration/braking. Load sensor calibration drift on front-left sensor (#3). Uneven floor surface amplifying instability.",
+      actions: ["Secure payload properly", "Recalibrate all load sensors", "Reduce max acceleration/deceleration", "Add no-go zones for uneven surfaces", "Enable enhanced stability mode"],
+      resolutionTime: "20-30 minutes",
+    },
+    {
+      title: "Repeated Docking Failures",
+      description: "Robot failing to dock correctly 4 out of 5 attempts. Position accuracy degraded to ±15cm (normal: ±3cm). Requiring manual intervention for charging.",
+      errorCode: "PERF-1205",
+      affectedSystems: ["Localization", "Vision System", "Docking Controller"],
+      rootCause: "Docking markers faded or obscured. Vision system having difficulty with ambient lighting changes. Wheel odometry drift from floor surface changes.",
+      actions: ["Replace docking visual markers", "Adjust lighting around charging station", "Recalibrate vision system", "Update docking approach algorithm", "Clean docking sensors"],
+      resolutionTime: "30-45 minutes",
+    },
+  ],
 };
 
 /**
@@ -287,9 +316,13 @@ export function generateIncidents(count: number = 20): RobotIncident[] {
     });
   }
   
-  return incidents.sort((a, b) => 
-    new Date(b.detectedAt).getTime() - new Date(a.detectedAt).getTime()
-  );
+  // Sort by severity first (hot to cold: critical > high > medium > low), then by time
+  const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
+  return incidents.sort((a, b) => {
+    const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
+    if (severityDiff !== 0) return severityDiff;
+    return new Date(b.detectedAt).getTime() - new Date(a.detectedAt).getTime();
+  });
 }
 
 function generateResolutionSteps(actions: string[], status: IncidentStatus): RobotIncident["resolutionSteps"] {

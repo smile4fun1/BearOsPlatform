@@ -16,12 +16,14 @@ const facilityMetadata: Record<
   Facility,
   { city: string; region: OpsDataPoint["region"] }
 > = {
-  "Seoul HQ Automation Lab": { city: "Seoul", region: "APAC" },
-  "Silicon Valley Command": { city: "Redwood City", region: "Americas" },
-  "Tokyo Robotics Studio": { city: "Tokyo", region: "APAC" },
-  "Seoul Servi Factory": { city: "Incheon", region: "APAC" },
-  "Busan Pilot Cluster": { city: "Busan", region: "APAC" },
-  "Singapore Experience Hub": { city: "Singapore", region: "APAC" },
+  "Seoul Operations Center": { city: "Seoul", region: "APAC" },
+  "Redwood City HQ": { city: "Redwood City", region: "Americas" },
+  "Los Angeles Distribution": { city: "Los Angeles", region: "Americas" },
+  "London Service Hub": { city: "London", region: "Europe" },
+  "Paris Operations": { city: "Paris", region: "Europe" },
+  "Berlin Tech Center": { city: "Berlin", region: "Europe" },
+  "Singapore Hub": { city: "Singapore", region: "APAC" },
+  "Tokyo Service Center": { city: "Tokyo", region: "APAC" },
 };
 
 const verticals: ServiceVertical[] = [
@@ -33,10 +35,9 @@ const verticals: ServiceVertical[] = [
 ];
 
 const robotModels: RobotModel[] = [
-  "Servi",
-  "Servi Lift",
   "Servi Plus",
-  "Servi Suite",
+  "Carti 100",
+  "Carti 600",
 ];
 
 const shifts: OpsDataPoint["shift"][] = [
@@ -111,7 +112,7 @@ export const financialSnapshots: FinancialSnapshot[] = [
     pipelineUsd: 51_000_000,
     grossMargin: 63,
     deployments: 980,
-    note: "APAC mega-franchise deals closed; ramping Servi Suite production in Incheon.",
+    note: "APAC mega-franchise deals closed; ramping Servi Plus and Carti 100 production in Incheon.",
   },
   {
     quarter: "2025 Q1",
@@ -127,7 +128,7 @@ export const financialSnapshots: FinancialSnapshot[] = [
     pipelineUsd: 88_000_000,
     grossMargin: 67,
     deployments: 1_340,
-    note: "Servi Lift 2.0 ready for mixed-elevator environments; multi-floor dining wins.",
+    note: "Carti 600 launched for heavy-duty warehousing; multi-industry expansion accelerating.",
   },
   {
     quarter: "2025 Q3 (proj)",
@@ -151,12 +152,12 @@ export const knowledgeBase: BearKnowledgeSlice[] = [
   },
   {
     id: "kb-servi",
-    topic: "Servi Platform",
+    topic: "Bear Robotics Product Line",
     summary:
-      "Servi, Servi Plus, and Servi Lift move food, dishes, linens, and supplies with mm-level navigation. The platform integrates with elevator controls, POS, and Bear Cloud for fleet teleoperation.",
+      "Servi Plus delivers premium food service automation with 4 trays and 40kg payload. Carti 100 (100kg) supports staff operations and light warehousing. Carti 600 (600kg) handles heavy industrial loads. All models feature precision navigation and Bear Cloud integration.",
     sources: [
-      "https://bearrobotics.ai/servi",
-      "Internal elevator integration notes (rev 3)",
+      "https://bearrobotics.ai/products",
+      "Internal product specifications (rev 5)",
     ],
     lastUpdated: "2025-08-22",
     confidence: 0.9,
@@ -165,7 +166,7 @@ export const knowledgeBase: BearKnowledgeSlice[] = [
     id: "kb-market",
     topic: "Market Footprint",
     summary:
-      "Over 1,200 deployments across Korea, Japan, Singapore, and 15 US states with partners like Chili's Korea, Hyundai Green Food, Compass Group, and Rakuten Eagles ballpark.",
+      "Global deployments across Korea, USA, UK, France, Germany, Japan, and Singapore. Restaurant partners, healthcare facilities, and warehouse operations across 8 countries.",
     sources: ["Deployment tracker", "Public partner releases"],
     lastUpdated: "2025-10-02",
     confidence: 0.88,

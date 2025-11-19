@@ -187,6 +187,44 @@ export function parseTimeRange(query: string): TimeRange | undefined {
 }
 
 /**
+ * Get facility-specific statistics
+ */
+export function getFacilityStats(facilityName: string) {
+  const facilityRobots = robotFleet.filter(r => r.facility === facilityName);
+  const facilityOps = operationsDataset.filter(o => o.facility === facilityName).slice(-50);
+  
+  if (facilityRobots.length === 0) {
+    return null;
+  }
+  
+  const activeCount = facilityRobots.filter(r => r.status === "active").length;
+  const avgBattery = facilityRobots.reduce((sum, r) => sum + r.battery, 0) / facilityRobots.length;
+  const avgUptime = facilityOps.reduce((sum, o) => sum + o.uptime, 0) / facilityOps.length;
+  const totalOrders = facilityOps.reduce((sum, o) => sum + o.ordersServed, 0);
+  const errorCount = facilityRobots.filter(r => r.status === "error").length;
+  
+  // Model breakdown
+  const modelBreakdown = facilityRobots.reduce((acc, r) => {
+    acc[r.model] = (acc[r.model] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  return {
+    facility: facilityName,
+    city: facilityRobots[0].city,
+    region: facilityRobots[0].region,
+    totalRobots: facilityRobots.length,
+    activeRobots: activeCount,
+    errorRobots: errorCount,
+    avgBattery: Math.round(avgBattery * 10) / 10,
+    avgUptime: Math.round(avgUptime * 10) / 10,
+    totalOrders,
+    modelBreakdown,
+    recentIncidents: facilityOps.reduce((sum, o) => sum + o.incidents, 0),
+  };
+}
+
+/**
  * Get comprehensive data summary for AI context
  */
 export function getAIDataContext(query: string) {
@@ -196,10 +234,20 @@ export function getAIDataContext(query: string) {
   const fleetStats = getFleetStats(timeRange);
   const opsStats = getOperationsStats(timeRange);
   
+  // Add model breakdown
+  const modelBreakdown = robotFleet.reduce((acc, r) => {
+    acc[r.model] = (acc[r.model] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
   return {
     timestamp: dayjs().format("YYYY-MM-DD HH:mm:ss"),
     timeRange: timeLabel,
-    fleet: fleetStats,
+    fleet: {
+      ...fleetStats,
+      modelBreakdown,
+      availableModels: ["Servi Plus", "Carti 100", "Carti 600"],
+    },
     operations: opsStats,
   };
 }

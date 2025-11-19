@@ -72,10 +72,10 @@ export const curateKpis = (): KPICard[] => {
   return [
     {
       id: "kpi-orders",
-      label: "Orders Automated",
+      label: "Deliveries Completed",
       value: numberFormatter.format(currentOrders),
       ...compareDelta(currentOrders, priorOrders),
-      description: "Tasks completed autonomously over the last two weeks.",
+      description: "Total robot-assisted deliveries over the last two weeks.",
     },
     {
       id: "kpi-uptime",

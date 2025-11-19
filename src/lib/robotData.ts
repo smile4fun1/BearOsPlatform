@@ -7,11 +7,12 @@ faker.seed(42);
 export interface Robot {
   id: string;
   name: string;
-  model: "Servi" | "Servi Lift" | "Servi Plus" | "Servi Suite";
+  model: "Servi" | "Servi Plus" | "Carti 100" | "Carti 600";
+  vertical: "Restaurant" | "Healthcare" | "Staff Aid" | "Warehousing";
   status: "active" | "idle" | "charging" | "maintenance" | "offline" | "error";
   facility: string;
   city: string;
-  region: "APAC" | "Americas";
+  region: "APAC" | "Americas" | "Europe";
   location: { lat: number; lng: number; floor: number };
   battery: number;
   uptime: number;
@@ -22,6 +23,14 @@ export interface Robot {
   assignedZone?: string;
   currentTask?: string;
   errors: string[];
+  specs: {
+    payloadCapacity: string;
+    maxSpeed: string;
+    runtime: string;
+    trays?: number; // Only for food service robots
+    dimensions: string;
+    weight: string;
+  };
   metrics: {
     avgTripTime: number;
     successRate: number;
@@ -30,25 +39,80 @@ export interface Robot {
     tripsCompleted: number;
     totalDistanceKm: number;
     ordersServed: number;
+    battery: number; // Add battery to metrics
   };
 }
 
 const facilities = [
-  { name: "Seoul HQ Automation Lab", city: "Seoul", region: "APAC" as const, coords: { lat: 37.5665, lng: 126.978 } },
-  { name: "Silicon Valley Command", city: "Mountain View", region: "Americas" as const, coords: { lat: 37.3861, lng: -122.0839 } },
-  { name: "Tokyo Robotics Studio", city: "Tokyo", region: "APAC" as const, coords: { lat: 35.6762, lng: 139.6503 } },
-  { name: "Seoul Servi Factory", city: "Seoul", region: "APAC" as const, coords: { lat: 37.5519, lng: 126.9918 } },
-  { name: "Busan Pilot Cluster", city: "Busan", region: "APAC" as const, coords: { lat: 35.1796, lng: 129.0756 } },
-  { name: "Singapore Experience Hub", city: "Singapore", region: "APAC" as const, coords: { lat: 1.3521, lng: 103.8198 } },
+  { name: "Seoul Operations Center", city: "Seoul", region: "APAC" as const, coords: { lat: 37.5665, lng: 126.978 } },
+  { name: "Redwood City HQ", city: "Redwood City", region: "Americas" as const, coords: { lat: 37.4852, lng: -122.2364 } },
+  { name: "Los Angeles Distribution", city: "Los Angeles", region: "Americas" as const, coords: { lat: 34.0522, lng: -118.2437 } },
+  { name: "London Service Hub", city: "London", region: "Europe" as const, coords: { lat: 51.5074, lng: -0.1278 } },
+  { name: "Paris Operations", city: "Paris", region: "Europe" as const, coords: { lat: 48.8566, lng: 2.3522 } },
+  { name: "Berlin Tech Center", city: "Berlin", region: "Europe" as const, coords: { lat: 52.5200, lng: 13.4050 } },
+  { name: "Singapore Hub", city: "Singapore", region: "APAC" as const, coords: { lat: 1.3521, lng: 103.8198 } },
+  { name: "Tokyo Service Center", city: "Tokyo", region: "APAC" as const, coords: { lat: 35.6762, lng: 139.6503 } },
 ];
 
-const models: Robot["model"][] = ["Servi", "Servi Lift", "Servi Plus", "Servi Suite"];
-const zones = ["Dining Area A", "Dining Area B", "Bar Section", "Kitchen Entrance", "Main Hall", "Private Rooms"];
-const tasks = [
+const models: Robot["model"][] = ["Servi Plus", "Carti 100", "Carti 600"];
+
+// Model specifications based on actual Bear Robotics products
+const modelSpecs = {
+  "Servi Plus": {
+    vertical: "Restaurant" as const,
+    payloadCapacity: "40 kg (88 lbs)",
+    maxSpeed: "1.2 m/s",
+    runtime: "14-18 hours",
+    trays: 4,
+    dimensions: "550×550×1350 mm",
+    weight: "60 kg"
+  },
+  "Carti 100": {
+    vertical: "Staff Aid" as const, // Can also be Warehousing
+    payloadCapacity: "100 kg (220 lbs)",
+    maxSpeed: "1.5 m/s",
+    runtime: "10-14 hours",
+    dimensions: "600×800×1100 mm",
+    weight: "80 kg"
+  },
+  "Carti 600": {
+    vertical: "Warehousing" as const,
+    payloadCapacity: "600 kg (1320 lbs)",
+    maxSpeed: "1.0 m/s",
+    runtime: "8-12 hours",
+    dimensions: "800×1200×1400 mm",
+    weight: "180 kg"
+  }
+};
+
+// Task descriptions vary by model vertical
+const restaurantZones = ["Dining Area A", "Dining Area B", "Bar Section", "Kitchen Entrance", "Main Hall", "Private Rooms"];
+const staffAidZones = ["East Wing", "West Wing", "Service Corridor", "Storage Area", "Central Hub", "North Section"];
+const warehousingZones = ["Zone A", "Zone B", "Zone C", "Loading Dock", "Warehouse Floor", "Shipping Area"];
+
+const restaurantTasks = [
   "Delivering to Table 12",
   "Returning to kitchen",
   "Waiting for pickup",
   "En route to Table 8",
+  "Charging",
+  "Idle - Ready for assignment",
+];
+
+const staffAidTasks = [
+  "Transporting cleaning supplies",
+  "Delivering tools to maintenance",
+  "Moving supplies to storage",
+  "Returning empty carts",
+  "Charging",
+  "Idle - Ready for assignment",
+];
+
+const warehousingTasks = [
+  "Moving pallets to dock",
+  "Transporting goods to Zone B",
+  "Picking order items",
+  "Returning to staging area",
   "Charging",
   "Idle - Ready for assignment",
 ];
@@ -77,6 +141,27 @@ function generateRobot(index: number): Robot {
   const facility = facilities[index % facilities.length];
   const robotId = ROBOT_IDS[index % ROBOT_IDS.length];
   const model = models[index % models.length];
+  const specs = modelSpecs[model];
+  
+  // Allow Carti 100 to be either Staff Aid or Warehousing
+  let vertical = specs.vertical;
+  if (model === "Carti 100" && index % 3 === 0) {
+    vertical = "Warehousing";
+  }
+  
+  // Select zones and tasks based on vertical
+  let zones: string[];
+  let tasks: string[];
+  if (vertical === "Restaurant") {
+    zones = restaurantZones;
+    tasks = restaurantTasks;
+  } else if (vertical === "Staff Aid") {
+    zones = staffAidZones;
+    tasks = staffAidTasks;
+  } else {
+    zones = warehousingZones;
+    tasks = warehousingTasks;
+  }
   
   // Weighted status distribution
   const statusWeights = [40, 30, 15, 8, 5, 2]; // active, idle, charging, maintenance, offline, error
@@ -99,14 +184,18 @@ function generateRobot(index: number): Robot {
   
   const hasError = status === "error";
   const errors = hasError ? [
-    ["LIDAR calibration drift detected", "WiFi signal weak", "Tray sensor malfunction", "Navigation path blocked", "Battery degradation warning"]
+    ["LIDAR calibration drift detected", "WiFi signal weak", "Load sensor malfunction", "Navigation path blocked", "Battery degradation warning"]
     [(index * 13) % 5]
   ] : [];
   
+  // Serial number prefix based on model
+  const serialPrefix = model.startsWith("Servi") ? "SRV" : "CRT";
+  
   return {
     id: robotId,
-    name: `${model}-${robotId.slice(0, 4).toUpperCase()}`,
+    name: `${model.replace(" ", "-")}-${robotId.slice(0, 4).toUpperCase()}`,
     model,
+    vertical,
     status,
     facility: facility.name,
     city: facility.city,
@@ -123,10 +212,18 @@ function generateRobot(index: number): Robot {
       ? dayjs().subtract(2 + (index % 46), 'hour').toISOString()
       : dayjs().subtract(1 + (index % 299), 'second').toISOString(),
     firmware: `v${2 + (index % 3)}.${(index * 3) % 10}.${(index * 7) % 21}`,
-    serialNumber: `SRV-${robotId.toUpperCase()}${String(10000000 + index).slice(1, 5)}`,
+    serialNumber: `${serialPrefix}-${robotId.toUpperCase()}${String(10000000 + index).slice(1, 5)}`,
     assignedZone: (index % 5) !== 0 ? zones[index % zones.length] : undefined,
     currentTask: status === "active" ? tasks[index % tasks.length] : undefined,
     errors,
+    specs: {
+      payloadCapacity: specs.payloadCapacity,
+      maxSpeed: specs.maxSpeed,
+      runtime: specs.runtime,
+      trays: specs.trays,
+      dimensions: specs.dimensions,
+      weight: specs.weight,
+    },
     metrics: {
       avgTripTime: 45 + (index * 17) % 135,
       successRate: 92 + ((index * 11) % 80) / 10,
@@ -135,6 +232,7 @@ function generateRobot(index: number): Robot {
       tripsCompleted: 100 + (index * 41) % 900,
       totalDistanceKm: 10 + ((index * 47) % 390) / 10,
       ordersServed: 200 + (index * 53) % 1300,
+      battery: batteryLevel,
     },
   };
 }

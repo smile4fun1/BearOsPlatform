@@ -32,9 +32,9 @@ export default async function Home() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-xl text-white/70 leading-relaxed">
-              A next-generation operations platform powered by multi-agent AI systems. 
-              Featuring autonomous task delegation, proactive problem solving, and real-time 
-              orchestration across Seoul to Silicon Valley.
+              Centralized operations platform powered by multi-agent AI systems. 
+              Monitor fleet health, diagnose incidents in real-time, and leverage AI-assisted 
+              troubleshooting for field engineers and operations teams.
             </p>
 
             {/* CTA Buttons */}
@@ -323,8 +323,8 @@ export default async function Home() {
               </div>
               <h3 className="mt-6 text-xl font-semibold">Real-time Operations</h3>
               <p className="mt-3 text-white/60 leading-relaxed">
-                Live telemetry from facilities across Seoul, Tokyo, Singapore, and Silicon Valley 
-                with shift-level granularity.
+                Live telemetry monitoring across all deployed facilities 
+                with shift-level granularity and instant health diagnostics.
               </p>
               <div className="mt-6 flex items-center text-sm font-medium text-sky-400 transition-colors group-hover:text-sky-300">
                 View Dashboard
@@ -446,7 +446,7 @@ export default async function Home() {
               </div>
             </div>
             <div className="text-sm text-white/50">
-              © 2025 Bear Robotics. Seoul ↔ Silicon Valley.
+              © 2025 Bear Robotics Operations Platform.
             </div>
           </div>
         </div>

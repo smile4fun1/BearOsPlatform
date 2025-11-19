@@ -38,7 +38,7 @@ export default async function OperationsPage() {
               Global Operations Dashboard
             </h1>
             <p className="mt-3 text-lg text-white/60">
-              Real-time telemetry across {facilities.length} facilities monitoring Servi fleet performance
+              Real-time telemetry across {facilities.length} facilities monitoring Bear Robotics fleet performance
             </p>
           </div>
           

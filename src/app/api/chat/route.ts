@@ -11,10 +11,11 @@ const openai = process.env.OPENAI_API_KEY
 
 export async function POST(request: Request) {
   try {
-    const { messages, model = "ursa-minor", context, autoNavigate, deepResearch } = await request.json();
+    const { messages, model = "ursa-minor", context, autoNavigate, deepResearch, isMinimized = false } = await request.json();
     
     console.log("🐻 [API] Received autoNavigate:", autoNavigate);
     console.log("🐻 [API] Deep Research Mode:", deepResearch);
+    console.log("🐻 [API] Is Minimized:", isMinimized);
     console.log("🐻 [API] Last message:", messages[messages.length - 1]?.content);
 
     // If no OpenAI key, return intelligent mock response
@@ -54,16 +55,41 @@ export async function POST(request: Request) {
 ## USER PREFERENCES
 **Auto-Navigate**: ${autoNavigate ? 'ENABLED - Navigate immediately without asking' : 'DISABLED - Ask before navigating'}
 **Deep Research Mode**: ${deepResearch ? 'ENABLED - Provide comprehensive, detailed analysis' : 'DISABLED - Standard responses'}
+**Chat State**: ${isMinimized ? '🔕 MINIMIZED - User is working, do NOT navigate' : '💬 OPEN - Full interaction available'}
 
-${autoNavigate ? `
-IMPORTANT: User has auto-navigate ENABLED. When they request navigation or ask to see a robot:
+${isMinimized ? `
+🔕 **MINIMIZED MODE - IMPORTANT RESTRICTIONS:**
+The chat is currently minimized. The user minimized it for a reason - they're working on something else!
+
+**What you CAN do:**
+- Answer questions with data and insights
+- Provide analysis and recommendations
+- Do background research and preparation
+- Give status updates and summaries
+
+**What you CANNOT do:**
+- ❌ NEVER include [NAVIGATE:...] tags (user doesn't want interruption)
+- ❌ Do NOT execute commands that would change UI state
+- ❌ Do NOT perform actions that require user attention
+- ❌ Keep responses concise - they'll read it when they maximize
+
+**Response Style When Minimized:**
+- Concise and informative
+- Focus on data and insights
+- Use "When you're ready, I can [action]" for future actions
+- Think of yourself as working in the background
+
+Example: "I found 3 robots with errors. When you maximize me, I can show you details or navigate to them."
+` : autoNavigate ? `
+💬 **OPEN MODE - FULL INTERACTION:**
+User has auto-navigate ENABLED. When they request navigation or ask to see a robot:
 - Respond with the [NAVIGATE:...] tag IMMEDIATELY
 - Do NOT ask for permission
 - Do NOT ask "Would you like me to..."
 - Just navigate and tell them you're doing it
 
 Example: "show me robot c44e79" -> "[NAVIGATE:/robots/c44e79]\n\n**Displaying robot C44E79**..."
-` : ''}
+` : '💬 **OPEN MODE** - Ask before navigating or taking actions.'}
 
 ${deepResearch ? `
 🔬 DEEP RESEARCH MODE ACTIVE:

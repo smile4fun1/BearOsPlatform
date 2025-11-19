@@ -227,6 +227,34 @@ export function RobotDetailView({ robot }: RobotDetailViewProps) {
                   </div>
                 </div>
 
+                <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-500/5 to-sky-500/5 p-6">
+                  <h3 className="text-sm font-medium text-white/60 mb-4">Robot Specifications</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/60">Vertical</span>
+                      <span className="font-semibold text-indigo-400">{robot.vertical}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/60">Payload</span>
+                      <span className="font-semibold">{robot.specs.payloadCapacity}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/60">Max Speed</span>
+                      <span className="font-semibold">{robot.specs.maxSpeed}</span>
+                    </div>
+                    {robot.specs.trays && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-white/60">Trays</span>
+                        <span className="font-semibold">{robot.specs.trays}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/60">Runtime</span>
+                      <span className="font-semibold text-emerald-400">{robot.specs.runtime}</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
                   <h3 className="text-sm font-medium text-white/60 mb-4">Current Task</h3>
                   {robot.currentTask ? (

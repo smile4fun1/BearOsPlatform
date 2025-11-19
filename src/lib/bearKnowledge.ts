@@ -14,34 +14,30 @@ export const BEAR_ROBOTICS_KNOWLEDGE = `
 
 ## Product Line
 
-### Servi (Original Model)
-- **Type**: Food service robot
-- **Capacity**: Up to 60 lbs (27 kg)
-- **Trays**: 3 large trays
-- **Use Case**: Restaurant table service, food running
-- **Navigation**: Autonomous with LIDAR + cameras
-- **Battery**: 8-12 hour runtime
-- **Charging**: Auto-docking
-
-### Servi Lift
-- **Type**: Elevated service robot
-- **Special Feature**: Hydraulic lift mechanism
-- **Height Adjustment**: 30-48 inches
-- **Use Case**: Countertop delivery, bar service
-- **Capacity**: 40 lbs (18 kg)
-
 ### Servi Plus
-- **Type**: Enhanced capacity model
-- **Capacity**: 80 lbs (36 kg)
-- **Trays**: 4 large trays + 1 utility tray
-- **Use Case**: Large venue service, high-volume operations
-- **Features**: Enhanced stability, faster navigation
+- **Type**: Enhanced food service robot
+- **Capacity**: 88 lbs (40 kg)
+- **Trays**: 4 large trays
+- **Speed**: 1.2 m/s
+- **Use Case**: High-volume restaurant operations
+- **Features**: Enhanced payload, faster navigation, longer battery life (14-18 hours)
 
-### Servi Suite
-- **Type**: Hospitality robot
-- **Use Case**: Hotel amenity delivery, room service
-- **Features**: Secure compartments, call button interaction
-- **Capacity**: 50 lbs (23 kg)
+### Carti 100
+- **Type**: Multi-purpose autonomous cart
+- **Capacity**: 220 lbs (100 kg)
+- **Speed**: 1.5 m/s
+- **Use Case**: Staff aid (cleaning supplies, tools), light warehousing
+- **Features**: Flatbed design, industrial durability, 10-14 hour runtime
+- **Dimensions**: 600×800×1100 mm
+
+### Carti 600
+- **Type**: Heavy-duty industrial robot
+- **Capacity**: 1320 lbs (600 kg)
+- **Speed**: 1.0 m/s
+- **Use Case**: Warehouse operations, pallet movement, heavy goods transport
+- **Features**: Reinforced chassis, advanced load sensors, 8-12 hour runtime
+- **Dimensions**: 800×1200×1400 mm
+- **Weight**: 180 kg
 
 ## Technical Specifications
 
@@ -82,22 +78,27 @@ export const BEAR_ROBOTICS_KNOWLEDGE = `
 - **Monthly**: Deep cleaning, mechanical inspection
 - **Quarterly**: LIDAR recalibration, safety audit
 
-## Deployment Locations
+## Monitored Facilities (in Bear Universe Platform)
 
-### Active Facilities
-1. **Seoul HQ Automation Lab** - R&D and testing (Seoul, South Korea)
-2. **Silicon Valley Command** - US operations center (Mountain View, CA)
-3. **Tokyo Robotics Studio** - APAC expansion hub (Tokyo, Japan)
-4. **Seoul Servi Factory** - Manufacturing (Seoul, South Korea)
-5. **Busan Pilot Cluster** - Beta deployment site (Busan, South Korea)
-6. **Singapore Experience Hub** - Customer demos (Singapore)
+### Americas Region
+1. **Redwood City HQ** - Primary operations center (California, USA)
+2. **Los Angeles Distribution** - West coast logistics (California, USA)
 
-### Target Markets
-- **Hospitality**: Restaurants, cafes, hotels
-- **Enterprise Dining**: Corporate cafeterias, airports
-- **Healthcare**: Hospital meal delivery, medical supply transport
-- **Stadiums**: Large venue food service
-- **Korean Franchises**: Specialized Korean dining chains
+### Europe Region
+3. **London Service Hub** - UK operations (London, UK)
+4. **Paris Operations** - France operations (Paris, France)
+5. **Berlin Tech Center** - Germany operations (Berlin, Germany)
+
+### APAC Region
+6. **Seoul Operations Center** - Korea headquarters (Seoul, South Korea)
+7. **Tokyo Service Center** - Japan operations (Tokyo, Japan)
+8. **Singapore Hub** - Singapore operations (Singapore)
+
+### Deployment Verticals
+- **Restaurant Service**: Food delivery, bussing (Servi Plus)
+- **Staff Operations**: Cleaning, tools, supplies (Carti 100)
+- **Warehousing**: Heavy loads, pallets, logistics (Carti 600)
+- **Healthcare**: Hospital meal/supply delivery (Servi Plus, Carti 100)
 
 ## RFE (Robotics Field Engineer) Operations
 
@@ -121,16 +122,25 @@ export const BEAR_ROBOTICS_KNOWLEDGE = `
 - **Level 3 (High)**: Service disruption, dispatch RFE within 6 hours
 - **Level 4 (Critical)**: Safety concern, immediate shutdown and RFE dispatch
 
-## Bear Universe Platform Features
+## Bear Universe Platform Overview
 
-### For Operators
-- Real-time fleet monitoring
-- KPI dashboards and analytics
-- Alert management
-- Robot parameter adjustment
-- Command execution (with permissions)
+**Purpose**: Centralized operations platform for monitoring and managing Bear Robotics fleets in real-time. Designed for field engineers, operations teams, and facility managers.
 
-### For RFEs
+**Core Value Propositions**:
+- Monitor 100+ robots across 8 global facilities in real-time
+- Diagnose incidents with AI-powered root cause analysis
+- Reduce downtime through predictive maintenance alerts
+- Optimize fleet performance with actionable insights
+- Enable remote troubleshooting for field engineers
+
+### For Operations Teams
+- **Real-time Fleet Monitoring**: Live telemetry from all robots
+- **Incident Radar**: Priority-sorted incidents with severity levels
+- **KPI Dashboards**: Uptime, deliveries, performance metrics
+- **Alert Management**: Proactive notifications for issues
+- **Performance Analytics**: Historical trends and comparisons
+
+### For Field Engineers (RFE)
 - Diagnostic tools and logs
 - Map editing and waypoint management
 - Live robot screen streaming

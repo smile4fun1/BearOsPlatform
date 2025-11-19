@@ -10,6 +10,7 @@ interface ChatContextType {
   isOpen: boolean;
   isMinimized: boolean;
   position: { x: number; y: number };
+  canNavigate: boolean; // AI can only navigate when chat is open (not minimized)
   createConversation: (model?: "ursa-minor" | "ursa-major" | "aurora-lore") => string;
   deleteConversation: (id: string) => void;
   setCurrentConversation: (id: string) => void;
@@ -18,6 +19,7 @@ interface ChatContextType {
   minimizeChat: () => void;
   maximizeChat: () => void;
   setPosition: (pos: { x: number; y: number }) => void;
+  addNotification: (message: string) => void; // For background research notifications
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -38,9 +40,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(saved);
         setConversations(parsed.conversations || []);
         setCurrentConversationId(parsed.currentId || null);
-        // Always start closed (minimized to icon) regardless of saved state
-        setIsOpen(false);
-        setIsMinimized(false);
+        // IMPORTANT: Restore the chat state (open/minimized) across navigation
+        // This prevents the chat from minimizing when AI navigates to a new page
+        setIsOpen(parsed.isOpen ?? false);
+        setIsMinimized(parsed.isMinimized ?? false);
         setPosition(parsed.position || { x: 20, y: 20 });
       } catch (e) {
         console.error("Failed to load conversations:", e);
@@ -152,6 +155,43 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setIsMinimized(false);
   }, []);
 
+  const addNotification = useCallback((message: string) => {
+    // Add a notification message when chat is minimized
+    // This allows background research to communicate without navigation
+    if (!currentConversationId) return;
+
+    const notificationMessage: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      content: `🔔 **Background Research Complete**\n\n${message}`,
+      timestamp: dayjs().toISOString(),
+    };
+
+    setConversations((prev) =>
+      prev.map((conv) => {
+        if (conv.id === currentConversationId) {
+          return {
+            ...conv,
+            messages: [...conv.messages, notificationMessage],
+            updatedAt: dayjs().toISOString(),
+          };
+        }
+        return conv;
+      })
+    );
+
+    // Show browser notification if supported and chat is minimized
+    if (isMinimized && "Notification" in window && Notification.permission === "granted") {
+      new Notification("Ursa Minor", {
+        body: message,
+        icon: "/bear-icon.png",
+      });
+    }
+  }, [currentConversationId, isMinimized]);
+
+  // Calculate if AI can navigate - only when chat is open and NOT minimized
+  const canNavigate = isOpen && !isMinimized;
+
   return (
     <ChatContext.Provider
       value={{
@@ -160,6 +200,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         isOpen,
         isMinimized,
         position,
+        canNavigate,
         createConversation,
         deleteConversation,
         setCurrentConversation,
@@ -168,6 +209,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         minimizeChat,
         maximizeChat,
         setPosition,
+        addNotification,
       }}
     >
       {children}

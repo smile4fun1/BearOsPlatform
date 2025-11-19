@@ -1,10 +1,12 @@
 export type Facility =
-  | "Seoul HQ Automation Lab"
-  | "Silicon Valley Command"
-  | "Tokyo Robotics Studio"
-  | "Seoul Servi Factory"
-  | "Busan Pilot Cluster"
-  | "Singapore Experience Hub";
+  | "Seoul Operations Center"
+  | "Redwood City HQ"
+  | "Los Angeles Distribution"
+  | "London Service Hub"
+  | "Paris Operations"
+  | "Berlin Tech Center"
+  | "Singapore Hub"
+  | "Tokyo Service Center";
 
 export type ServiceVertical =
   | "Hospitality"
@@ -13,7 +15,8 @@ export type ServiceVertical =
   | "Stadiums"
   | "Korean Franchises";
 
-export type RobotModel = "Servi" | "Servi Lift" | "Servi Plus" | "Servi Suite";
+export type RobotModel = "Servi Plus" | "Carti 100" | "Carti 600";
+export type RobotVertical = "Restaurant" | "Healthcare" | "Staff Aid" | "Warehousing";
 
 export type KPIMomentum = "up" | "down" | "steady";
 
@@ -21,7 +24,7 @@ export interface OpsDataPoint {
   id: string;
   facility: Facility;
   city: string;
-  region: "APAC" | "Americas";
+  region: "APAC" | "Americas" | "Europe";
   vertical: ServiceVertical;
   robotModel: RobotModel;
   shift: "Breakfast" | "Lunch" | "Dinner" | "Late Night";

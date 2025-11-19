@@ -33,6 +33,7 @@ export function ImprovedDraggableChat() {
     isOpen,
     isMinimized,
     position,
+    canNavigate,
     createConversation,
     deleteConversation,
     setCurrentConversation,
@@ -41,6 +42,7 @@ export function ImprovedDraggableChat() {
     minimizeChat,
     maximizeChat,
     setPosition,
+    addNotification,
   } = useChat();
 
   const [isDragging, setIsDragging] = useState(false);
@@ -577,6 +579,7 @@ export function ImprovedDraggableChat() {
           context: contextInfo,
           autoNavigate: autoNavEnabled,
           deepResearch: shouldUseDeepResearch,
+          isMinimized: isMinimized, // Pass minimized state to AI for smart behavior
         }),
         signal: controller.signal,
       });
@@ -607,13 +610,24 @@ export function ImprovedDraggableChat() {
       console.log("🐻 Response type:", typeof data.response);
       console.log("🐻 Response content:", data.response);
 
-      // Handle navigation commands with smooth transition
+      // Handle navigation commands with smart state awareness
       if (data.response && typeof data.response === 'string' && data.response.includes("[NAVIGATE:")) {
         const match = data.response.match(/\[NAVIGATE:([^\]]+)\]/);
         console.log("🐻 Navigation match:", match);
         if (match) {
           const target = match[1];
           const cleanResponse = data.response.replace(/\[NAVIGATE:[^\]]+\]/g, "").trim();
+          
+          // SMART BEHAVIOR: Only navigate if chat is open (not minimized)
+          if (!canNavigate) {
+            console.log("🐻 Chat is minimized - preventing navigation, showing notification instead");
+            addMessage({
+              role: "assistant",
+              content: `🔔 **Navigation Blocked**\n\nI found what you're looking for at: ${target}\n\nHowever, since the chat is minimized, I won't navigate automatically. Maximize me to proceed, or I can do background research instead!\n\n${cleanResponse}`,
+            });
+            setIsLoading(false);
+            return;
+          }
           
           console.log("🐻 Target URL:", target);
           console.log("🐻 Current pathname:", pathname);
@@ -628,6 +642,7 @@ export function ImprovedDraggableChat() {
           setIsLoading(false);
           
           // Direct hard navigation for reliability across all pages
+          // The chat state (open/minimized) will be preserved via localStorage
           const fullUrl = window.location.origin + target;
           console.log("🐻 Executing navigation in 300ms to:", fullUrl);
           setTimeout(() => {

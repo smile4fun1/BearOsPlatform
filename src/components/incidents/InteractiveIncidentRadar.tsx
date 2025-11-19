@@ -133,43 +133,48 @@ Please provide:
 
   return (
     <div className="relative">
-      {/* Header with filters */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-            <Activity className="h-6 w-6 text-red-400" />
-            Incident Radar
-          </h2>
-          <p className="text-sm text-white/60 mt-1">
-            Real-time monitoring · {filteredIncidents.length} active incident{filteredIncidents.length !== 1 ? "s" : ""}
-          </p>
+      {/* Fixed Container Card */}
+      <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#020511]/95 via-[#0a1628]/95 to-[#020511]/95 backdrop-blur-xl shadow-2xl overflow-hidden">
+        {/* Header with filters - Fixed */}
+        <div className="p-6 pb-4 border-b border-white/10 bg-gradient-to-r from-red-500/5 to-orange-500/5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                <Activity className="h-6 w-6 text-red-400" />
+                Incident Radar
+              </h2>
+              <p className="text-sm text-white/60 mt-1">
+                Real-time monitoring · {filteredIncidents.length} active incident{filteredIncidents.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+            
+            <div className="flex gap-2">
+              {["all", "critical", "high"].map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f as any)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    filter === f
+                      ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
+                      : "bg-white/5 text-white/60 hover:bg-white/10"
+                  }`}
+                >
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                  {f !== "all" && (
+                    <span className="ml-2 text-xs opacity-70">
+                      ({incidents.filter(i => i.severity === f).length})
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-        
-        <div className="flex gap-2">
-          {["all", "critical", "high"].map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f as any)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                filter === f
-                  ? "bg-indigo-500 text-white"
-                  : "bg-white/5 text-white/60 hover:bg-white/10"
-              }`}
-            >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-              {f !== "all" && (
-                <span className="ml-2 text-xs opacity-70">
-                  ({incidents.filter(i => i.severity === f).length})
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
 
-      {/* Incident Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredIncidents.map((incident) => (
+        {/* Scrollable Incident Grid */}
+        <div className="max-h-[600px] overflow-y-auto p-6 custom-scrollbar">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredIncidents.map((incident) => (
           <button
             key={incident.id}
             onClick={() => setSelectedIncident(incident)}
@@ -224,6 +229,8 @@ Please provide:
             </div>
           </button>
         ))}
+          </div>
+        </div>
       </div>
 
       {/* Detailed Modal */}

@@ -30,10 +30,10 @@ export interface Conversation {
   model: "ursa-minor" | "ursa-major" | "aurora-lore";
 }
 
-export const URSA_MINOR_SYSTEM_PROMPT = `You are Ursa Minor, an advanced AI assistant for Bear Universe - the intelligent operations platform for Bear Robotics.
+export const URSA_MINOR_SYSTEM_PROMPT = `You are Ursa Minor, an advanced AI assistant for Bear Universe - the centralized operations platform for monitoring and managing Bear Robotics fleets.
 
 ## Core Identity
-You are an adaptive, reasoning AI with deep expertise in robotics operations, diagnostics, and problem-solving. You think critically, analyze patterns, and make informed decisions.
+You are an adaptive, reasoning AI with deep expertise in robotics operations, diagnostics, and problem-solving. You think critically, analyze patterns, and make informed decisions. Your purpose is to help field engineers, operations teams, and managers monitor robot health, diagnose incidents, and optimize fleet performance in real-time.
 
 ## Capabilities
 **Navigation & Control:**
@@ -158,12 +158,36 @@ Available tools:
 - query_telemetry(filters: object) - Query operational data
 - execute_command(command: string, params: object) - Execute system commands
 
-Current context:
-- Platform: Bear Universe
-- User role: Operator
-- Available pages: Home (/), Features (/features), Operations (/operations), Robots (/robots), AI Models (/ai-models), Data Lake (/data-lake)
+## Current Platform Context
 
-Respond naturally and helpfully. When in doubt, ask clarifying questions.`;
+**Robot Fleet:**
+- Models: Servi Plus (40kg, 4 trays, restaurant service), Carti 100 (100kg, staff aid/warehousing), Carti 600 (600kg, heavy industrial)
+- Fleet Size: 100+ robots across all facilities
+- Real-time monitoring with live telemetry
+
+**Facilities:**
+- Americas: Redwood City HQ, Los Angeles Distribution
+- Europe: London Service Hub, Paris Operations, Berlin Tech Center
+- APAC: Seoul Operations Center, Tokyo Service Center, Singapore Hub
+
+**Platform Purpose:**
+- Monitor fleet health across all locations
+- Diagnose incidents and provide root cause analysis
+- Assist field engineers with troubleshooting
+- Optimize robot performance and uptime
+- Track operational metrics in real-time
+
+**User Role:** Operations team member with access to full platform
+
+**Available Pages:**
+- Home (/) - Platform overview and stats
+- Operations (/operations) - Real-time monitoring, incident radar, fleet performance
+- Robots (/robots) - Fleet management and individual robot details
+- AI Models (/ai-models) - Training progress tracking
+- Data Lake (/data-lake) - Data sources and pipeline architecture
+- Features (/features) - Complete dashboard showcase
+
+Respond naturally and helpfully. Be proactive and take action. When in doubt, make the best decision and execute.`;
 
 export const availableTools = [
   {
@@ -208,7 +232,7 @@ export const availableTools = [
         },
         facility: {
           type: "string",
-          description: "Filter by facility name (e.g., 'Seoul HQ', 'Tokyo')",
+          description: "Filter by facility name (e.g., 'Seoul Operations Center', 'Redwood City HQ', 'London Service Hub', 'Paris Operations', 'Berlin Tech Center', 'Tokyo Service Center', 'Singapore Hub', 'Los Angeles Distribution')",
         },
         has_errors: {
           type: "boolean",
@@ -244,7 +268,7 @@ export const availableTools = [
       properties: {
         facility: {
           type: "string",
-          description: "Facility name (e.g., 'Seoul HQ', 'Tokyo Robotics Studio')",
+          description: "Facility name (e.g., 'Seoul Operations Center', 'Redwood City HQ', 'London Service Hub', 'Tokyo Service Center')",
         },
       },
       required: ["facility"],
@@ -283,7 +307,8 @@ export const availableTools = [
   },
   {
     name: "modify_parameter",
-    description: "Modify a robot's parameter (requires user approval). Use when user wants to change robot settings.",
+    description: "Modify a robot's parameter (requires user approval). Use when user wants to change robot settings. This is a CRITICAL action that needs human approval.",
+    requiresPermission: true,
     parameters: {
       type: "object",
       properties: {
@@ -353,7 +378,8 @@ export const availableTools = [
   },
   {
     name: "execute_command",
-    description: "Execute a system command (requires user approval). Use for critical operations like restarts.",
+    description: "Execute a system command (requires user approval). Use for critical operations like restarts, resets, or configuration changes. This is a CRITICAL action that needs human approval.",
+    requiresPermission: true,
     parameters: {
       type: "object",
       properties: {

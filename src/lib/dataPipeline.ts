@@ -27,7 +27,7 @@ const verticals: ServiceVertical[] = [
   "Korean Franchises",
 ];
 
-const robotModels: RobotModel[] = ["Servi", "Servi Lift", "Servi Plus", "Servi Suite"];
+const robotModels: RobotModel[] = ["Servi Plus", "Carti 100", "Carti 600"];
 
 const shifts = ["Breakfast", "Lunch", "Dinner", "Late Night"];
 

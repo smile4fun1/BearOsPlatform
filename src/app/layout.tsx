@@ -4,6 +4,8 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { ChatProvider } from "@/components/chat/ChatProvider";
 import { ImprovedDraggableChat } from "@/components/chat/ImprovedDraggableChat";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +41,8 @@ export default function RootLayout({
         {children}
           <ImprovedDraggableChat />
         </ChatProvider>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

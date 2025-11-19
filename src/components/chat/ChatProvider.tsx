@@ -25,9 +25,10 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export function ChatProvider({ children }: { children: ReactNode }) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(true); // Open by default
+  const [isOpen, setIsOpen] = useState(false); // Start closed (minimized icon only)
   const [isMinimized, setIsMinimized] = useState(false);
   const [position, setPosition] = useState({ x: 20, y: 20 });
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   // Load conversations from localStorage on mount
   useEffect(() => {
@@ -37,8 +38,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(saved);
         setConversations(parsed.conversations || []);
         setCurrentConversationId(parsed.currentId || null);
-        setIsOpen(parsed.isOpen ?? true);
-        setIsMinimized(parsed.isMinimized ?? false);
+        // Always start closed (minimized to icon) regardless of saved state
+        setIsOpen(false);
+        setIsMinimized(false);
         setPosition(parsed.position || { x: 20, y: 20 });
       } catch (e) {
         console.error("Failed to load conversations:", e);
@@ -56,6 +58,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       setConversations([firstConv]);
       setCurrentConversationId(firstConv.id);
     }
+    setHasHydrated(true);
   }, []);
 
   // Save to localStorage whenever state changes

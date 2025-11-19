@@ -69,6 +69,8 @@ export function ImprovedDraggableChat() {
   const [iconDragStart, setIconDragStart] = useState({ x: 0, y: 0 });
   const [hasIconMoved, setHasIconMoved] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [hasHydrated, setHasHydrated] = useState(false);
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   const [autoNavigate, setAutoNavigate] = useState(() => {
     if (typeof window === "undefined") return true; // Default to true
     const stored = localStorage.getItem("bear-auto-navigate");
@@ -99,8 +101,10 @@ export function ImprovedDraggableChat() {
     (c) => c.id === currentConversationId
   );
 
-  // Detect mobile device
+  // Hydration and mobile detection
   useEffect(() => {
+    setHasHydrated(true);
+    
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024); // lg breakpoint
     };
@@ -109,6 +113,29 @@ export function ImprovedDraggableChat() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // Show welcome popup after 5 seconds (only once per session)
+  useEffect(() => {
+    if (!hasHydrated) return;
+    
+    const hasSeenWelcome = sessionStorage.getItem("bear-welcome-shown");
+    if (hasSeenWelcome) return;
+    
+    const timer = setTimeout(() => {
+      // Only show if chat is still closed
+      if (!isOpen) {
+        setShowWelcomePopup(true);
+        sessionStorage.setItem("bear-welcome-shown", "true");
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          setShowWelcomePopup(false);
+        }, 5000);
+      }
+    }, 5000);
+    
+    return () => clearTimeout(timer);
+  }, [hasHydrated, isOpen]);
 
   // Smart initial positioning - only run once and only if not loaded from storage
   useEffect(() => {
@@ -228,15 +255,13 @@ export function ImprovedDraggableChat() {
     }
   }, [isOpen, isMinimized, currentConversation]);
 
-  // Handle icon dragging with movement detection
+  // Handle icon dragging with movement detection (supports both mouse and touch)
   useEffect(() => {
     if (!isDraggingIcon) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      e.preventDefault();
-      
-      let newX = e.clientX - iconDragStart.x;
-      let newY = e.clientY - iconDragStart.y;
+    const handleMove = (clientX: number, clientY: number) => {
+      let newX = clientX - iconDragStart.x;
+      let newY = clientY - iconDragStart.y;
 
       // Constrain to viewport
       newX = Math.max(0, Math.min(window.innerWidth - 56, newX));
@@ -251,18 +276,34 @@ export function ImprovedDraggableChat() {
       setIconPosition({ x: newX, y: newY });
     };
 
-    const handleMouseUp = () => {
+    const handleMouseMove = (e: MouseEvent) => {
+      e.preventDefault();
+      handleMove(e.clientX, e.clientY);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      if (e.touches.length > 0) {
+        handleMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+
+    const handleEnd = () => {
       setIsDraggingIcon(false);
     };
 
     document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleEnd);
     document.body.style.userSelect = "none";
     document.body.style.cursor = "grabbing";
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("mouseup", handleEnd);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleEnd);
       document.body.style.userSelect = "";
       document.body.style.cursor = "";
     };
@@ -677,6 +718,9 @@ export function ImprovedDraggableChat() {
     }
   };
 
+  // Don't render until hydrated to prevent flash
+  if (!hasHydrated) return null;
+
   if (!isOpen) {
     return (
       <>
@@ -699,6 +743,16 @@ export function ImprovedDraggableChat() {
                 y: e.clientY - iconPosition.y,
               });
             }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              const touch = e.touches[0];
+              setIsDraggingIcon(true);
+              setHasIconMoved(false); // Reset movement flag
+              setIconDragStart({
+                x: touch.clientX - iconPosition.x,
+                y: touch.clientY - iconPosition.y,
+              });
+            }}
             onClick={(e) => {
               e.preventDefault();
               // Only open if icon wasn't dragged
@@ -706,6 +760,7 @@ export function ImprovedDraggableChat() {
                 toggleChat();
                 setHasUnreadMessage(false);
                 setShowNotificationBubble(false);
+                setShowWelcomePopup(false); // Hide welcome popup when chat opens
                 // Mark current message as read
                 if (currentConversation && currentConversation.messages.length > 0) {
                   const lastMessage = currentConversation.messages[currentConversation.messages.length - 1];
@@ -767,6 +822,44 @@ export function ImprovedDraggableChat() {
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowNotificationBubble(false);
+                  }}
+                  className="flex-shrink-0 text-white/40 hover:text-white transition-colors"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Welcome Popup - Shows after 5 seconds */}
+          {showWelcomePopup && !showNotificationBubble && (
+            <div 
+              onClick={() => {
+                toggleChat();
+                setShowWelcomePopup(false);
+              }}
+              className="absolute left-16 w-56 bg-gradient-to-r from-indigo-500/20 to-sky-500/20 backdrop-blur-xl border border-indigo-400/30 rounded-xl p-3 shadow-2xl animate-in slide-in-from-left-2 fade-in duration-300 cursor-pointer hover:border-indigo-400/50 transition-all hover:scale-105"
+              style={{ 
+                zIndex: 10000,
+                // Smart positioning: show above icon if icon is in bottom half, below if in top half
+                ...(iconPosition.y > (typeof window !== "undefined" ? window.innerHeight / 2 : 400)
+                  ? { bottom: "100%", marginBottom: "8px" } // Icon in bottom half - show above
+                  : { top: 0 } // Icon in top half - show below
+                )
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <div className="flex-shrink-0 text-xl">👋</div>
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-white mb-0.5">I'm here to help!</div>
+                  <div className="text-xs text-white/70">
+                    Click to chat with Ursa Minor
+                  </div>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowWelcomePopup(false);
                   }}
                   className="flex-shrink-0 text-white/40 hover:text-white transition-colors"
                 >

@@ -42,8 +42,8 @@ a {
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #020511;
+  --foreground: #ffffff;
 }
 
 @theme inline {
@@ -53,17 +53,15 @@ a {
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: #020511;
 }
 
 body {
-  background: var(--background);
+  background: #020511;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
 }
 
 /* Custom Scrollbar Styling */

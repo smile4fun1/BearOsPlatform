@@ -112,6 +112,11 @@ Example:
 
   User: "what's wrong in operations?"
   You: "[NAVIGATE:/operations]\n\n**Opening Operations Dashboard**\n\nI found 3 critical issues..."
+  
+  User: "take me to the robots page"
+  You: "[NAVIGATE:/robots]\n\n**Opening Robot Fleet Management**\n\nShowing all robots..."
+
+⚠️ CRITICAL: Use /robots for fleet page, NOT /robots/robots or robots without slash!
 
 ═══════════════════════════════════════════════════════════════
 ` : `
@@ -263,6 +268,22 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
           
           if (name === "navigate" && parameters.page) {
             targetUrl = parameters.page;
+            console.log(`🐻 [API] Navigate tool called with page parameter:`, parameters.page);
+            
+            // ⚠️ VALIDATION: Ensure URL format is correct
+            if (!targetUrl.startsWith("/")) {
+              console.warn(`🐻 [API] ⚠️ Fixing malformed URL: "${targetUrl}" → "/${targetUrl}"`);
+              targetUrl = "/" + targetUrl;
+            }
+            
+            // ⚠️ VALIDATION: Prevent double paths like /robots/robots
+            if (targetUrl.includes("//") || targetUrl.match(/\/([^\/]+)\/\1/)) {
+              console.error(`🐻 [API] 🚨 Malformed URL detected: "${targetUrl}" - contains duplicates!`);
+              targetUrl = targetUrl.replace("//", "/").replace(/\/([^\/]+)\/\1/, "/$1");
+              console.log(`🐻 [API] Fixed to:`, targetUrl);
+            }
+            
+            console.log(`🐻 [API] Final targetUrl:`, targetUrl);
             const pageName = targetUrl.replace("/", "").replace("-", " ").toUpperCase();
             
             // Provide RELEVANT context based on what page they're navigating to
@@ -274,8 +295,12 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
               description = `**AI Models Training Center**\n\nMonitoring Ursa Minor (40B), Ursa Major (70B), and Aurora Bear Lore (120B) training pipelines.`;
             } else if (targetUrl.includes("data")) {
               description = `**Data Lake & Pipeline**\n\nStreaming telemetry from ${realData.fleet.totalRobots} active robots. Live ingestion monitoring.`;
-            } else if (targetUrl.includes("robot") && targetUrl !== "/robots") {
-              description = `**Robots Fleet View**\n\n${realData.fleet.totalRobots} robots deployed. Filter by facility, status, or model.`;
+            } else if (targetUrl === "/robots") {
+              // Fleet overview page
+              const modelBreakdown = Object.entries(realData.fleet.modelBreakdown || {})
+                .map(([model, count]) => `${count} ${model}`)
+                .join(" • ");
+              description = `**Robot Fleet Management**\n\n${realData.fleet.totalRobots} robots deployed${modelBreakdown ? `: ${modelBreakdown}` : ""}\nFilter by facility, status, or model.`;
             } else {
               description = `**${pageName}**`;
             }

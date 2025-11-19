@@ -36,8 +36,12 @@ export function Header() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900 shadow-lg shadow-amber-600/30 transition-all group-hover:shadow-amber-600/50 group-hover:scale-105">
-            <span className="text-xl">🐻</span>
+          <div className="relative h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-[#5DADE2]/30 transition-all group-hover:shadow-[#5DADE2]/50 group-hover:scale-105">
+            <img 
+              src="/download.png" 
+              alt="Bear Robotics" 
+              className="h-full w-full object-cover"
+            />
           </div>
           <div className="hidden sm:block">
             <div className="text-sm font-semibold text-white">Bear Universe</div>

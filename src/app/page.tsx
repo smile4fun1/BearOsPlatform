@@ -18,7 +18,7 @@ export default async function Home() {
         <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
           <div className="flex flex-col items-center text-center">
             {/* Badge */}
-            <div className="flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-300 backdrop-blur-sm">
+            <div className="flex items-center gap-2 rounded-full border border-[#5DADE2]/20 bg-[#5DADE2]/10 px-4 py-2 text-sm font-medium text-[#85C1E9] backdrop-blur-sm">
               <Sparkles className="h-4 w-4" />
               <span>AI-Powered · Agentic Automation · Real-time Intelligence</span>
             </div>
@@ -41,14 +41,14 @@ export default async function Home() {
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/features"
-                className="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-500 to-rose-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/30 transition-all hover:shadow-sky-500/50 hover:scale-105"
+                className="group flex items-center justify-center gap-2 rounded-xl bg-[#5DADE2] hover:bg-[#3498DB] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#5DADE2]/30 transition-all hover:shadow-[#5DADE2]/50 hover:scale-105"
               >
                 Explore Features
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/operations"
-                className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10"
+                className="flex items-center justify-center gap-2 rounded-xl border border-[#5DADE2]/30 bg-white/5 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-[#5DADE2]/10 hover:border-[#5DADE2]/50"
               >
                 View Operations
               </Link>
@@ -316,7 +316,7 @@ export default async function Home() {
             {/* Feature Cards */}
             <Link
               href="/operations"
-              className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 transition-all hover:border-sky-500/30 hover:shadow-lg hover:shadow-sky-500/10"
+              className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 transition-all hover:border-[#5DADE2]/30 hover:shadow-lg hover:shadow-[#5DADE2]/10"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/20 to-indigo-500/20 text-sky-400">
                 <BarChart3 className="h-6 w-6" />
@@ -326,7 +326,7 @@ export default async function Home() {
                 Live telemetry monitoring across all deployed facilities 
                 with shift-level granularity and instant health diagnostics.
               </p>
-              <div className="mt-6 flex items-center text-sm font-medium text-sky-400 transition-colors group-hover:text-sky-300">
+              <div className="mt-6 flex items-center text-sm font-medium text-[#5DADE2] transition-colors group-hover:text-[#85C1E9]">
                 View Dashboard
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
@@ -334,7 +334,7 @@ export default async function Home() {
 
             <Link
               href="/ai-models"
-              className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 transition-all hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/10"
+              className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 transition-all hover:border-[#5DADE2]/30 hover:shadow-lg hover:shadow-[#5DADE2]/10"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/20 to-rose-500/20 text-indigo-400">
                 <Brain className="h-6 w-6" />
@@ -343,7 +343,7 @@ export default async function Home() {
               <p className="mt-3 text-white/60 leading-relaxed">
                 Track training progress for Ursa Minor, Ursa Major, and Aurora Bear Lore with milestone monitoring.
               </p>
-              <div className="mt-6 flex items-center text-sm font-medium text-indigo-400 transition-colors group-hover:text-indigo-300">
+              <div className="mt-6 flex items-center text-sm font-medium text-[#5DADE2] transition-colors group-hover:text-[#85C1E9]">
                 Monitor Training
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
@@ -351,7 +351,7 @@ export default async function Home() {
 
             <Link
               href="/data-lake"
-              className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 transition-all hover:border-rose-500/30 hover:shadow-lg hover:shadow-rose-500/10"
+              className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 transition-all hover:border-[#5DADE2]/30 hover:shadow-lg hover:shadow-[#5DADE2]/10"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500/20 to-orange-500/20 text-rose-400">
                 <Database className="h-6 w-6" />
@@ -361,7 +361,7 @@ export default async function Home() {
                 Curated operational datasets with KPI aggregation, demand heatmaps, 
                 and incident radar across all facilities.
               </p>
-              <div className="mt-6 flex items-center text-sm font-medium text-rose-400 transition-colors group-hover:text-rose-300">
+              <div className="mt-6 flex items-center text-sm font-medium text-[#5DADE2] transition-colors group-hover:text-[#85C1E9]">
                 Explore Data
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
@@ -437,8 +437,12 @@ export default async function Home() {
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 via-indigo-500 to-rose-500">
-                <span className="text-xs font-bold text-white">B</span>
+              <div className="h-8 w-8 rounded-lg overflow-hidden">
+                <img 
+                  src="/download.png" 
+                  alt="Bear Robotics" 
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div>
                 <div className="text-sm font-semibold">Bear Universe</div>

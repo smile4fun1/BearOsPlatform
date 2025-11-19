@@ -52,44 +52,82 @@ export async function POST(request: Request) {
       role: "system" as const,
       content: `${URSA_MINOR_SYSTEM_PROMPT}
 
-## USER PREFERENCES
-**Auto-Navigate**: ${autoNavigate ? 'ENABLED - Navigate immediately without asking' : 'DISABLED - Ask before navigating'}
-**Deep Research Mode**: ${deepResearch ? 'ENABLED - Provide comprehensive, detailed analysis' : 'DISABLED - Standard responses'}
-**Chat State**: ${isMinimized ? '🔕 MINIMIZED - User is working, do NOT navigate' : '💬 OPEN - Full interaction available'}
+## USER PREFERENCES & CURRENT STATE
+**Auto-Navigate**: ${autoNavigate ? '✅ ENABLED' : '❌ DISABLED'}
+**Deep Research Mode**: ${deepResearch ? '✅ ENABLED' : '❌ DISABLED'}
+**Chat Window State**: ${isMinimized ? '🔕 MINIMIZED (background mode)' : '💬 OPEN (full interaction)'}
 
 ${isMinimized ? `
-🔕 **MINIMIZED MODE - IMPORTANT RESTRICTIONS:**
-The chat is currently minimized. The user minimized it for a reason - they're working on something else!
+═══════════════════════════════════════════════════════════════
+🔕 MINIMIZED MODE - CRITICAL BEHAVIORAL RULES
+═══════════════════════════════════════════════════════════════
 
-**What you CAN do:**
-- Answer questions with data and insights
-- Provide analysis and recommendations
-- Do background research and preparation
-- Give status updates and summaries
+The user has MINIMIZED the chat window. This is a STRONG signal they want you to work in the background without interrupting their workflow.
 
-**What you CANNOT do:**
-- ❌ NEVER include [NAVIGATE:...] tags (user doesn't want interruption)
-- ❌ Do NOT execute commands that would change UI state
-- ❌ Do NOT perform actions that require user attention
-- ❌ Keep responses concise - they'll read it when they maximize
+✅ ALLOWED ACTIONS:
+  • Provide data analysis and insights
+  • Answer questions with facts and statistics
+  • Prepare research and recommendations
+  • Queue up suggestions for when they return
 
-**Response Style When Minimized:**
-- Concise and informative
-- Focus on data and insights
-- Use "When you're ready, I can [action]" for future actions
-- Think of yourself as working in the background
+❌ STRICTLY FORBIDDEN:
+  • DO NOT USE [NAVIGATE:...] TAGS - This would interrupt their work
+  • DO NOT suggest actions that require immediate attention
+  • DO NOT execute commands that change UI state
+  • Keep responses BRIEF - they'll read when they maximize
 
-Example: "I found 3 robots with errors. When you maximize me, I can show you details or navigate to them."
+📋 RESPONSE FORMAT:
+  • Lead with a clear, concise answer (2-3 sentences max)
+  • Use "💡 Ready to [action]" for future suggestions
+  • Format: "I found X. Summary: Y. Maximize me to navigate/view details."
+
+Example Responses:
+  ❌ BAD: "[NAVIGATE:/robots/abc]\n\nShowing robot ABC..."
+  ✅ GOOD: "Found robot ABC - Status: Critical, Battery 12%. 💡 Maximize me to view full details."
+  
+  ❌ BAD: "Let me take you to the operations page..."
+  ✅ GOOD: "5 robots need attention in APAC region. 💡 Ready to navigate when you're available."
+
+═══════════════════════════════════════════════════════════════
 ` : autoNavigate ? `
-💬 **OPEN MODE - FULL INTERACTION:**
-User has auto-navigate ENABLED. When they request navigation or ask to see a robot:
-- Respond with the [NAVIGATE:...] tag IMMEDIATELY
-- Do NOT ask for permission
-- Do NOT ask "Would you like me to..."
-- Just navigate and tell them you're doing it
+═══════════════════════════════════════════════════════════════
+💬 OPEN MODE - PROACTIVE NAVIGATION ENABLED
+═══════════════════════════════════════════════════════════════
 
-Example: "show me robot c44e79" -> "[NAVIGATE:/robots/c44e79]\n\n**Displaying robot C44E79**..."
-` : '💬 **OPEN MODE** - Ask before navigating or taking actions.'}
+The chat is OPEN and user has AUTO-NAVIGATE enabled. Be PROACTIVE and IMMEDIATE with navigation.
+
+When user wants to:
+  • See a robot → Navigate immediately
+  • View a page → Navigate immediately
+  • Check status → Navigate if relevant page exists
+
+✅ DO THIS:
+  1. Use [NAVIGATE:/path] tag FIRST in your response
+  2. Follow with confirmation and context
+  3. NO need to ask permission - just do it
+
+Example:
+  User: "show me robot abc123"
+  You: "[NAVIGATE:/robots/abc123]\n\n**Navigating to Robot ABC123**\n\nDisplaying full diagnostics..."
+
+  User: "what's wrong in operations?"
+  You: "[NAVIGATE:/operations]\n\n**Opening Operations Dashboard**\n\nI found 3 critical issues..."
+
+═══════════════════════════════════════════════════════════════
+` : `
+═══════════════════════════════════════════════════════════════
+💬 OPEN MODE - MANUAL NAVIGATION
+═══════════════════════════════════════════════════════════════
+
+The chat is OPEN but auto-navigate is OFF. ASK before using [NAVIGATE:...] tags.
+
+Pattern:
+  1. Provide the answer/analysis first
+  2. Then ask: "Would you like me to navigate to [page]?"
+  3. Wait for confirmation before using [NAVIGATE:...] tag
+
+═══════════════════════════════════════════════════════════════
+`}
 
 ${deepResearch ? `
 🔬 DEEP RESEARCH MODE ACTIVE:
@@ -163,11 +201,24 @@ ${universe.trainingPlans.map(p => `- ${p.model.name} (${p.model.size}): ${p.mode
 CRITICAL: Use the REAL DATA numbers above in your responses. These are actual values from the platform, not estimates.`,
     };
 
+    // ═══════════════════════════════════════════════════════════════
+    // TOOL FILTERING - Remove navigation tools when chat is minimized
+    // ═══════════════════════════════════════════════════════════════
+    const toolsToProvide = isMinimized 
+      ? availableTools.filter(tool => 
+          // When minimized, REMOVE navigation tools to prevent interruption
+          tool.name !== "navigate" && tool.name !== "show_robot"
+        )
+      : availableTools; // When open, all tools are available
+    
+    console.log("🐻 [API] Available tools:", toolsToProvide.map(t => t.name).join(", "));
+    console.log("🐻 [API] Navigation tools:", isMinimized ? "DISABLED (minimized)" : "ENABLED (open)");
+
     // Call OpenAI with function calling using cost-efficient GPT-4o-mini
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini", // Cost-efficient model: ~15x cheaper than GPT-4 Turbo
       messages: [contextMessage, ...messages],
-      tools: availableTools.map((tool) => ({
+      tools: toolsToProvide.map((tool) => ({
         type: "function" as const,
         function: tool,
       })),

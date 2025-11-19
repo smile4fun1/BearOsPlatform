@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* Bear Robotics Branding Colors */
+:root {
+  --bear-blue: #5DADE2;
+  --bear-blue-dark: #3498DB;
+  --bear-blue-light: #85C1E9;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Mobile viewport fixes - prevent zoom on input focus */
 @supports (-webkit-touch-callout: none) {
   input,

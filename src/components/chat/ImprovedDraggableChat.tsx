@@ -610,51 +610,65 @@ export function ImprovedDraggableChat() {
       console.log("🐻 Response type:", typeof data.response);
       console.log("🐻 Response content:", data.response);
 
-      // Handle navigation commands with smart state awareness
+      // ═══════════════════════════════════════════════════════════════
+      // SMART NAVIGATION HANDLER - Respects chat state (open/minimized)
+      // ═══════════════════════════════════════════════════════════════
       if (data.response && typeof data.response === 'string' && data.response.includes("[NAVIGATE:")) {
         const match = data.response.match(/\[NAVIGATE:([^\]]+)\]/);
-        console.log("🐻 Navigation match:", match);
+        console.log("🐻 [NAV] Navigation command detected");
+        console.log("🐻 [NAV] Match result:", match);
+        console.log("🐻 [NAV] Can navigate?", canNavigate, "(isOpen:", isOpen, ", isMinimized:", isMinimized, ")");
+        
         if (match) {
           const target = match[1];
           const cleanResponse = data.response.replace(/\[NAVIGATE:[^\]]+\]/g, "").trim();
           
-          // SMART BEHAVIOR: Only navigate if chat is open (not minimized)
+          // ═══════════════════════════════════════════════════════════════
+          // CRITICAL CHECK: Prevent navigation when chat is minimized
+          // ═══════════════════════════════════════════════════════════════
           if (!canNavigate) {
-            console.log("🐻 Chat is minimized - preventing navigation, showing notification instead");
+            console.log("🐻 [NAV] ⛔ NAVIGATION BLOCKED - Chat is minimized");
+            console.log("🐻 [NAV] User doesn't want interruption, showing notification instead");
+            
             addMessage({
               role: "assistant",
-              content: `🔔 **Navigation Blocked**\n\nI found what you're looking for at: ${target}\n\nHowever, since the chat is minimized, I won't navigate automatically. Maximize me to proceed, or I can do background research instead!\n\n${cleanResponse}`,
+              content: `🔔 **Background Research Complete**\n\n${cleanResponse || `I found what you're looking for at: **${target}**`}\n\n💡 Since you minimized me, I didn't navigate automatically. Maximize when ready, and I'll take you there!`,
             });
             setIsLoading(false);
-            return;
+            return; // STOP HERE - do not execute navigation
           }
           
-          console.log("🐻 Target URL:", target);
-          console.log("🐻 Current pathname:", pathname);
-          console.log("🐻 Full URL will be:", window.location.origin + target);
+          // ═══════════════════════════════════════════════════════════════
+          // EXECUTE NAVIGATION - Chat is open, user wants to see this
+          // ═══════════════════════════════════════════════════════════════
+          console.log("🐻 [NAV] ✅ EXECUTING NAVIGATION");
+          console.log("🐻 [NAV] Target:", target);
+          console.log("🐻 [NAV] Current:", pathname);
+          console.log("🐻 [NAV] Full URL:", window.location.origin + target);
           
-          // Show transition message immediately
+          // Show transition message with clean response
           addMessage({
             role: "assistant",
-            content: cleanResponse || "✨ Navigating to " + target,
+            content: cleanResponse || `✨ Navigating to ${target}`,
           });
           
           setIsLoading(false);
           
-          // Direct hard navigation for reliability across all pages
-          // The chat state (open/minimized) will be preserved via localStorage
+          // Hard navigation to ensure reliability across all pages
+          // Chat state (open/minimized/position) preserved via localStorage
           const fullUrl = window.location.origin + target;
-          console.log("🐻 Executing navigation in 300ms to:", fullUrl);
+          console.log("🐻 [NAV] Scheduling navigation in 300ms...");
           setTimeout(() => {
-            console.log("🐻 NOW NAVIGATING TO:", fullUrl);
+            console.log("🐻 [NAV] 🚀 NAVIGATING NOW to:", fullUrl);
             window.location.href = fullUrl;
           }, 300);
           return;
         } else {
-          console.error("🐻 NAVIGATE tag found but regex didn't match!");
+          console.error("🐻 [NAV] ⚠️ NAVIGATE tag found but regex didn't match - malformed tag?");
+          console.error("🐻 [NAV] Raw response:", data.response);
         }
       } else {
-        console.log("🐻 No NAVIGATE command detected in response");
+        console.log("🐻 [NAV] No navigation command in response (expected behavior)");
       }
 
       // Handle tool calls that need permission

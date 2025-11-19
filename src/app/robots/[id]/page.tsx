@@ -4,7 +4,7 @@ import { RobotDetailView } from "@/components/robots/RobotDetailView";
 
 export const dynamic = 'force-dynamic';
 
-export default async function RobotDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   // Next.js 15+ requires awaiting params
   const { id } = await params;
   const robot = getRobotById(id);

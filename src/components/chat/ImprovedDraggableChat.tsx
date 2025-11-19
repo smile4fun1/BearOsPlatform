@@ -950,7 +950,9 @@ export function ImprovedDraggableChat() {
           onMouseDown={handleMouseDown}
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center text-2xl relative">
+            <div className={`flex items-center justify-center relative ${
+              isMinimized && !isMobile ? "h-10 w-10 text-3xl" : "h-8 w-8 text-2xl"
+            }`}>
               🐻
               {isMinimized && hasUnreadMessage && (
                 <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Battery, Zap, Activity, AlertCircle, CheckCircle } from "lucide-react";
+import { UtensilsCrossed, TruckIcon, Container, Battery, Zap, Activity, AlertCircle, CheckCircle } from "lucide-react";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 
 export function RobotFleetStatus() {
@@ -35,27 +35,30 @@ export function RobotFleetStatus() {
   const models = [
     {
       name: "Servi Plus",
-      icon: "🤖",
+      icon: UtensilsCrossed,
       data: fleetData.serviPlus,
       color: "sky",
       gradient: "from-sky-500/20 to-sky-600/10",
       border: "border-sky-500/30",
+      iconColor: "text-sky-400",
     },
     {
       name: "Carti 100",
-      icon: "🚚",
+      icon: TruckIcon,
       data: fleetData.carti100,
       color: "indigo",
       gradient: "from-indigo-500/20 to-indigo-600/10",
       border: "border-indigo-500/30",
+      iconColor: "text-indigo-400",
     },
     {
       name: "Carti 600",
-      icon: "🏗️",
+      icon: Container,
       data: fleetData.carti600,
       color: "purple",
       gradient: "from-purple-500/20 to-purple-600/10",
       border: "border-purple-500/30",
+      iconColor: "text-purple-400",
     },
   ];
 
@@ -81,7 +84,9 @@ export function RobotFleetStatus() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="text-4xl">{model.icon}</div>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 ${model.iconColor}`}>
+                  <model.icon className="h-6 w-6" />
+                </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">{model.name}</h3>
                   <p className="text-xs text-white/50">Active Fleet</p>
@@ -201,15 +206,14 @@ export function RobotFleetStatus() {
             <div className="text-sm text-white/50 mt-1">Charging</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-sky-400">
+            <div className="text-3xl font-bold text-rose-400">
               <AnimatedCounter 
-                value={((fleetData.serviPlus.avgBattery + fleetData.carti100.avgBattery + fleetData.carti600.avgBattery) / 3)} 
+                value={fleetData.serviPlus.maintenance + fleetData.carti100.maintenance + fleetData.carti600.maintenance} 
                 duration={2000} 
                 decimals={0}
-                suffix="%"
               />
             </div>
-            <div className="text-sm text-white/50 mt-1">Fleet Avg Battery</div>
+            <div className="text-sm text-white/50 mt-1">In Maintenance</div>
           </div>
         </div>
       </div>

@@ -79,10 +79,10 @@ export function Header() {
           })}
         </div>
 
-        {/* Status Indicator - Opens System Status Modal */}
+        {/* Status Indicator - Toggles System Status Modal */}
         <button
           ref={liveButtonRef}
-          onClick={() => setSystemStatusOpen(true)}
+          onClick={() => setSystemStatusOpen(!systemStatusOpen)}
           className="hidden items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400 transition-all hover:bg-emerald-500/20 hover:border-emerald-500/30 lg:flex"
         >
           <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />

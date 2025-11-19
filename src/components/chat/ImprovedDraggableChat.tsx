@@ -811,12 +811,12 @@ export function ImprovedDraggableChat() {
               }
               setHasIconMoved(false); // Reset for next interaction
             }}
-            className={`flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-sky-500 text-white shadow-lg shadow-indigo-500/50 transition-all hover:shadow-indigo-500/70 hover:scale-110 z-50 ${
+            className={`flex h-14 w-14 items-center justify-center transition-all hover:scale-110 z-50 ${
               isDraggingIcon ? "cursor-grabbing" : "cursor-grab"
             } ${hasUnreadMessage ? "animate-pulse" : ""}`}
             aria-label="Open Ursa Minor"
           >
-            <div className="text-2xl">🐻</div>
+            <div className="text-4xl">🐻</div>
             {hasUnreadMessage && (
               <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse" />
             )}
@@ -950,7 +950,7 @@ export function ImprovedDraggableChat() {
           onMouseDown={handleMouseDown}
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-sky-500 text-xl relative">
+            <div className="flex h-8 w-8 items-center justify-center text-2xl relative">
               🐻
               {isMinimized && hasUnreadMessage && (
                 <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse" />

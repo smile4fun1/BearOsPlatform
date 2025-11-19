@@ -22,7 +22,7 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 - **AI Training Hub** – Track Ursa Minor (40B), Ursa Major (70B), and Aurora Bear Lore (120B) models with validation scores and milestone tracking
 - **Data Lake Explorer** – Access curated datasets including operations telemetry, knowledge base, financial snapshots, and API catalog
 - **Live Data Pipeline** – REST endpoints serving real-time generated data with `/api/live` streaming capabilities
-- **Ursa Minor AI Assistant** – 🆕 **Proactive Action Mode** - Draggable, resizable chat interface with GPT-4o-mini that **takes immediate action** instead of asking repeatedly. Features 12 powerful tools (diagnostics, commands, parameter changes, task scheduling, analysis), simulated realistic results for POC/demo, tool calling with auto-execution, and smart navigation. See [PROACTIVE_AI_BEHAVIOR.md](PROACTIVE_AI_BEHAVIOR.md) for details
+- **Ursa Minor AI Assistant** – 🆕 **Advanced Intelligence Platform** - Full-featured AI chat with GPT-4o-mini that takes immediate action. Features: **Draggable icon** (move anywhere), **Smart notifications** (bubble previews + badges when minimized - shows AI responses in real-time), **Deep Research Mode** with auto-detection, **All-corner resizing**, **Focus-based transparency**, 12 powerful tools, proactive execution, and seamless navigation. Never closes completely - minimizes to movable icon
 - **Robot Fleet Management** – Comprehensive robot pages with live navigation maps, telemetry streaming, diagnostic tools, and RFE capabilities
 - **Live System Status** – Real-time status popup showing health of all systems (green, amber, red) with latency monitoring
 - **Responsive Navigation** – Stunning header with mobile-friendly navigation and live status indicator across all pages
@@ -34,7 +34,7 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 - **Bear Card Design System** – Unified card component with consistent styling, backdrop blur, and hover states across all panels
 - **Interactive components** using Recharts for data visualization and animated counters
 - **Responsive layouts** optimized for desktop, tablet, and mobile
-- **Draggable & Resizable Chat** – Pixel-perfect drag, bottom-right corner resize, smart positioning, stable on refresh
+- **Advanced Chat UX** – Draggable icon (move anywhere on screen), all-corner resizing, focus-based transparency (30% when unfocused), clickable notification bubbles with response previews, pulse animations, auto-scroll to latest message, deep research mode with auto-detection, adjustable font size (12-18px)
 - **Selectable Text** – Global unselectability with exceptions for inputs and chat messages
 - **Live status indicators** showing system health and data pipeline status
 - **Smooth animations** and transitions throughout with IntersectionObserver triggers

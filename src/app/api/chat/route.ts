@@ -11,9 +11,10 @@ const openai = process.env.OPENAI_API_KEY
 
 export async function POST(request: Request) {
   try {
-    const { messages, model = "ursa-minor", context, autoNavigate } = await request.json();
+    const { messages, model = "ursa-minor", context, autoNavigate, deepResearch } = await request.json();
     
     console.log("🐻 [API] Received autoNavigate:", autoNavigate);
+    console.log("🐻 [API] Deep Research Mode:", deepResearch);
     console.log("🐻 [API] Last message:", messages[messages.length - 1]?.content);
 
     // If no OpenAI key, return intelligent mock response
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
 
 ## USER PREFERENCES
 **Auto-Navigate**: ${autoNavigate ? 'ENABLED - Navigate immediately without asking' : 'DISABLED - Ask before navigating'}
+**Deep Research Mode**: ${deepResearch ? 'ENABLED - Provide comprehensive, detailed analysis' : 'DISABLED - Standard responses'}
 
 ${autoNavigate ? `
 IMPORTANT: User has auto-navigate ENABLED. When they request navigation or ask to see a robot:
@@ -61,6 +63,19 @@ IMPORTANT: User has auto-navigate ENABLED. When they request navigation or ask t
 - Just navigate and tell them you're doing it
 
 Example: "show me robot c44e79" -> "[NAVIGATE:/robots/c44e79]\n\n**Displaying robot C44E79**..."
+` : ''}
+
+${deepResearch ? `
+🔬 DEEP RESEARCH MODE ACTIVE:
+- Provide COMPREHENSIVE, DETAILED analysis
+- Include multiple perspectives and cross-references
+- Show step-by-step reasoning
+- Reference historical patterns and data trends
+- Suggest preventive measures and long-term solutions
+- Use markdown formatting for structure (headings, lists, tables)
+- Include confidence levels for recommendations
+- Cite specific data points and examples
+- Be thorough - users expect depth over brevity in this mode
 ` : ''}
 
 ## Bear Robotics Knowledge Base

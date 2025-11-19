@@ -45,8 +45,9 @@ export function ImprovedDraggableChat() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [resizeCorner, setResizeCorner] = useState<"tl" | "tr" | "bl" | "br" | null>(null);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [resizeStart, setResizeStart] = useState({ width: 400, height: 600, x: 0, y: 0 });
+  const [resizeStart, setResizeStart] = useState({ width: 400, height: 600, x: 0, y: 0, posX: 0, posY: 0 });
   const [chatSize, setChatSize] = useState({ width: 400, height: 600 });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +55,15 @@ export function ImprovedDraggableChat() {
   const [showSettings, setShowSettings] = useState(false);
   const [pendingToolCall, setPendingToolCall] = useState<any>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [isFocused, setIsFocused] = useState(true);
+  const [hasUnreadMessage, setHasUnreadMessage] = useState(false);
+  const [latestAIMessage, setLatestAIMessage] = useState<string>("");
+  const [showNotificationBubble, setShowNotificationBubble] = useState(false);
+  const [lastReadMessageId, setLastReadMessageId] = useState<string | null>(null);
+  const [iconPosition, setIconPosition] = useState({ x: 24, y: typeof window !== "undefined" ? window.innerHeight - 80 : 600 });
+  const [isDraggingIcon, setIsDraggingIcon] = useState(false);
+  const [iconDragStart, setIconDragStart] = useState({ x: 0, y: 0 });
+  const [hasIconMoved, setHasIconMoved] = useState(false);
   const [autoNavigate, setAutoNavigate] = useState(() => {
     if (typeof window === "undefined") return true; // Default to true
     const stored = localStorage.getItem("bear-auto-navigate");
@@ -63,6 +73,16 @@ export function ImprovedDraggableChat() {
       return true;
     }
     return stored === "true";
+  });
+  const [deepResearchMode, setDeepResearchMode] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const stored = localStorage.getItem("bear-deep-research");
+    return stored === "true";
+  });
+  const [fontSize, setFontSize] = useState(() => {
+    if (typeof window === "undefined") return 14;
+    const stored = localStorage.getItem("bear-font-size");
+    return stored ? parseInt(stored) : 14; // Default 14px
   });
   
   const chatRef = useRef<HTMLDivElement>(null);
@@ -88,10 +108,141 @@ export function ImprovedDraggableChat() {
     }
   }, [hasInitialized, position.x, position.y, setPosition]);
 
-  // Auto-scroll to bottom
+  // Auto-scroll to bottom on new messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [currentConversation?.messages]);
+
+  // Auto-scroll to bottom when chat opens or maximizes
+  useEffect(() => {
+    if (isOpen && !isMinimized) {
+      // Use timeout to ensure DOM is ready
+      setTimeout(() => {
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: "instant" });
+        }
+      }, 50);
+    }
+  }, [isOpen, isMinimized]);
+
+  // Handle focus/blur for transparency - improved detection
+  useEffect(() => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      if (chatRef.current) {
+        if (chatRef.current.contains(e.target as Node)) {
+          // Click inside chat - set focused
+          setIsFocused(true);
+          setHasUnreadMessage(false);
+          setShowNotificationBubble(false);
+        } else {
+          // Click outside chat - set unfocused
+          setIsFocused(false);
+        }
+      }
+    };
+
+    // Use capture phase to ensure we catch all clicks
+    document.addEventListener("mousedown", handleGlobalClick, true);
+
+    return () => {
+      document.removeEventListener("mousedown", handleGlobalClick, true);
+    };
+  }, []);
+
+  // Ensure chat is focused when opened or maximized
+  useEffect(() => {
+    if (isOpen && !isMinimized) {
+      setIsFocused(true);
+    }
+  }, [isOpen, isMinimized]);
+
+  // Track AI responses for notifications when minimized or closed - only show NEW messages
+  useEffect(() => {
+    if (!currentConversation) return;
+    
+    const messages = currentConversation.messages;
+    if (messages.length === 0) return;
+    
+    const lastMessage = messages[messages.length - 1];
+    
+    // Only show notification if:
+    // 1. Chat is minimized OR closed (not open)
+    // 2. Last message is from AI
+    // 3. This message hasn't been read yet (different from lastReadMessageId)
+    if ((isMinimized || !isOpen) && 
+        lastMessage.role === "assistant" && 
+        lastMessage.id !== lastReadMessageId) {
+      
+      setHasUnreadMessage(true);
+      setLatestAIMessage(lastMessage.content.substring(0, 100)); // First 100 chars
+      setShowNotificationBubble(true);
+      
+      console.log("🔔 NEW notification shown:", lastMessage.id, lastMessage.content.substring(0, 50));
+      
+      // Auto-hide bubble after 8 seconds
+      setTimeout(() => {
+        setShowNotificationBubble(false);
+      }, 8000);
+    }
+  }, [currentConversation?.messages, isMinimized, isOpen, lastReadMessageId]);
+
+  // Mark messages as read when chat is opened or maximized
+  useEffect(() => {
+    if (isOpen && !isMinimized && currentConversation) {
+      const messages = currentConversation.messages;
+      if (messages.length > 0) {
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage.role === "assistant") {
+          setLastReadMessageId(lastMessage.id);
+          console.log("✅ Message marked as read:", lastMessage.id);
+        }
+      }
+      setHasUnreadMessage(false);
+      setShowNotificationBubble(false);
+    }
+  }, [isOpen, isMinimized, currentConversation]);
+
+  // Handle icon dragging with movement detection
+  useEffect(() => {
+    if (!isDraggingIcon) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      e.preventDefault();
+      
+      let newX = e.clientX - iconDragStart.x;
+      let newY = e.clientY - iconDragStart.y;
+
+      // Constrain to viewport
+      newX = Math.max(0, Math.min(window.innerWidth - 56, newX));
+      newY = Math.max(0, Math.min(window.innerHeight - 56, newY));
+
+      // Track if icon has actually moved
+      const moved = Math.abs(newX - iconPosition.x) > 3 || Math.abs(newY - iconPosition.y) > 3;
+      if (moved) {
+        setHasIconMoved(true);
+      }
+
+      setIconPosition({ x: newX, y: newY });
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingIcon(false);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = "grabbing";
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.userSelect = "";
+      document.body.style.cursor = "";
+    };
+  }, [isDraggingIcon, iconDragStart, iconPosition]);
 
   // Listen for AI investigation requests from Incident Radar
   useEffect(() => {
@@ -183,29 +334,68 @@ export function ImprovedDraggableChat() {
     };
   }, [isDragging, dragStart, isMinimized, setPosition, chatSize]);
 
-  // Handle resizing
+  // Handle resizing from all corners
   useEffect(() => {
-    if (!isResizing) return;
+    if (!isResizing || !resizeCorner) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       e.preventDefault();
       
-      // Calculate new size
       const deltaX = e.clientX - resizeStart.x;
       const deltaY = e.clientY - resizeStart.y;
       
-      let newWidth = resizeStart.width + deltaX;
-      let newHeight = resizeStart.height + deltaY;
+      let newWidth = resizeStart.width;
+      let newHeight = resizeStart.height;
+      let newX = position.x;
+      let newY = position.y;
 
-      // Constrain dimensions - allow more vertical space
+      // Handle different corners
+      switch (resizeCorner) {
+        case "br": // Bottom-right (default behavior)
+          newWidth = resizeStart.width + deltaX;
+          newHeight = resizeStart.height + deltaY;
+          break;
+        case "bl": // Bottom-left
+          newWidth = resizeStart.width - deltaX;
+          newHeight = resizeStart.height + deltaY;
+          newX = resizeStart.posX + deltaX;
+          break;
+        case "tr": // Top-right
+          newWidth = resizeStart.width + deltaX;
+          newHeight = resizeStart.height - deltaY;
+          newY = resizeStart.posY + deltaY;
+          break;
+        case "tl": // Top-left
+          newWidth = resizeStart.width - deltaX;
+          newHeight = resizeStart.height - deltaY;
+          newX = resizeStart.posX + deltaX;
+          newY = resizeStart.posY + deltaY;
+          break;
+      }
+
+      // Constrain dimensions
       newWidth = Math.max(320, Math.min(800, newWidth));
       newHeight = Math.max(400, Math.min(window.innerHeight - 100, newHeight));
 
+      // Update position if resizing from left or top
+      if (resizeCorner === "bl" || resizeCorner === "tl") {
+        const widthDiff = resizeStart.width - newWidth;
+        newX = resizeStart.posX + widthDiff;
+      }
+      if (resizeCorner === "tr" || resizeCorner === "tl") {
+        const heightDiff = resizeStart.height - newHeight;
+        newY = resizeStart.posY + heightDiff;
+      }
+
       setChatSize({ width: newWidth, height: newHeight });
+      if (newX !== position.x || newY !== position.y) {
+        setPosition({ x: newX, y: newY });
+      }
     };
 
     const handleMouseUp = () => {
       setIsResizing(false);
+      setResizeCorner(null);
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -213,7 +403,13 @@ export function ImprovedDraggableChat() {
 
     // Prevent text selection while resizing
     document.body.style.userSelect = "none";
-    document.body.style.cursor = "nwse-resize";
+    const cursorMap = {
+      br: "nwse-resize",
+      tl: "nwse-resize",
+      bl: "nesw-resize",
+      tr: "nesw-resize",
+    };
+    document.body.style.cursor = cursorMap[resizeCorner];
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
@@ -221,17 +417,20 @@ export function ImprovedDraggableChat() {
       document.body.style.userSelect = "";
       document.body.style.cursor = "";
     };
-  }, [isResizing, resizeStart]);
+  }, [isResizing, resizeStart, resizeCorner, position, setPosition]);
 
-  const handleResizeStart = (e: React.MouseEvent) => {
+  const handleResizeStart = (corner: "tl" | "tr" | "bl" | "br") => (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsResizing(true);
+    setResizeCorner(corner);
     setResizeStart({
       width: chatSize.width,
       height: chatSize.height,
       x: e.clientX,
       y: e.clientY,
+      posX: position.x,
+      posY: position.y,
     });
   };
 
@@ -277,9 +476,22 @@ export function ImprovedDraggableChat() {
       const autoNavEnabled = autoNavigate;
       console.log("🐻 Auto-navigate enabled:", autoNavEnabled);
 
-      // Call chat API with timeout
+      // Detect if deep research mode should be enabled
+      const deepResearchKeywords = [
+        "deep research", "detailed analysis", "comprehensive", "investigate thoroughly",
+        "analyze in depth", "research mode", "full analysis", "deep dive",
+        "detailed investigation", "thorough review"
+      ];
+      const shouldUseDeepResearch = deepResearchMode || 
+        deepResearchKeywords.some(keyword => userMessage.toLowerCase().includes(keyword));
+      
+      if (shouldUseDeepResearch && !deepResearchMode) {
+        console.log("🔬 Deep Research Mode auto-detected!");
+      }
+
+      // Call chat API with timeout (longer for deep research)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), shouldUseDeepResearch ? 60000 : 30000);
 
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -295,6 +507,7 @@ export function ImprovedDraggableChat() {
           model: currentConversation?.model || "ursa-minor",
           context: contextInfo,
           autoNavigate: autoNavEnabled,
+          deepResearch: shouldUseDeepResearch,
         }),
         signal: controller.signal,
       });
@@ -438,13 +651,95 @@ export function ImprovedDraggableChat() {
 
   if (!isOpen) {
     return (
-      <button
-        onClick={toggleChat}
-        className="fixed bottom-6 left-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-sky-500 text-white shadow-lg shadow-indigo-500/50 transition-all hover:shadow-indigo-500/70 hover:scale-110 z-50 animate-in fade-in zoom-in duration-300"
-        aria-label="Open Ursa Minor"
-      >
-        <div className="text-2xl">🐻</div>
-      </button>
+      <>
+        <div
+          style={{
+            position: "fixed",
+            left: `${iconPosition.x}px`,
+            top: `${iconPosition.y}px`,
+            zIndex: 9999,
+          }}
+          className="relative"
+        >
+          <button
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setIsDraggingIcon(true);
+              setHasIconMoved(false); // Reset movement flag
+              setIconDragStart({
+                x: e.clientX - iconPosition.x,
+                y: e.clientY - iconPosition.y,
+              });
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              // Only open if icon wasn't dragged
+              if (!hasIconMoved) {
+                toggleChat();
+                setHasUnreadMessage(false);
+                setShowNotificationBubble(false);
+                // Mark current message as read
+                if (currentConversation && currentConversation.messages.length > 0) {
+                  const lastMessage = currentConversation.messages[currentConversation.messages.length - 1];
+                  if (lastMessage.role === "assistant") {
+                    setLastReadMessageId(lastMessage.id);
+                  }
+                }
+              }
+              setHasIconMoved(false); // Reset for next interaction
+            }}
+            className={`flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-sky-500 text-white shadow-lg shadow-indigo-500/50 transition-all hover:shadow-indigo-500/70 hover:scale-110 z-50 ${
+              isDraggingIcon ? "cursor-grabbing" : "cursor-grab"
+            } ${hasUnreadMessage ? "animate-pulse" : ""}`}
+            aria-label="Open Ursa Minor"
+          >
+            <div className="text-2xl">🐻</div>
+            {hasUnreadMessage && (
+              <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse" />
+            )}
+          </button>
+
+          {/* Notification Bubble */}
+          {showNotificationBubble && latestAIMessage && (
+            <div 
+              onClick={() => {
+                toggleChat();
+                setHasUnreadMessage(false);
+                setShowNotificationBubble(false);
+                // Mark current message as read
+                if (currentConversation && currentConversation.messages.length > 0) {
+                  const lastMessage = currentConversation.messages[currentConversation.messages.length - 1];
+                  if (lastMessage.role === "assistant") {
+                    setLastReadMessageId(lastMessage.id);
+                  }
+                }
+              }}
+              className="absolute left-16 top-0 w-64 bg-[#020511]/95 backdrop-blur-xl border border-white/20 rounded-xl p-3 shadow-2xl animate-in slide-in-from-left-2 fade-in duration-300 cursor-pointer hover:border-indigo-400/50 transition-all hover:scale-105"
+              style={{ zIndex: 10000 }}
+            >
+              <div className="flex items-start gap-2">
+                <div className="flex-shrink-0 text-lg">🐻</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium text-indigo-300 mb-1">Ursa Minor</div>
+                  <div className="text-sm text-white/90 line-clamp-3">
+                    {latestAIMessage}...
+                  </div>
+                  <div className="text-xs text-indigo-400 mt-2 font-medium">Click to open →</div>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowNotificationBubble(false);
+                  }}
+                  className="flex-shrink-0 text-white/40 hover:text-white transition-colors"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </>
     );
   }
 
@@ -458,26 +753,37 @@ export function ImprovedDraggableChat() {
         zIndex: 9999,
         width: isMinimized ? "320px" : `${chatSize.width}px`,
         transition: isDragging || isResizing ? "none" : "all 0.3s ease-in-out",
+        opacity: isFocused ? 1 : 0.3,
       }}
       className={`${isDragging ? "cursor-grabbing" : ""} ${isResizing ? "cursor-nwse-resize" : ""} animate-in slide-in-from-bottom-5 fade-in duration-300`}
     >
-      <div className="relative rounded-2xl border border-white/20 bg-[#020511]/95 backdrop-blur-xl shadow-2xl overflow-hidden">
+      <div className={`relative rounded-2xl border shadow-2xl overflow-hidden transition-all duration-300 ${
+        isFocused 
+          ? "border-white/20 bg-[#020511]/95 backdrop-blur-xl" 
+          : "border-white/10 bg-[#020511]/40 backdrop-blur-sm"
+      }`}>
         {/* Header */}
         <div
           className={`flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-indigo-500/20 to-sky-500/20 p-4 ${
             isDragging ? "cursor-grabbing" : "cursor-grab"
-          }`}
+          } ${isMinimized && hasUnreadMessage ? "animate-pulse" : ""}`}
           onMouseDown={handleMouseDown}
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-sky-500 text-xl">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-sky-500 text-xl relative">
               🐻
+              {isMinimized && hasUnreadMessage && (
+                <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse" />
+              )}
             </div>
             <div>
               <div className="text-sm font-semibold text-white">Ursa Minor</div>
               <div className="flex items-center gap-1.5 text-xs text-emerald-400">
                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span>Online & Ready</span>
+                {deepResearchMode && (
+                  <span className="ml-2 bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded text-[10px]">🔬 Research</span>
+                )}
               </div>
             </div>
           </div>
@@ -528,14 +834,14 @@ export function ImprovedDraggableChat() {
             </button>
             <button
               onClick={() => {
-                // Add shrink animation before closing
+                // Add shrink animation before minimizing
                 if (chatRef.current) {
                   chatRef.current.style.transition = 'all 0.3s ease-in-out';
                   chatRef.current.style.transform = 'scale(0.8)';
                   chatRef.current.style.opacity = '0';
                 }
                 setTimeout(() => {
-                  toggleChat();
+                  toggleChat(); // This will minimize to icon
                   if (chatRef.current) {
                     chatRef.current.style.transform = '';
                     chatRef.current.style.opacity = '';
@@ -543,9 +849,10 @@ export function ImprovedDraggableChat() {
                 }, 300);
               }}
               className="rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
-              aria-label="Close"
+              aria-label="Minimize to icon"
+              title="Minimize"
             >
-              <X className="h-4 w-4" />
+              <Minus className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -623,9 +930,72 @@ export function ImprovedDraggableChat() {
                     </div>
                   </label>
                   
+                  <label className="flex items-start gap-3 cursor-pointer selectable">
+                    <input
+                      type="checkbox"
+                      checked={deepResearchMode}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setDeepResearchMode(checked);
+                        localStorage.setItem("bear-deep-research", String(checked));
+                      }}
+                      className="mt-0.5 rounded border-white/20 bg-white/10 text-purple-500 focus:ring-purple-500/50"
+                    />
+                    <div className="flex-1">
+                      <div className="text-sm text-white flex items-center gap-2">
+                        🔬 Deep Research Mode
+                        <span className="text-xs bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">Beta</span>
+                      </div>
+                      <div className="text-xs text-white/50 mt-0.5">
+                        Enhanced analysis with detailed investigations, cross-referencing, and comprehensive answers. Auto-detects when deep research is needed.
+                      </div>
+                    </div>
+                  </label>
+                  
                   <div className="pt-3 border-t border-white/10">
-                    <div className="text-xs text-white/40">
-                      More settings coming soon...
+                    <div className="text-sm text-white mb-2">Font Size</div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => {
+                          const newSize = Math.max(12, fontSize - 1);
+                          setFontSize(newSize);
+                          localStorage.setItem("bear-font-size", String(newSize));
+                        }}
+                        disabled={fontSize <= 12}
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        title="Decrease font size"
+                      >
+                        <span className="text-lg font-bold">−</span>
+                      </button>
+                      
+                      <div className="flex-1 text-center">
+                        <div className="text-sm text-white/90">{fontSize}px</div>
+                        <div className="text-xs text-white/40">Range: 12-18px</div>
+                      </div>
+                      
+                      <button
+                        onClick={() => {
+                          const newSize = Math.min(18, fontSize + 1);
+                          setFontSize(newSize);
+                          localStorage.setItem("bear-font-size", String(newSize));
+                        }}
+                        disabled={fontSize >= 18}
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        title="Increase font size"
+                      >
+                        <span className="text-lg font-bold">+</span>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          setFontSize(14);
+                          localStorage.setItem("bear-font-size", "14");
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 text-xs transition-colors"
+                        title="Reset to default"
+                      >
+                        Reset
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -659,7 +1029,8 @@ export function ImprovedDraggableChat() {
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`selectable max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
+                    style={{ fontSize: `${fontSize}px` }}
+                    className={`selectable max-w-[85%] rounded-2xl px-4 py-2.5 ${
                       message.role === "user"
                         ? "bg-gradient-to-r from-indigo-500 to-sky-500 text-white"
                         : "bg-white/10 text-white/90"
@@ -694,7 +1065,10 @@ export function ImprovedDraggableChat() {
               
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-2.5 text-sm text-white/90">
+                  <div 
+                    style={{ fontSize: `${fontSize}px` }}
+                    className="flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-2.5 text-white/90"
+                  >
                     <Loader2 className="h-4 w-4 animate-spin" />
                     <span>Thinking...</span>
                   </div>
@@ -712,7 +1086,8 @@ export function ImprovedDraggableChat() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask Ursa Minor anything..."
-                  className="flex-1 rounded-lg bg-white/10 px-4 py-2.5 text-sm text-white placeholder-white/40 outline-none transition-colors focus:bg-white/15 focus:ring-2 focus:ring-indigo-500/50"
+                  style={{ fontSize: `${fontSize}px` }}
+                  className="flex-1 rounded-lg bg-white/10 px-4 py-2.5 text-white placeholder-white/40 outline-none transition-colors focus:bg-white/15 focus:ring-2 focus:ring-indigo-500/50"
                   disabled={isLoading}
                   autoFocus
                 />
@@ -728,15 +1103,38 @@ export function ImprovedDraggableChat() {
           </>
         )}
         
-        {/* Resize Handle - Bottom Right Corner */}
+        {/* Invisible Resize Handles - All Four Corners */}
         {!isMinimized && (
-          <div
-            onMouseDown={handleResizeStart}
-            className="absolute bottom-0 right-0 h-6 w-6 cursor-nwse-resize group"
-            style={{ touchAction: 'none' }}
-          >
-            <div className="absolute bottom-1 right-1 h-3 w-3 border-r-2 border-b-2 border-white/20 group-hover:border-indigo-400 transition-colors" />
-          </div>
+          <>
+            {/* Top-left corner */}
+            <div
+              onMouseDown={handleResizeStart("tl")}
+              className="absolute top-0 left-0 h-4 w-4 cursor-nwse-resize hover:bg-indigo-500/20 transition-colors"
+              style={{ touchAction: 'none' }}
+              title="Resize from top-left corner"
+            />
+            {/* Top-right corner */}
+            <div
+              onMouseDown={handleResizeStart("tr")}
+              className="absolute top-0 right-0 h-4 w-4 cursor-nesw-resize hover:bg-indigo-500/20 transition-colors"
+              style={{ touchAction: 'none' }}
+              title="Resize from top-right corner"
+            />
+            {/* Bottom-left corner */}
+            <div
+              onMouseDown={handleResizeStart("bl")}
+              className="absolute bottom-0 left-0 h-4 w-4 cursor-nesw-resize hover:bg-indigo-500/20 transition-colors"
+              style={{ touchAction: 'none' }}
+              title="Resize from bottom-left corner"
+            />
+            {/* Bottom-right corner */}
+            <div
+              onMouseDown={handleResizeStart("br")}
+              className="absolute bottom-0 right-0 h-4 w-4 cursor-nwse-resize hover:bg-indigo-500/20 transition-colors"
+              style={{ touchAction: 'none' }}
+              title="Resize from bottom-right corner"
+            />
+          </>
         )}
       </div>
     </div>

@@ -256,20 +256,53 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
         const { name, parameters } = toolCall;
         console.log(`🐻 [API] Processing tool: ${name}`, parameters);
         
-        // Handle navigation tools (auto-execute)
+        // Handle navigation tools (auto-execute) with SMART contextual responses
         if (name === "navigate" || name === "show_robot") {
           let targetUrl = "";
           let description = "";
           
           if (name === "navigate" && parameters.page) {
             targetUrl = parameters.page;
-            const pageName = targetUrl.replace("/", "").replace("-", " ") || "Home";
-            description = `**Navigating to ${pageName}**...`;
+            const pageName = targetUrl.replace("/", "").replace("-", " ").toUpperCase();
+            
+            // Provide RELEVANT context based on what page they're navigating to
+            if (targetUrl.includes("operation")) {
+              const activeRobots = realData.fleet.totalRobots;
+              const facilities = realData.operations.totalFacilities;
+              description = `**Operations Dashboard**\n\n${activeRobots} robots monitored across ${facilities} facilities. Real-time telemetry updating every 30 seconds.`;
+            } else if (targetUrl.includes("ai-model")) {
+              description = `**AI Models Training Center**\n\nMonitoring Ursa Minor (40B), Ursa Major (70B), and Aurora Bear Lore (120B) training pipelines.`;
+            } else if (targetUrl.includes("data")) {
+              description = `**Data Lake & Pipeline**\n\nStreaming telemetry from ${realData.fleet.totalRobots} active robots. Live ingestion monitoring.`;
+            } else if (targetUrl.includes("robot") && targetUrl !== "/robots") {
+              description = `**Robots Fleet View**\n\n${realData.fleet.totalRobots} robots deployed. Filter by facility, status, or model.`;
+            } else {
+              description = `**${pageName}**`;
+            }
+            
             console.log(`🐻 [API] Navigation to page: ${targetUrl}`);
           } else if (name === "show_robot" && parameters.robot_id) {
             targetUrl = `/robots/${parameters.robot_id}`;
             const robotId = parameters.robot_id.toUpperCase();
-            description = `**Displaying Robot ${robotId}**...\n\nTaking you to the comprehensive dashboard with live telemetry, navigation map, and RFE diagnostic tools.`;
+            
+            // Fetch ACTUAL robot data to provide relevant context
+            const robotStats = getRobotStats(parameters.robot_id);
+            if (robotStats) {
+              const statusEmoji = robotStats.status === "active" ? "🟢" : 
+                                 robotStats.status === "charging" ? "🔋" : 
+                                 robotStats.status === "error" ? "🔴" : "⚠️";
+              
+              const highlights = [];
+              if (robotStats.status === "error") highlights.push(`⚠️ ${robotStats.errorCount} errors`);
+              if (robotStats.batteryLevel < 20) highlights.push(`🔋 Low battery: ${robotStats.batteryLevel}%`);
+              else highlights.push(`🔋 ${robotStats.batteryLevel}%`);
+              if (robotStats.metrics.tripsCompleted > 0) highlights.push(`${robotStats.metrics.tripsCompleted} trips today`);
+              
+              description = `**Robot ${robotId}** ${statusEmoji}\n\n${highlights.join(" • ")}\n📍 ${robotStats.facility}, ${robotStats.city}`;
+            } else {
+              description = `**Robot ${robotId}**\n\nLoading telemetry and diagnostics...`;
+            }
+            
             console.log(`🐻 [API] Navigation to robot: ${targetUrl}`);
           }
           
@@ -409,24 +442,32 @@ function generateMockResponse(userMessage: string): string {
     if (robotId) {
       const robotStats = getRobotStats(robotId);
       if (robotStats) {
+        const statusEmoji = robotStats.status === "active" ? "🟢" : 
+                           robotStats.status === "charging" ? "🔋" : 
+                           robotStats.status === "error" ? "🔴" : "⚠️";
+        
+        const highlights = [];
+        if (robotStats.status === "error") highlights.push(`⚠️ ${robotStats.errorCount} errors detected`);
+        if (robotStats.batteryLevel < 20) highlights.push(`🔋 Low battery: ${robotStats.batteryLevel}%`);
+        else highlights.push(`🔋 ${robotStats.batteryLevel}%`);
+        if (robotStats.metrics.tripsCompleted > 0) highlights.push(`${robotStats.metrics.tripsCompleted} trips completed`);
+        highlights.push(`${robotStats.metrics.totalDistanceKm} km traveled`);
+        
         return `[NAVIGATE:/robots/${robotId}]
 
-**Displaying robot ${robotStats.name}** (${robotId.toUpperCase()})...
+**Robot ${robotId.toUpperCase()}** ${statusEmoji} - ${robotStats.model}
 
-**Quick Stats:**
-- Status: ${robotStats.status.toUpperCase()}
-- Battery: ${robotStats.metrics.battery}%
-- Uptime: ${robotStats.metrics.uptime}%
-- Location: ${robotStats.facility}, ${robotStats.city}
-- Trips Completed: ${robotStats.metrics.tripsCompleted}
-- Distance: ${robotStats.metrics.totalDistanceKm} km
-
-Taking you to the comprehensive dashboard with live telemetry, navigation map, and RFE diagnostic tools.`;
+${highlights.join(" • ")}
+📍 ${robotStats.facility}, ${robotStats.city}
+⏱️ Uptime: ${robotStats.metrics.uptime}%`;
       }
-    }
-    return `[NAVIGATE:/robots/${robotId}]
+      
+      return `[NAVIGATE:/robots/${robotId}]
 
-**Displaying robot ${robotId?.toUpperCase()}**... Taking you to its comprehensive dashboard with live telemetry, navigation map, and RFE diagnostic tools.`;
+**Robot ${robotId?.toUpperCase()}**
+
+Loading real-time telemetry and diagnostics...`;
+    }
   }
   
   // Fleet status queries
@@ -504,25 +545,60 @@ ${realData.fleet.alerts.lowBattery.map(r => `- **${r.name}** (${r.id}): ${r.batt
 Would you like me to navigate you to a specific robot for diagnostics?`;
   }
   
-  // Navigation commands - Smart detection
+  // Navigation commands - Smart detection with REAL contextual data
   if (lowerMessage.includes("navigate") || lowerMessage.includes("go to") || lowerMessage.includes("show me") || lowerMessage.includes("take me") || lowerMessage.includes("display") || lowerMessage.includes("open")) {
     if (lowerMessage.includes("operation")) {
-      return "[NAVIGATE:/operations]\n\n**Taking you to Operations Dashboard**... You'll see real-time telemetry from all 6 facilities with interactive sortable tables, live KPIs, and facility breakdowns.";
+      const activeRobots = realData.fleet.totalRobots;
+      const facilities = realData.operations.totalFacilities;
+      const successRate = realData.operations.successRate;
+      return `[NAVIGATE:/operations]
+
+**Operations Dashboard**
+
+${activeRobots} robots monitored • ${facilities} facilities • ${successRate}% success rate
+Real-time telemetry updates every 30 seconds.`;
     }
     if (lowerMessage.includes("ai") || lowerMessage.includes("model") || lowerMessage.includes("training")) {
-      return "[NAVIGATE:/ai-models]\n\n**Opening AI Models page**... Monitoring training progress for Ursa Minor (40B), Ursa Major (70B), and Aurora Bear Lore (120B).";
+      return `[NAVIGATE:/ai-models]
+
+**AI Models Training Center**
+
+Monitoring Ursa Minor (40B), Ursa Major (70B), and Aurora Bear Lore (120B) training pipelines.`;
     }
     if (lowerMessage.includes("data") || lowerMessage.includes("lake") || lowerMessage.includes("pipeline")) {
-      return "[NAVIGATE:/data-lake]\n\n**Navigating to Data Lake**... Exploring data sources, pipeline architecture, and real-time streaming analytics.";
+      const ingestRate = (Math.random() * 5 + 15).toFixed(1);
+      return `[NAVIGATE:/data-lake]
+
+**Data Lake & Pipeline**
+
+Streaming telemetry from ${realData.fleet.totalRobots} active robots
+Current ingestion: ~${ingestRate} GB/hour`;
     }
     if (lowerMessage.includes("robots") || lowerMessage.includes("fleet") || (lowerMessage.includes("all") && lowerMessage.includes("robot"))) {
-      return "[NAVIGATE:/robots]\n\n**Opening Robot Fleet Management**... Viewing all 101 active robots with search, filters, and comprehensive diagnostics.";
+      const modelBreakdown = Object.entries(realData.fleet.modelBreakdown || {})
+        .map(([model, count]) => `${count} ${model}`)
+        .join(" • ");
+      
+      return `[NAVIGATE:/robots]
+
+**Robot Fleet Management**
+
+${realData.fleet.totalRobots} robots deployed${modelBreakdown ? `: ${modelBreakdown}` : ""}
+Filter by facility, status, or model.`;
     }
     if (lowerMessage.includes("home") || lowerMessage.includes("dashboard") || lowerMessage.includes("main")) {
-      return "[NAVIGATE:/]\n\n**Returning to Home Dashboard**... Executive overview with AI constellation status and upcoming features.";
+      return `[NAVIGATE:/]
+
+**Bear Universe Dashboard**
+
+Executive overview with real-time KPIs and AI constellation status.`;
     }
     if (lowerMessage.includes("feature")) {
-      return "[NAVIGATE:/features]\n\n**Opening Features page**... Comprehensive showcase of all Bear Universe capabilities.";
+      return `[NAVIGATE:/features]
+
+**Platform Features**
+
+Comprehensive showcase of all Bear Universe capabilities.`;
     }
   }
   

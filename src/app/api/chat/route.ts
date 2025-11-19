@@ -27,6 +27,7 @@ export async function POST(request: Request) {
           response: mockResponse,
           needsPermission: false,
           toolCalls: [],
+          model: "mock", // Indicate this is a mock response
         });
       } catch (mockError) {
         console.error("🐻 [API] Mock response error:", mockError);
@@ -34,17 +35,39 @@ export async function POST(request: Request) {
           response: "I'm here to help! Try asking about fleet status, robot details, or navigate to different pages.",
           needsPermission: false,
           toolCalls: [],
+          model: "mock",
+          error: true, // Mark as error so status updates
         });
       }
     }
     
-    console.log("🐻 [API] Using GPT-4o-mini with autoNavigate:", autoNavigate);
+    // ═══════════════════════════════════════════════════════════════
+    // MULTI-MODEL ROUTING: Smart model selection based on task complexity
+    // ═══════════════════════════════════════════════════════════════
+    const userQuery = messages[messages.length - 1]?.content || "";
+    const lowerQuery = userQuery.toLowerCase();
+    
+    // Determine task complexity and select appropriate model
+    const isComplexTask = 
+      deepResearch || // Deep research always uses better model
+      lowerQuery.includes("analyze") ||
+      lowerQuery.includes("compare") ||
+      lowerQuery.includes("diagnose") ||
+      lowerQuery.includes("troubleshoot") ||
+      lowerQuery.includes("why") ||
+      lowerQuery.includes("explain") ||
+      lowerQuery.includes("how does") ||
+      lowerQuery.includes("recommend") ||
+      lowerQuery.includes("suggest") ||
+      lowerQuery.length > 100; // Long queries likely need better reasoning
+    
+    const selectedModel = isComplexTask ? "gpt-4o" : "gpt-4o-mini";
+    console.log(`🐻 [API] Selected model: ${selectedModel} (complex task: ${isComplexTask})`);
 
     // Get current universe data for context
     const universe = composeCurationResponse();
     
     // Get REAL platform data based on user query
-    const userQuery = messages[messages.length - 1]?.content || "";
     const realData = getAIDataContext(userQuery);
     
     // Build comprehensive context with auto-navigate instruction and REAL DATA
@@ -232,9 +255,9 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
     console.log("🐻 [API] Available tools:", toolsToProvide.map(t => t.name).join(", "));
     console.log("🐻 [API] Navigation tools:", isMinimized ? "DISABLED (minimized)" : "ENABLED (open)");
 
-    // Call OpenAI with function calling using cost-efficient GPT-4o-mini
+    // Call OpenAI with dynamically selected model based on task complexity
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // Cost-efficient model: ~15x cheaper than GPT-4 Turbo
+      model: selectedModel,
       messages: [contextMessage, ...messages],
       tools: toolsToProvide.map((tool) => ({
         type: "function" as const,
@@ -244,8 +267,8 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
           parameters: tool.parameters,
         },
       })),
-      temperature: 0.7,
-      max_tokens: 1000, // Increased for more comprehensive responses
+      temperature: isComplexTask ? 0.8 : 0.7, // Higher temp for complex reasoning
+      max_tokens: isComplexTask ? 1500 : 1000, // More tokens for complex tasks
     });
 
     const assistantMessage = completion.choices[0].message;
@@ -503,11 +526,13 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
     }
     
     console.log("🐻 [API] Final response:", responseContent);
+    console.log(`🐻 [API] Model used: ${selectedModel}`);
 
     return NextResponse.json({
       response: responseContent,
       needsPermission,
       toolCalls,
+      model: selectedModel, // Track which model was used
     });
   } catch (error) {
     console.error("🐻 [API] Chat error:", error);
@@ -518,6 +543,7 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
       needsPermission: false,
       toolCalls: [],
       error: true,
+      model: "error", // Mark as error response
     });
   }
 }

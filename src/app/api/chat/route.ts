@@ -347,7 +347,18 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
             
             console.log(`🐻 [API] Navigation to page: ${targetUrl}`);
           } else if (name === "show_robot" && parameters.robot_id) {
-            const robotId = parameters.robot_id.toLowerCase();
+            let robotId = parameters.robot_id.toLowerCase().trim();
+            
+            // ⚠️ SMART EXTRACTION: If user provided full robot name (e.g., "Carti-100-E0F1G2"), extract just the ID part
+            if (robotId.includes("-")) {
+              const parts = robotId.split("-");
+              const lastPart = parts[parts.length - 1];
+              // If last part looks like a robot ID (6 alphanumeric chars), use it
+              if (lastPart.length === 6 && /^[a-z0-9]{6}$/i.test(lastPart)) {
+                console.log(`🐻 [API] Extracted robot ID "${lastPart}" from full name "${robotId}"`);
+                robotId = lastPart.toLowerCase();
+              }
+            }
             
             // ⚠️ VALIDATION: Prevent using show_robot for page names!
             const invalidRobotIds = ["robots", "robot", "operations", "home", "ai-models", "data-lake", "features"];

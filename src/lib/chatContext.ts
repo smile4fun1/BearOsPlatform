@@ -257,13 +257,13 @@ export const availableTools = [
   },
   {
     name: "show_robot",
-    description: "Display ONE SPECIFIC robot by its ID. ONLY use when user provides an ACTUAL ROBOT ID (6-char alphanumeric like 'c44e79'). DO NOT use for page names like 'robots' - that's the navigate tool. DO NOT use for queries like 'faulty robots' - that's list_robots tool. Example: 'show robot c44e79' → robot_id='c44e79'.",
+    description: "Display ONE SPECIFIC robot by its ID. ONLY use when user provides an ACTUAL ROBOT ID (6-char alphanumeric like 'c44e79', 'e0f1g2'). Robot names are formatted like 'Servi-Plus-ABC123' or 'Carti-100-E0F1G2' where the last part (after final dash) is the robot ID. Extract the ID from the name if needed. DO NOT use for page names like 'robots' - that's the navigate tool. DO NOT use for queries like 'faulty robots' - that's list_robots tool. Examples: 'show robot c44e79' → robot_id='c44e79', 'show Carti-100-E0F1G2' → robot_id='e0f1g2'.",
     parameters: {
       type: "object",
       properties: {
         robot_id: {
           type: "string",
-          description: "The 6-character alphanumeric robot ID (e.g., 'y2z3a4', 'c44e79'). Must be an actual robot identifier, NOT words like 'robots', 'operations', 'faulty', etc.",
+          description: "The 6-character alphanumeric robot ID (e.g., 'y2z3a4', 'c44e79', 'e0f1g2'). If user provides full robot name like 'Carti-100-E0F1G2', extract the last part after the final dash. Must be an actual robot identifier, NOT words like 'robots', 'operations', 'faulty', etc.",
         },
       },
       required: ["robot_id"],

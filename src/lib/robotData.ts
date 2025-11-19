@@ -193,7 +193,7 @@ function generateRobot(index: number): Robot {
   
   return {
     id: robotId,
-    name: `${model.replace(" ", "-")}-${robotId.slice(0, 4).toUpperCase()}`,
+    name: `${model.replace(" ", "-")}-${robotId.toUpperCase()}`,
     model,
     vertical,
     status,

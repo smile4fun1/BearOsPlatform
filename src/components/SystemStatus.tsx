@@ -9,7 +9,15 @@ interface SystemStatusProps {
 }
 
 export function SystemStatus({ isOpen, onClose }: SystemStatusProps) {
-  const [position, setPosition] = useState({ x: 100, y: 100 });
+  // Set default position to top-right corner
+  const getDefaultPosition = () => {
+    if (typeof window !== 'undefined') {
+      return { x: window.innerWidth - 450, y: 80 };
+    }
+    return { x: 100, y: 100 };
+  };
+  
+  const [position, setPosition] = useState(getDefaultPosition());
   const [size, setSize] = useState({ width: 420, height: 620 });
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -17,6 +25,11 @@ export function SystemStatus({ isOpen, onClose }: SystemStatusProps) {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ width: 420, height: 620, x: 0, y: 0, posX: 100, posY: 100 });
   const [currentTime, setCurrentTime] = useState(new Date());
+  
+  // Initialize position on client-side mount
+  useEffect(() => {
+    setPosition(getDefaultPosition());
+  }, []);
 
   // Update clock every second
   useEffect(() => {

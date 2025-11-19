@@ -8,6 +8,7 @@ import {
   ChevronRight, Play, Pause, RotateCcw, CheckCircle, XCircle
 } from "lucide-react";
 import { Robot } from "@/lib/robotData";
+import { Footer } from "@/components/Footer";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -537,6 +538,7 @@ export function RobotDetailView({ robot }: RobotDetailViewProps) {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

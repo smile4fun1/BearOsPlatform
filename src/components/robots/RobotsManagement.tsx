@@ -8,6 +8,7 @@ import {
   WifiOff, Wrench, BatteryCharging, CircleAlert
 } from "lucide-react";
 import { robotFleet, Robot } from "@/lib/robotData";
+import { Footer } from "@/components/Footer";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -307,6 +308,7 @@ export function RobotsManagement() {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

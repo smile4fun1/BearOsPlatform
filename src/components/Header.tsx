@@ -96,40 +96,69 @@ export function Header() {
         </button>
       </nav>
 
-      {/* Mobile Navigation */}
-      {mobileMenuOpen && (
-        <div className="border-t border-white/10 bg-[#020511]/95 backdrop-blur-xl lg:hidden">
-          <div className="mx-auto max-w-7xl space-y-1 px-6 py-4">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href;
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`
-                    flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all
-                    ${
-                      isActive
-                        ? "bg-white/10 text-white"
-                        : "text-white/60 hover:bg-white/5 hover:text-white"
-                    }
-                  `}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{item.name}</span>
-                </Link>
-              );
-            })}
-            <div className="flex items-center gap-2 rounded-xl bg-emerald-500/10 px-4 py-3 text-xs font-medium text-emerald-400 border border-emerald-500/20">
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>All Systems Operational</span>
+    </header>
+    
+    {/* Mobile Navigation Overlay */}
+    {mobileMenuOpen && (
+      <>
+        {/* Backdrop */}
+        <div 
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden animate-in fade-in duration-200"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+        
+        {/* Slide-in Menu */}
+        <div className="fixed top-0 right-0 z-50 h-full w-[280px] bg-[#020511]/98 backdrop-blur-xl border-l border-white/10 lg:hidden animate-in slide-in-from-right duration-300 shadow-2xl">
+          <div className="flex flex-col h-full">
+            {/* Menu Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+              <div className="text-sm font-semibold text-white">Navigation</div>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-lg p-2 text-white/60 hover:bg-white/5 hover:text-white transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            {/* Menu Items */}
+            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-2">
+              {navigation.map((item) => {
+                const isActive = pathname === item.href;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`
+                      flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all
+                      ${
+                        isActive
+                          ? "bg-gradient-to-r from-indigo-500/20 to-sky-500/20 text-white border border-white/10"
+                          : "text-white/60 hover:bg-white/5 hover:text-white"
+                      }
+                    `}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+            
+            {/* Status Footer */}
+            <div className="px-4 py-4 border-t border-white/10">
+              <div className="flex items-center gap-2 rounded-xl bg-emerald-500/10 px-4 py-3 text-xs font-medium text-emerald-400 border border-emerald-500/20">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>All Systems Operational</span>
+              </div>
             </div>
           </div>
         </div>
-      )}
-    </header>
+      </>
+    )}
+    
     
     {/* Live Status Popup */}
     <LiveStatusPopup

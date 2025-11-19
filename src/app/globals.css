@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* Mobile viewport fixes - prevent zoom on input focus */
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+}
+
+/* Prevent double-tap zoom on mobile */
+* {
+  touch-action: manipulation;
+}
+
 /* Global user-select and drag prevention */
 * {
   user-select: none;

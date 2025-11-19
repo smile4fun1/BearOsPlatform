@@ -68,6 +68,7 @@ export function ImprovedDraggableChat() {
   const [isDraggingIcon, setIsDraggingIcon] = useState(false);
   const [iconDragStart, setIconDragStart] = useState({ x: 0, y: 0 });
   const [hasIconMoved, setHasIconMoved] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [autoNavigate, setAutoNavigate] = useState(() => {
     if (typeof window === "undefined") return true; // Default to true
     const stored = localStorage.getItem("bear-auto-navigate");
@@ -97,6 +98,17 @@ export function ImprovedDraggableChat() {
   const currentConversation = conversations.find(
     (c) => c.id === currentConversationId
   );
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Smart initial positioning - only run once and only if not loaded from storage
   useEffect(() => {
@@ -131,8 +143,14 @@ export function ImprovedDraggableChat() {
     }
   }, [isOpen, isMinimized]);
 
-  // Handle focus/blur for transparency - improved detection
+  // Handle focus/blur for transparency - improved detection (DESKTOP ONLY)
   useEffect(() => {
+    // Disable transparency feature on mobile
+    if (isMobile) {
+      setIsFocused(true);
+      return;
+    }
+
     const handleGlobalClick = (e: MouseEvent) => {
       if (chatRef.current) {
         if (chatRef.current.contains(e.target as Node)) {
@@ -153,7 +171,7 @@ export function ImprovedDraggableChat() {
     return () => {
       document.removeEventListener("mousedown", handleGlobalClick, true);
     };
-  }, []);
+  }, [isMobile]);
 
   // Ensure chat is focused when opened or maximized
   useEffect(() => {
@@ -289,8 +307,10 @@ export function ImprovedDraggableChat() {
     return () => window.removeEventListener("open-ai-chat" as any, handleAIInvestigation);
   }, [isOpen, toggleChat, currentConversationId, createConversation]);
 
-  // Smooth pixel-perfect dragging
+  // Smooth pixel-perfect dragging (DESKTOP ONLY)
   const handleMouseDown = (e: React.MouseEvent) => {
+    // Disable dragging on mobile
+    if (isMobile) return;
     if ((e.target as HTMLElement).closest(".chat-content, .chat-input")) return;
     e.preventDefault();
     setIsDragging(true);
@@ -426,6 +446,8 @@ export function ImprovedDraggableChat() {
   }, [isResizing, resizeStart, resizeCorner, position, setPosition]);
 
   const handleResizeStart = (corner: "tl" | "tr" | "bl" | "br") => (e: React.MouseEvent) => {
+    // Disable resizing on mobile
+    if (isMobile) return;
     e.preventDefault();
     e.stopPropagation();
     setIsResizing(true);
@@ -763,16 +785,27 @@ export function ImprovedDraggableChat() {
       ref={chatRef}
       style={{
         position: "fixed",
-        left: `${position.x}px`,
-        top: `${position.y}px`,
+        // Mobile: fullscreen, Desktop: positioned
+        ...(isMobile ? {
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: "100%",
+          height: "100%",
+        } : {
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          width: isMinimized ? "320px" : `${chatSize.width}px`,
+        }),
         zIndex: 9999,
-        width: isMinimized ? "320px" : `${chatSize.width}px`,
         transition: isDragging || isResizing ? "none" : "all 0.3s ease-in-out",
-        opacity: isFocused ? 1 : 0.3,
+        // Mobile: always opaque, Desktop: responsive opacity
+        opacity: isMobile ? 1 : (isFocused ? 1 : 0.3),
       }}
-      className={`${isDragging ? "cursor-grabbing" : ""} ${isResizing ? "cursor-nwse-resize" : ""} animate-in slide-in-from-bottom-5 fade-in duration-300`}
+      className={`${isDragging ? "cursor-grabbing" : ""} ${isResizing ? "cursor-nwse-resize" : ""} ${isMobile ? "animate-in fade-in slide-in-from-bottom-2 duration-300" : "animate-in slide-in-from-bottom-5 fade-in duration-300"}`}
     >
-      <div className={`relative rounded-2xl border shadow-2xl overflow-hidden transition-all duration-300 ${
+      <div className={`relative ${isMobile ? "h-full flex flex-col" : "rounded-2xl"} border shadow-2xl overflow-hidden transition-all duration-300 ${
         isFocused 
           ? "border-white/20 bg-[#020511]/95 backdrop-blur-xl" 
           : "border-white/10 bg-[#020511]/40 backdrop-blur-sm"
@@ -780,8 +813,8 @@ export function ImprovedDraggableChat() {
         {/* Header */}
         <div
           className={`flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-indigo-500/20 to-sky-500/20 p-4 ${
-            isDragging ? "cursor-grabbing" : "cursor-grab"
-          } ${isMinimized && hasUnreadMessage ? "animate-pulse" : ""}`}
+            !isMobile && isDragging ? "cursor-grabbing" : ""
+          } ${!isMobile && !isDragging ? "cursor-grab" : ""} ${isMinimized && hasUnreadMessage ? "animate-pulse" : ""} ${isMobile ? "flex-shrink-0" : ""}`}
           onMouseDown={handleMouseDown}
         >
           <div className="flex items-center gap-3">
@@ -1019,8 +1052,8 @@ export function ImprovedDraggableChat() {
 
             {/* Messages */}
             <div 
-              className="chat-content overflow-y-auto p-4 space-y-4" 
-              style={{ height: `${chatSize.height - 200}px` }}
+              className={`chat-content overflow-y-auto p-4 space-y-4 ${isMobile ? "flex-1" : ""}`}
+              style={isMobile ? {} : { height: `${chatSize.height - 200}px` }}
             >
               {!currentConversation && (
                 <div className="flex h-full flex-col items-center justify-center text-center text-white/40">
@@ -1094,17 +1127,17 @@ export function ImprovedDraggableChat() {
             </div>
 
             {/* Input */}
-            <form onSubmit={handleSendMessage} className="chat-input chat-input-form border-t border-white/10 p-4">
+            <form onSubmit={handleSendMessage} className={`chat-input chat-input-form border-t border-white/10 p-4 ${isMobile ? "flex-shrink-0" : ""}`}>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask Ursa Minor anything..."
-                  style={{ fontSize: `${fontSize}px` }}
+                  style={{ fontSize: isMobile ? "16px" : `${fontSize}px` }}
                   className="flex-1 rounded-lg bg-white/10 px-4 py-2.5 text-white placeholder-white/40 outline-none transition-colors focus:bg-white/15 focus:ring-2 focus:ring-indigo-500/50"
                   disabled={isLoading}
-                  autoFocus
+                  autoFocus={!isMobile}
                 />
                 <button
                   type="submit"
@@ -1118,8 +1151,8 @@ export function ImprovedDraggableChat() {
           </>
         )}
         
-        {/* Invisible Resize Handles - All Four Corners */}
-        {!isMinimized && (
+        {/* Invisible Resize Handles - All Four Corners (DESKTOP ONLY) */}
+        {!isMinimized && !isMobile && (
           <>
             {/* Top-left corner */}
             <div

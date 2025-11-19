@@ -22,7 +22,7 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 - **AI Training Hub** – Track Ursa Minor (40B), Ursa Major (70B), and Aurora Bear Lore (120B) models with validation scores and milestone tracking
 - **Data Lake Explorer** – Access curated datasets including operations telemetry, knowledge base, financial snapshots, and API catalog
 - **Live Data Pipeline** – REST endpoints serving real-time generated data with `/api/live` streaming capabilities
-- **Ursa Minor AI Assistant** – 🆕 **Enhanced with adaptive reasoning** - Draggable, resizable chat interface with GPT-4o-mini, advanced problem-solving capabilities, pattern recognition, and incident investigation expertise. Features tool calling, permission-based commands, LangChain memory, conversation management, and smart navigation
+- **Ursa Minor AI Assistant** – 🆕 **Proactive Action Mode** - Draggable, resizable chat interface with GPT-4o-mini that **takes immediate action** instead of asking repeatedly. Features 12 powerful tools (diagnostics, commands, parameter changes, task scheduling, analysis), simulated realistic results for POC/demo, tool calling with auto-execution, and smart navigation. See [PROACTIVE_AI_BEHAVIOR.md](PROACTIVE_AI_BEHAVIOR.md) for details
 - **Robot Fleet Management** – Comprehensive robot pages with live navigation maps, telemetry streaming, diagnostic tools, and RFE capabilities
 - **Live System Status** – Real-time status popup showing health of all systems (green, amber, red) with latency monitoring
 - **Responsive Navigation** – Stunning header with mobile-friendly navigation and live status indicator across all pages

@@ -53,6 +53,7 @@ export function ImprovedDraggableChat() {
   const [chatSize, setChatSize] = useState({ width: 400, height: 600 });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<"connected" | "thinking" | "error">("connected");
   const [showConversations, setShowConversations] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [pendingToolCall, setPendingToolCall] = useState<any>(null);
@@ -512,6 +513,7 @@ export function ImprovedDraggableChat() {
     const userMessage = input.trim();
     setInput("");
     setIsLoading(true);
+    setConnectionStatus("thinking");
     
     // Auto-create conversation if none exists and wait for state update
     let activeConvId = currentConversationId;
@@ -635,6 +637,7 @@ export function ImprovedDraggableChat() {
               content: `🔔 **Background Research Complete**\n\n${cleanResponse || `I found what you're looking for at: **${target}**`}\n\n💡 Since you minimized me, I didn't navigate automatically. Maximize when ready, and I'll take you there!`,
             });
             setIsLoading(false);
+            setConnectionStatus("connected");
             return; // STOP HERE - do not execute navigation
           }
           
@@ -653,6 +656,7 @@ export function ImprovedDraggableChat() {
           });
           
           setIsLoading(false);
+          setConnectionStatus("connected");
           
           // Hard navigation to ensure reliability across all pages
           // Chat state (open/minimized/position) preserved via localStorage
@@ -687,8 +691,11 @@ export function ImprovedDraggableChat() {
           toolCalls: data.toolCalls,
         });
       }
+      
+      setConnectionStatus("connected");
     } catch (error: any) {
       console.error("🐻 Chat error:", error);
+      setConnectionStatus("error");
       
       let errorMessage = "I apologize, but I encountered an error. Please try again.";
       
@@ -702,6 +709,9 @@ export function ImprovedDraggableChat() {
         role: "assistant",
         content: errorMessage,
       });
+      
+      // Reset to connected after 3 seconds
+      setTimeout(() => setConnectionStatus("connected"), 3000);
     } finally {
       setIsLoading(false);
     }
@@ -948,9 +958,26 @@ export function ImprovedDraggableChat() {
             </div>
             <div>
               <div className="text-sm font-semibold text-white">Ursa Minor</div>
-              <div className="flex items-center gap-1.5 text-xs text-emerald-400">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Online & Ready</span>
+              <div className="flex items-center gap-1.5 text-xs">
+                {/* Real-time connection status */}
+                {connectionStatus === "connected" && (
+                  <>
+                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-emerald-400">Online & Ready</span>
+                  </>
+                )}
+                {connectionStatus === "thinking" && (
+                  <>
+                    <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+                    <span className="text-amber-400">Thinking...</span>
+                  </>
+                )}
+                {connectionStatus === "error" && (
+                  <>
+                    <div className="h-1.5 w-1.5 rounded-full bg-red-400 animate-pulse" />
+                    <span className="text-red-400">Connection Error</span>
+                  </>
+                )}
                 {deepResearchMode && (
                   <span className="ml-2 bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded text-[10px]">🔬 Research</span>
                 )}

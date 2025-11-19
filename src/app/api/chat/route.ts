@@ -96,27 +96,40 @@ Example Responses:
 
 The chat is OPEN and user has AUTO-NAVIGATE enabled. Be PROACTIVE and IMMEDIATE with navigation.
 
-When user wants to:
-  • See a robot → Navigate immediately
-  • View a page → Navigate immediately
-  • Check status → Navigate if relevant page exists
+🚀 WHEN TO NAVIGATE (use navigate/show_robot tool):
+  • See a specific robot by ID → Navigate to /robots/{id}
+  • View a dashboard page → Navigate to that page
+  • User says "go to", "take me to", "open" → Navigate
 
-✅ DO THIS:
-  1. Use [NAVIGATE:/path] tag FIRST in your response
-  2. Follow with confirmation and context
-  3. NO need to ask permission - just do it
+🔍 WHEN TO QUERY (use list_robots tool - DON'T navigate):
+  • Filter robots ("show faulty robots", "robots with errors")
+  • Search by status ("active robots", "charging robots")
+  • Search by facility ("robots in Seoul")
+  • Multiple robots or lists → Use list_robots tool, provide data
 
-Example:
+✅ CORRECT NAVIGATION EXAMPLES:
   User: "show me robot abc123"
-  You: "[NAVIGATE:/robots/abc123]\n\n**Navigating to Robot ABC123**\n\nDisplaying full diagnostics..."
+  You: "[NAVIGATE:/robots/abc123]\n\n**Robot ABC123**..."
 
-  User: "what's wrong in operations?"
-  You: "[NAVIGATE:/operations]\n\n**Opening Operations Dashboard**\n\nI found 3 critical issues..."
-  
   User: "take me to the robots page"
-  You: "[NAVIGATE:/robots]\n\n**Opening Robot Fleet Management**\n\nShowing all robots..."
+  You: "[NAVIGATE:/robots]\n\n**Robot Fleet Management**..."
 
-⚠️ CRITICAL: Use /robots for fleet page, NOT /robots/robots or robots without slash!
+  User: "go to operations"
+  You: "[NAVIGATE:/operations]\n\n**Operations Dashboard**..."
+
+❌ WRONG - DON'T NAVIGATE FOR QUERIES:
+  User: "show me faulty robots"
+  You: ❌ "[NAVIGATE:/robots/faulty]" ← PAGE DOESN'T EXIST!
+  You: ✅ Use list_robots(has_errors=true) and show data instead
+
+  User: "robots with low battery"
+  You: ❌ "[NAVIGATE:/robots/low-battery]" ← FAKE PAGE!
+  You: ✅ Use list_robots(low_battery=true) and show data instead
+
+⚠️ CRITICAL: 
+- ONLY navigate to REAL pages: /, /operations, /robots, /ai-models, /data-lake, /robots/{id}
+- NEVER create fake URLs like /robots/faulty or /robots/error
+- For filtering/searching → Use list_robots tool, DON'T navigate!
 
 ═══════════════════════════════════════════════════════════════
 ` : `
@@ -225,7 +238,11 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
       messages: [contextMessage, ...messages],
       tools: toolsToProvide.map((tool) => ({
         type: "function" as const,
-        function: tool,
+        function: {
+          name: tool.name,
+          description: tool.description,
+          parameters: tool.parameters,
+        },
       })),
       temperature: 0.7,
       max_tokens: 1000, // Increased for more comprehensive responses
@@ -307,25 +324,39 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
             
             console.log(`🐻 [API] Navigation to page: ${targetUrl}`);
           } else if (name === "show_robot" && parameters.robot_id) {
-            targetUrl = `/robots/${parameters.robot_id}`;
-            const robotId = parameters.robot_id.toUpperCase();
+            const robotId = parameters.robot_id.toLowerCase();
             
-            // Fetch ACTUAL robot data to provide relevant context
-            const robotStats = getRobotStats(parameters.robot_id);
-            if (robotStats) {
-              const statusEmoji = robotStats.status === "active" ? "🟢" : 
-                                 robotStats.status === "charging" ? "🔋" : 
-                                 robotStats.status === "error" ? "🔴" : "⚠️";
+            // ⚠️ VALIDATION: Prevent using show_robot for page names!
+            const invalidRobotIds = ["robots", "robot", "operations", "home", "ai-models", "data-lake", "features"];
+            if (invalidRobotIds.includes(robotId)) {
+              console.error(`🐻 [API] 🚨 INVALID: AI tried to use show_robot with "${robotId}" - this is a page name, not a robot ID!`);
+              console.error(`🐻 [API] Correcting to navigate tool instead...`);
               
-              const highlights = [];
-              if (robotStats.status === "error") highlights.push(`⚠️ ${robotStats.errorCount} errors`);
-              if (robotStats.batteryLevel < 20) highlights.push(`🔋 Low battery: ${robotStats.batteryLevel}%`);
-              else highlights.push(`🔋 ${robotStats.batteryLevel}%`);
-              if (robotStats.metrics.tripsCompleted > 0) highlights.push(`${robotStats.metrics.tripsCompleted} trips today`);
-              
-              description = `**Robot ${robotId}** ${statusEmoji}\n\n${highlights.join(" • ")}\n📍 ${robotStats.facility}, ${robotStats.city}`;
+              // Auto-correct: treat as navigation to robots page
+              targetUrl = "/robots";
+              description = `**Robot Fleet Management**\n\n${realData.fleet.totalRobots} robots deployed. Filter by facility, status, or model.`;
             } else {
-              description = `**Robot ${robotId}**\n\nLoading telemetry and diagnostics...`;
+              // Valid robot ID - proceed normally
+              targetUrl = `/robots/${robotId}`;
+              const robotIdUpper = robotId.toUpperCase();
+              
+              // Fetch ACTUAL robot data to provide relevant context
+              const robotStats = getRobotStats(robotId);
+              if (robotStats) {
+                const statusEmoji = robotStats.status === "active" ? "🟢" : 
+                                   robotStats.status === "charging" ? "🔋" : 
+                                   robotStats.status === "error" ? "🔴" : "⚠️";
+                
+                const highlights = [];
+                if (robotStats.status === "error") highlights.push(`⚠️ ${robotStats.errorCount} errors`);
+                if (robotStats.batteryLevel < 20) highlights.push(`🔋 Low battery: ${robotStats.batteryLevel}%`);
+                else highlights.push(`🔋 ${robotStats.batteryLevel}%`);
+                if (robotStats.metrics.tripsCompleted > 0) highlights.push(`${robotStats.metrics.tripsCompleted} trips today`);
+                
+                description = `**Robot ${robotIdUpper}** ${statusEmoji}\n\n${highlights.join(" • ")}\n📍 ${robotStats.facility}, ${robotStats.city}`;
+              } else {
+                description = `**Robot ${robotIdUpper}**\n\nLoading telemetry and diagnostics...`;
+              }
             }
             
             console.log(`🐻 [API] Navigation to robot: ${targetUrl}`);
@@ -338,18 +369,57 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
           }
         }
         
-        // Handle list/filter tools (use AI response with data)
+        // ═══════════════════════════════════════════════════════════════
+        // Handle list_robots tool - provide REAL filtered data, DON'T navigate
+        // ═══════════════════════════════════════════════════════════════
         if (name === "list_robots") {
-          console.log(`🐻 [API] List robots tool called with filters:`, parameters);
-          // AI will provide response using REAL DATA - no need to execute
-          if (!responseContent) {
-            const filters = [];
-            if (parameters.status) filters.push(`status: ${parameters.status}`);
-            if (parameters.facility) filters.push(`facility: ${parameters.facility}`);
-            if (parameters.has_errors) filters.push("with errors");
-            if (parameters.low_battery) filters.push("low battery");
-            responseContent = `Filtering robots${filters.length > 0 ? ' by ' + filters.join(', ') : ''}...`;
+          console.log(`🐻 [API] 🔍 List robots tool called with filters:`, parameters);
+          
+          // Build filter description
+          const filters = [];
+          if (parameters.status) filters.push(`status: ${parameters.status}`);
+          if (parameters.facility) filters.push(`facility: ${parameters.facility}`);
+          if (parameters.has_errors) filters.push("with errors");
+          if (parameters.low_battery) filters.push("low battery");
+          
+          // Get filtered robots from real data
+          let filteredRobots = realData.fleet.robots || [];
+          
+          // Apply filters
+          if (parameters.has_errors) {
+            filteredRobots = realData.fleet.alerts.errors || [];
+          } else if (parameters.low_battery) {
+            filteredRobots = realData.fleet.alerts.lowBattery || [];
+          } else if (parameters.status && parameters.status !== "all") {
+            const targetStatus = parameters.status.toLowerCase();
+            filteredRobots = filteredRobots.filter((r: any) => 
+              r.status?.toLowerCase() === targetStatus
+            );
           }
+          
+          // Limit to top 10 for readability
+          const displayRobots = filteredRobots.slice(0, 10);
+          const hasMore = filteredRobots.length > 10;
+          
+          console.log(`🐻 [API] Found ${filteredRobots.length} matching robots`);
+          
+          // Format response with REAL data
+          if (displayRobots.length > 0) {
+            const robotList = displayRobots.map((r: any) => {
+              const statusEmoji = r.status === "active" ? "🟢" : 
+                                 r.status === "charging" ? "🔋" : 
+                                 r.status === "error" ? "🔴" : "⚠️";
+              const battery = r.battery || r.batteryLevel || "N/A";
+              const errorInfo = r.error ? ` - ${r.error}` : "";
+              return `${statusEmoji} **${r.name || r.id}** (${(r.id || "").toUpperCase()}) - ${battery}% battery${errorInfo}`;
+            }).join("\n");
+            
+            responseContent = `**Found ${filteredRobots.length} robot${filteredRobots.length !== 1 ? 's' : ''}** ${filters.length > 0 ? `(${filters.join(', ')})` : ''}:\n\n${robotList}${hasMore ? `\n\n_...and ${filteredRobots.length - 10} more_` : ''}\n\n💡 Would you like me to navigate to the robots page to see details?`;
+          } else {
+            responseContent = `No robots found matching the criteria${filters.length > 0 ? ` (${filters.join(', ')})` : ''}.`;
+          }
+          
+          console.log(`🐻 [API] Generated list_robots response`);
         }
         
         // Handle diagnostic tools - generate simulated results
@@ -493,6 +563,58 @@ ${highlights.join(" • ")}
 
 Loading real-time telemetry and diagnostics...`;
     }
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // FILTERING/QUERY REQUESTS - Use data, DON'T navigate to fake pages
+  // ═══════════════════════════════════════════════════════════════
+  
+  // Query for robots with errors/faults
+  if ((lowerMessage.includes("faulty") || lowerMessage.includes("fault")) || 
+      (lowerMessage.includes("show") && (lowerMessage.includes("error") || lowerMessage.includes("problem"))) ||
+      (lowerMessage.includes("robot") && lowerMessage.includes("error"))) {
+    
+    const errorRobots = realData.fleet.alerts.errors || [];
+    
+    if (errorRobots.length === 0) {
+      return `✅ **No robots with errors!**\n\nAll ${realData.fleet.total} robots are operating normally.\n\n💡 Would you like to see the full fleet status?`;
+    }
+    
+    const robotList = errorRobots.slice(0, 10).map(r => {
+      return `🔴 **${r.name}** (${r.id.toUpperCase()}) - ${r.battery}% battery\n   Error: ${r.error}\n   Location: ${r.facility}`;
+    }).join('\n\n');
+    
+    return `**Found ${errorRobots.length} robot${errorRobots.length !== 1 ? 's' : ''} with errors:**\n\n${robotList}${errorRobots.length > 10 ? `\n\n_...and ${errorRobots.length - 10} more_` : ''}\n\n💡 Would you like me to navigate to a specific robot for diagnostics?`;
+  }
+  
+  // Query for robots with low battery
+  if (lowerMessage.includes("low battery") || (lowerMessage.includes("battery") && (lowerMessage.includes("low") || lowerMessage.includes("<") || lowerMessage.includes("below")))) {
+    
+    const lowBatteryRobots = realData.fleet.alerts.lowBattery || [];
+    
+    if (lowBatteryRobots.length === 0) {
+      return `✅ **All robots have healthy battery levels!**\n\nLowest battery: ${Math.min(...(realData.fleet.robots || []).map((r: any) => r.battery || 100))}%\n\n💡 Would you like to see battery statistics?`;
+    }
+    
+    const robotList = lowBatteryRobots.slice(0, 10).map(r => {
+      return `🔋 **${r.name}** (${r.id.toUpperCase()}) - ${r.battery}% battery\n   Location: ${r.facility}`;
+    }).join('\n\n');
+    
+    return `**Found ${lowBatteryRobots.length} robot${lowBatteryRobots.length !== 1 ? 's' : ''} with low battery (< 20%):**\n\n${robotList}${lowBatteryRobots.length > 10 ? `\n\n_...and ${lowBatteryRobots.length - 10} more_` : ''}\n\n💡 Would you like me to navigate to a specific robot?`;
+  }
+  
+  // Query for active/idle/charging robots
+  if ((lowerMessage.includes("active") || lowerMessage.includes("idle") || lowerMessage.includes("charging")) && lowerMessage.includes("robot")) {
+    let statusFilter = "";
+    if (lowerMessage.includes("active")) statusFilter = "active";
+    else if (lowerMessage.includes("idle")) statusFilter = "idle";
+    else if (lowerMessage.includes("charging")) statusFilter = "charging";
+    
+    const count = statusFilter === "active" ? realData.fleet.active : 
+                  statusFilter === "idle" ? realData.fleet.idle : 
+                  realData.fleet.charging;
+    
+    return `**${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} Robots:**\n\nCurrently **${count} robot${count !== 1 ? 's' : ''}** ${statusFilter === "active" ? "actively working" : statusFilter === "idle" ? "in idle state" : "charging"}.\n\n💡 Would you like me to navigate to the robots page to see details?`;
   }
   
   // Fleet status queries

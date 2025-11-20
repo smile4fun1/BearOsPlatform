@@ -25,6 +25,7 @@ import {
   Target
 } from "lucide-react";
 import type { Robot } from "@/lib/robotData";
+import { ActionModal } from "./ActionModals";
 
 interface RFEDiagnosticPanelProps {
   robot: Robot;
@@ -35,7 +36,7 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
   const [activeTab, setActiveTab] = useState<"tools" | "ai-diagnosis">("tools");
   const [isRunningDiagnostic, setIsRunningDiagnostic] = useState(false);
   const [aiDiagnostic, setAiDiagnostic] = useState<string | null>(null);
-  const [executingAction, setExecutingAction] = useState<string | null>(null);
+  const [currentAction, setCurrentAction] = useState<"diagnostics" | "recalibrate" | "restart" | "parameters" | "clear-errors" | "emergency-stop" | null>(null);
 
   // Calculate anomalies and patterns
   const batteryHealth = robot.battery > 80 ? "excellent" : robot.battery > 60 ? "good" : robot.battery > 40 ? "fair" : "critical";
@@ -65,11 +66,8 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
     setIsRunningDiagnostic(false);
   };
 
-  const handleQuickAction = async (action: string) => {
-    setExecutingAction(action);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setExecutingAction(null);
-    // In production, this would trigger actual commands
+  const handleQuickAction = (action: "diagnostics" | "recalibrate" | "restart" | "parameters" | "clear-errors" | "emergency-stop") => {
+    setCurrentAction(action);
   };
 
   return (
@@ -225,14 +223,9 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => handleQuickAction("diagnostics")}
-                    disabled={executingAction !== null}
-                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/20"
                   >
-                    {executingAction === "diagnostics" ? (
-                      <Loader2 className="h-5 w-5 text-emerald-400 animate-spin" />
-                    ) : (
-                      <Activity className="h-5 w-5 text-emerald-400" />
-                    )}
+                    <Activity className="h-5 w-5 text-emerald-400" />
                     <div>
                       <div className="font-semibold text-white">Run Full Diagnostics</div>
                       <div className="text-xs text-white/60">System health check</div>
@@ -241,14 +234,9 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
 
                   <button
                     onClick={() => handleQuickAction("recalibrate")}
-                    disabled={executingAction !== null}
-                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-sky-500/10 to-sky-500/5 border border-sky-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-sky-500/10 to-sky-500/5 border border-sky-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-sky-500/20 hover:shadow-lg hover:shadow-sky-500/20"
                   >
-                    {executingAction === "recalibrate" ? (
-                      <Loader2 className="h-5 w-5 text-sky-400 animate-spin" />
-                    ) : (
-                      <Target className="h-5 w-5 text-sky-400" />
-                    )}
+                    <Target className="h-5 w-5 text-sky-400" />
                     <div>
                       <div className="font-semibold text-white">Recalibrate Sensors</div>
                       <div className="text-xs text-white/60">LIDAR, IMU, encoders</div>
@@ -257,14 +245,9 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
 
                   <button
                     onClick={() => handleQuickAction("restart")}
-                    disabled={executingAction !== null}
-                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 border border-indigo-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 border border-indigo-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/20"
                   >
-                    {executingAction === "restart" ? (
-                      <Loader2 className="h-5 w-5 text-indigo-400 animate-spin" />
-                    ) : (
-                      <RefreshCw className="h-5 w-5 text-indigo-400" />
-                    )}
+                    <RefreshCw className="h-5 w-5 text-indigo-400" />
                     <div>
                       <div className="font-semibold text-white">Soft Restart</div>
                       <div className="text-xs text-white/60">Reboot services</div>
@@ -273,14 +256,9 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
 
                   <button
                     onClick={() => handleQuickAction("parameters")}
-                    disabled={executingAction !== null}
-                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-violet-500/10 to-violet-500/5 border border-violet-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-violet-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-violet-500/10 to-violet-500/5 border border-violet-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-violet-500/20 hover:shadow-lg hover:shadow-violet-500/20"
                   >
-                    {executingAction === "parameters" ? (
-                      <Loader2 className="h-5 w-5 text-violet-400 animate-spin" />
-                    ) : (
-                      <Settings className="h-5 w-5 text-violet-400" />
-                    )}
+                    <Settings className="h-5 w-5 text-violet-400" />
                     <div>
                       <div className="font-semibold text-white">Adjust Parameters</div>
                       <div className="text-xs text-white/60">Speed, sensitivity</div>
@@ -289,14 +267,9 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
 
                   <button
                     onClick={() => handleQuickAction("clear-errors")}
-                    disabled={executingAction !== null}
-                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-amber-500/20 hover:shadow-lg hover:shadow-amber-500/20"
                   >
-                    {executingAction === "clear-errors" ? (
-                      <Loader2 className="h-5 w-5 text-amber-400 animate-spin" />
-                    ) : (
-                      <Zap className="h-5 w-5 text-amber-400" />
-                    )}
+                    <Zap className="h-5 w-5 text-amber-400" />
                     <div>
                       <div className="font-semibold text-white">Clear Error Flags</div>
                       <div className="text-xs text-white/60">Reset error states</div>
@@ -305,14 +278,9 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
 
                   <button
                     onClick={() => handleQuickAction("emergency-stop")}
-                    disabled={executingAction !== null}
-                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-red-500/10 to-red-500/5 border border-red-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-3 rounded-xl bg-gradient-to-br from-red-500/10 to-red-500/5 border border-red-500/30 p-4 text-left transition-all hover:scale-[1.02] hover:from-red-500/20 hover:shadow-lg hover:shadow-red-500/20"
                   >
-                    {executingAction === "emergency-stop" ? (
-                      <Loader2 className="h-5 w-5 text-red-400 animate-spin" />
-                    ) : (
-                      <Power className="h-5 w-5 text-red-400" />
-                    )}
+                    <Power className="h-5 w-5 text-red-400" />
                     <div>
                       <div className="font-semibold text-white">Emergency Stop</div>
                       <div className="text-xs text-white/60">Immediate halt</div>
@@ -413,6 +381,13 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
           )}
         </div>
       </div>
+
+      {/* Action Modals */}
+      <ActionModal
+        robot={robot}
+        action={currentAction}
+        onClose={() => setCurrentAction(null)}
+      />
     </div>
   );
 }

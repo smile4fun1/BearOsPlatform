@@ -5,10 +5,11 @@ import Link from "next/link";
 import {
   ArrowLeft, Bot, Battery, Wifi, MapPin, Activity, AlertTriangle,
   Settings, Terminal, FileText, Video, Map, Gauge, Zap, Clock,
-  ChevronRight, Play, Pause, RotateCcw, CheckCircle, XCircle
+  ChevronRight, Play, Pause, RotateCcw, CheckCircle, XCircle, Wrench
 } from "lucide-react";
 import { Robot } from "@/lib/robotData";
 import { Footer } from "@/components/Footer";
+import { RFEDiagnosticPanel } from "./RFEDiagnosticPanel";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -21,6 +22,7 @@ interface RobotDetailViewProps {
 export function RobotDetailView({ robot }: RobotDetailViewProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "map" | "telemetry" | "diagnostics" | "logs">("overview");
   const [isLiveView, setIsLiveView] = useState(false);
+  const [showRFEPanel, setShowRFEPanel] = useState(false);
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Activity },
@@ -139,6 +141,18 @@ export function RobotDetailView({ robot }: RobotDetailViewProps) {
               </div>
             </div>
           )}
+
+          {/* RFE Diagnostic Panel Button */}
+          <div className="mt-6">
+            <button
+              onClick={() => setShowRFEPanel(true)}
+              className="w-full flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-indigo-500/20 to-sky-500/20 border border-indigo-500/30 p-4 text-white transition-all hover:from-indigo-500/30 hover:to-sky-500/30 hover:scale-[1.01] hover:shadow-lg hover:shadow-indigo-500/20"
+            >
+              <Wrench className="h-5 w-5 text-indigo-300" />
+              <span className="font-semibold">Open RFE Diagnostic Panel</span>
+              <span className="text-xs text-white/60 ml-2">(AI-Powered Tools & Analysis)</span>
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -545,6 +559,14 @@ export function RobotDetailView({ robot }: RobotDetailViewProps) {
         </div>
       </main>
       <Footer />
+
+      {/* RFE Diagnostic Panel */}
+      {showRFEPanel && (
+        <RFEDiagnosticPanel
+          robot={robot}
+          onClose={() => setShowRFEPanel(false)}
+        />
+      )}
     </div>
   );
 }

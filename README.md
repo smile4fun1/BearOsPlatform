@@ -23,7 +23,7 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 - **Data Lake Explorer** – Access curated datasets including operations telemetry, knowledge base, financial snapshots, and API catalog
 - **Live Data Pipeline** – REST endpoints serving real-time generated data with `/api/live` streaming capabilities
 - **Ursa Minor AI Assistant** – 🆕 **Advanced Intelligence Platform** - Full-featured AI chat with GPT-4o-mini that takes immediate action. Features: **Draggable icon** (move anywhere), **Smart notifications** (bubble previews + badges when minimized - shows AI responses in real-time, persists across page refreshes), **Deep Research Mode** with auto-detection, **All-corner resizing**, **Focus-based transparency**, 12 powerful tools, proactive execution, and seamless navigation. Smart notification positioning ensures bubbles are always visible regardless of icon location. Never closes completely - minimizes to movable icon
-- **Robot Fleet Management** – Comprehensive robot pages with live navigation maps, telemetry streaming, diagnostic tools, and RFE capabilities
+- **Robot Fleet Management** – Comprehensive robot pages with live navigation maps, telemetry streaming, diagnostic tools, and **RFE Diagnostic Panel** with AI-powered comprehensive analysis
 - **Live System Status** – Real-time status popup showing health of all systems (green, amber, red) with latency monitoring
 - **Responsive Navigation** – Stunning header with mobile-friendly navigation and live status indicator across all pages
 
@@ -72,6 +72,7 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 | `src/components/operations/InteractiveOpsTable.tsx` | **NEW** Interactive sortable operations table with expandable rows |
 | `src/components/robots/RobotsManagement.tsx` | **NEW** Robot fleet management with search and filters |
 | `src/components/robots/RobotDetailView.tsx` | **NEW** Comprehensive robot detail view with tabs (Overview, Map, Telemetry, Diagnostics, Logs) |
+| `src/components/robots/RFEDiagnosticPanel.tsx` | **🆕 NEW** Robotics Field Engineer diagnostic panel with AI-powered comprehensive analysis, quick action tools, anomaly detection, usage statistics, and smart recommendations |
 | `src/components/incidents/InteractiveIncidentRadar.tsx` | **🆕 NEW** Interactive incident monitoring with real-world robot problems, AI insights, SSH access, and chat integration |
 | `src/components/presentation/PresentationSlides.tsx` | **🎤 NEW** Executive presentation component with 10 interactive slides, mouse-only navigation, and animated transitions |
 | `src/components/presentation/FormantPresentation.tsx` | **📊 NEW** Formant assessment presentation with 5 strategic analysis slides |

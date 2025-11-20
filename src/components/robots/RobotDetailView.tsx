@@ -530,14 +530,73 @@ export function RobotDetailView({ robot }: RobotDetailViewProps) {
               <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
                 <h3 className="text-lg font-semibold mb-4">System Health</h3>
                 <div className="space-y-3">
-                  <DiagnosticItem label="LIDAR Sensor" status="healthy" value="±1° accuracy" />
-                  <DiagnosticItem label="Camera Array" status="healthy" value="6/6 operational" />
-                  <DiagnosticItem label="Motor Controllers" status="healthy" value="All nominal" />
-                  <DiagnosticItem label="Battery Health" status={robot.battery < 30 ? "warning" : "healthy"} value={`${robot.battery}% capacity`} />
-                  <DiagnosticItem label="WiFi Connection" status="healthy" value="-52 dBm, 5GHz" />
-                  <DiagnosticItem label="Firmware Version" status="healthy" value={robot.firmware} />
+                  {/* Check for actual errors by category */}
+                  {(() => {
+                    const sensorError = robot.errors.find(e => e.category === "sensor");
+                    const mechanicalError = robot.errors.find(e => e.category === "mechanical");
+                    const navigationError = robot.errors.find(e => e.category === "navigation");
+                    const batteryError = robot.errors.find(e => e.category === "battery");
+                    const networkError = robot.errors.find(e => e.category === "network");
+                    
+                    return (
+                      <>
+                        <DiagnosticItem 
+                          label="LIDAR Sensor" 
+                          status={sensorError ? "error" : navigationError ? "warning" : "healthy"} 
+                          value={sensorError ? sensorError.errorCode : "±1° accuracy"} 
+                        />
+                        <DiagnosticItem 
+                          label="Camera Array" 
+                          status={sensorError ? "warning" : "healthy"} 
+                          value={sensorError ? "Degraded" : "6/6 operational"} 
+                        />
+                        <DiagnosticItem 
+                          label="Motor Controllers" 
+                          status={mechanicalError ? "error" : "healthy"} 
+                          value={mechanicalError ? mechanicalError.errorCode : "All nominal"} 
+                        />
+                        <DiagnosticItem 
+                          label="Battery Health" 
+                          status={batteryError ? "error" : robot.battery < 30 ? "warning" : "healthy"} 
+                          value={batteryError ? batteryError.errorCode : `${robot.battery}% capacity`} 
+                        />
+                        <DiagnosticItem 
+                          label="WiFi Connection" 
+                          status={networkError ? "error" : "healthy"} 
+                          value={networkError ? networkError.errorCode : "-52 dBm, 5GHz"} 
+                        />
+                        <DiagnosticItem 
+                          label="Firmware Version" 
+                          status="healthy" 
+                          value={robot.firmware} 
+                        />
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
+
+              {/* Show detailed errors if any exist */}
+              {robot.errors.length > 0 && (
+                <div className="rounded-2xl border border-rose-500/30 bg-rose-500/5 p-6">
+                  <h3 className="text-lg font-semibold mb-4 text-rose-400">Active Diagnostic Alerts</h3>
+                  <div className="space-y-3">
+                    {robot.errors.map((error, idx) => (
+                      <div key={idx} className="flex items-start gap-3 rounded-lg bg-black/20 p-4">
+                        <AlertTriangle className="h-5 w-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm font-mono text-rose-300">{error.errorCode}</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 uppercase">{error.severity}</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-white/60 capitalize">{error.category}</span>
+                          </div>
+                          <div className="text-sm text-white/80">{error.message}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -545,14 +604,104 @@ export function RobotDetailView({ robot }: RobotDetailViewProps) {
             <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
               <h3 className="text-lg font-semibold mb-4">System Logs (Last 24h)</h3>
               <div className="space-y-2 font-mono text-xs">
-                <LogEntry time="10:32:14" level="INFO" message="Task completed: Delivery to Table 12" />
-                <LogEntry time="10:31:58" level="INFO" message="Navigation: Reached waypoint WP-08" />
-                <LogEntry time="10:31:42" level="INFO" message="Task assigned: Table 12 delivery" />
-                <LogEntry time="10:30:15" level="WARN" message="Obstacle detected, rerouting" />
-                <LogEntry time="10:28:03" level="INFO" message="Battery level: 87%" />
-                {robot.errors.length > 0 && (
-                  <LogEntry time="10:15:32" level="ERROR" message={robot.errors[0]} />
-                )}
+                {(() => {
+                  const now = new Date();
+                  const logs = [];
+                  
+                  // Generate logs based on actual robot state
+                  const baseTime = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                  
+                  // Add error logs first if there are errors
+                  if (robot.errors.length > 0) {
+                    robot.errors.forEach((error, idx) => {
+                      const errorTime = baseTime - (idx * 120 + 180); // Errors 3-5 min ago
+                      const h = Math.floor(errorTime / 3600) % 24;
+                      const m = Math.floor((errorTime % 3600) / 60);
+                      const s = errorTime % 60;
+                      logs.push({
+                        time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`,
+                        level: error.severity === "critical" || error.severity === "high" ? "ERROR" : "WARN",
+                        message: `${error.errorCode}: ${error.message}`
+                      });
+                    });
+                  }
+                  
+                  // Recent task completion
+                  const t1 = baseTime - 45;
+                  logs.push({
+                    time: `${String(Math.floor(t1/3600)%24).padStart(2,'0')}:${String(Math.floor((t1%3600)/60)).padStart(2,'0')}:${String(t1%60).padStart(2,'0')}`,
+                    level: "INFO",
+                    message: robot.currentTask ? `Task in progress: ${robot.currentTask}` : `Task completed: Delivery to ${robot.assignedZone || 'assigned zone'}`
+                  });
+                  
+                  // Navigation update
+                  const t2 = baseTime - 156;
+                  logs.push({
+                    time: `${String(Math.floor(t2/3600)%24).padStart(2,'0')}:${String(Math.floor((t2%3600)/60)).padStart(2,'0')}:${String(t2%60).padStart(2,'0')}`,
+                    level: "INFO",
+                    message: `Navigation: Position update - Floor ${robot.location.floor}`
+                  });
+                  
+                  // Battery status based on actual level
+                  const t3 = baseTime - 289;
+                  logs.push({
+                    time: `${String(Math.floor(t3/3600)%24).padStart(2,'0')}:${String(Math.floor((t3%3600)/60)).padStart(2,'0')}:${String(t3%60).padStart(2,'0')}`,
+                    level: robot.battery < 30 ? "WARN" : "INFO",
+                    message: `Battery level: ${robot.battery}% ${robot.battery < 30 ? '(Low - charging recommended)' : robot.battery > 80 ? '(Excellent)' : '(Good)'}`
+                  });
+                  
+                  // Status-specific logs
+                  if (robot.status === "charging") {
+                    const t4 = baseTime - 612;
+                    logs.push({
+                      time: `${String(Math.floor(t4/3600)%24).padStart(2,'0')}:${String(Math.floor((t4%3600)/60)).padStart(2,'0')}:${String(t4%60).padStart(2,'0')}`,
+                      level: "INFO",
+                      message: "Charging station: Connection established"
+                    });
+                  } else if (robot.status === "error") {
+                    const t4 = baseTime - 425;
+                    logs.push({
+                      time: `${String(Math.floor(t4/3600)%24).padStart(2,'0')}:${String(Math.floor((t4%3600)/60)).padStart(2,'0')}:${String(t4%60).padStart(2,'0')}`,
+                      level: "ERROR",
+                      message: "System status: Error state detected - immediate attention required"
+                    });
+                  } else if (robot.status === "maintenance") {
+                    const t4 = baseTime - 732;
+                    logs.push({
+                      time: `${String(Math.floor(t4/3600)%24).padStart(2,'0')}:${String(Math.floor((t4%3600)/60)).padStart(2,'0')}:${String(t4%60).padStart(2,'0')}`,
+                      level: "INFO",
+                      message: "Maintenance mode activated by field engineer"
+                    });
+                  }
+                  
+                  // Trip stats
+                  const t5 = baseTime - 1847;
+                  logs.push({
+                    time: `${String(Math.floor(t5/3600)%24).padStart(2,'0')}:${String(Math.floor((t5%3600)/60)).padStart(2,'0')}:${String(t5%60).padStart(2,'0')}`,
+                    level: "INFO",
+                    message: `Performance: ${robot.metrics.tripsCompleted} trips completed today (${robot.metrics.successRate}% success rate)`
+                  });
+                  
+                  // Firmware check
+                  const t6 = baseTime - 2941;
+                  logs.push({
+                    time: `${String(Math.floor(t6/3600)%24).padStart(2,'0')}:${String(Math.floor((t6%3600)/60)).padStart(2,'0')}:${String(t6%60).padStart(2,'0')}`,
+                    level: "INFO",
+                    message: `Firmware version ${robot.firmware} - System check OK`
+                  });
+                  
+                  // Startup log
+                  const t7 = baseTime - 7200;
+                  logs.push({
+                    time: `${String(Math.floor(t7/3600)%24).padStart(2,'0')}:${String(Math.floor((t7%3600)/60)).padStart(2,'0')}:${String(t7%60).padStart(2,'0')}`,
+                    level: "INFO",
+                    message: `System startup completed - ${robot.name} online at ${robot.facility}`
+                  });
+                  
+                  return logs.map((log, idx) => (
+                    <LogEntry key={idx} time={log.time} level={log.level} message={log.message} />
+                  ));
+                })()}
               </div>
             </div>
           )}

@@ -36,17 +36,10 @@ export function InteractiveIncidentRadar() {
     // Load initial incidents
     setIncidents(getActiveIncidents());
     
-    // Simulate real-time updates
+    // Simulate real-time updates - refresh every 8 seconds to show activity
     const interval = setInterval(() => {
-      setIncidents(prev => {
-        const updated = getActiveIncidents();
-        // Only update if there are changes to avoid unnecessary re-renders
-        if (JSON.stringify(prev.map(i => i.id)) !== JSON.stringify(updated.map(i => i.id))) {
-          return updated;
-        }
-        return prev;
-      });
-    }, 10000); // Update every 10 seconds
+      setIncidents(getActiveIncidents());
+    }, 8000); // Update every 8 seconds
     
     return () => clearInterval(interval);
   }, []);
@@ -171,10 +164,17 @@ Please provide:
           </div>
         </div>
 
-        {/* Scrollable Incident Grid */}
-        <div className="max-h-[600px] overflow-y-auto p-6 custom-scrollbar">
+        {/* Scrollable Incident Grid - Fixed Height */}
+        <div className="h-[600px] overflow-y-auto p-6 custom-scrollbar">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredIncidents.map((incident) => (
+            {filteredIncidents.length === 0 ? (
+              <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                <AlertCircle className="h-12 w-12 text-white/30 mb-4" />
+                <p className="text-white/50 text-lg">No {filter !== "all" ? filter : ""} incidents found</p>
+                <p className="text-white/30 text-sm mt-2">System operating normally</p>
+              </div>
+            ) : (
+              filteredIncidents.map((incident) => (
           <button
             key={incident.id}
             onClick={() => setSelectedIncident(incident)}
@@ -228,7 +228,8 @@ Please provide:
               <ChevronRight className="h-5 w-5 text-white/60" />
             </div>
           </button>
-        ))}
+        )))
+            )}
           </div>
         </div>
       </div>

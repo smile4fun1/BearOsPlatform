@@ -335,7 +335,32 @@ function generateResolutionSteps(actions: string[], status: IncidentStatus): Rob
 
 // Real-time incident updates (simulates live system)
 export function getActiveIncidents(): RobotIncident[] {
-  return generateIncidents(15).filter(i => i.status !== "resolved");
+  // Generate more incidents for better demo visibility
+  const allIncidents = generateIncidents(30);
+  
+  // Add time-based variation to make incidents appear "live"
+  const now = Date.now();
+  const cycleTime = 30000; // 30 second cycle
+  const offset = Math.floor(now / cycleTime) % 10;
+  
+  return allIncidents
+    .filter(i => i.status !== "resolved")
+    .map((incident, idx) => {
+      // Randomly vary status based on time to simulate activity
+      const timeVariation = (now + idx * 1000) % 60000;
+      let status = incident.status;
+      
+      if (timeVariation < 15000 && status === "open") {
+        status = "investigating";
+      } else if (timeVariation >= 15000 && timeVariation < 30000 && status === "investigating") {
+        status = "in_progress";
+      } else if (timeVariation >= 45000 && status === "in_progress") {
+        status = "open"; // Cycle back
+      }
+      
+      return { ...incident, status } as RobotIncident;
+    })
+    .slice(0, 20); // Show up to 20 active incidents
 }
 
 export function getIncidentById(id: string): RobotIncident | undefined {

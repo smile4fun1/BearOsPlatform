@@ -511,6 +511,12 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
             const cpuUtil = 25 + Math.round(Math.random() * 30);
             results.push(`✅ **CPU:** ${cpuUtil}% utilization - Memory: Normal operating range`);
             
+            // Error details with accurate count
+            const errorCount = robotStats.errorCount || 0;
+            const errorDetails = errorCount > 0 
+              ? `🔴 **Errors:** ${errorCount} active error${errorCount > 1 ? 's' : ''}\n   ${robotStats.errorCode}: ${robotStats.errorMessage}`
+              : `✅ **Errors:** No active errors detected`;
+            
             // Recommendation based on REAL status
             let recommendation = "";
             if (robotStats.status === "error") {
@@ -523,7 +529,7 @@ CRITICAL: Use the REAL DATA numbers above in your responses. These are actual va
               recommendation = `✅ **Recommendation:** Robot is performing within normal parameters. Continue standard operation.`;
             }
             
-            responseContent = `⚙️ Running full diagnostic on Robot ${robotIdUpper}...\n\n**Diagnostic Complete:**\n${results.join('\n')}\n\n**Robot Details:**\n- Model: ${robotStats.model}\n- Location: ${robotStats.facility}, ${robotStats.city}\n- Status: ${robotStats.status.toUpperCase()}\n- Success Rate: ${robotStats.metrics.successRate}%\n\n${recommendation}`;
+            responseContent = `⚙️ Running full diagnostic on Robot ${robotIdUpper}...\n\n**Diagnostic Complete:**\n${results.join('\n')}\n${errorDetails}\n\n**Robot Details:**\n- Model: ${robotStats.model}\n- Location: ${robotStats.facility}, ${robotStats.city}\n- Status: ${robotStats.status.toUpperCase()}\n- Success Rate: ${robotStats.metrics.successRate}%\n\n${recommendation}`;
           }
           
           console.log(`🐻 [API] Generated diagnostic results from REAL robot data`);

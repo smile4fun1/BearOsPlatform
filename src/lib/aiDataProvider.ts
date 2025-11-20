@@ -97,7 +97,7 @@ export function getRobotStats(robotId: string) {
     city: robot.city,
     region: robot.region,
     batteryLevel: robot.battery, // Use ACTUAL battery from robot data
-    errorCount: robot.errorCount || 0,
+    errorCount: robot.errors?.length || 0, // Use ACTUAL error count from errors array
     metrics: {
       battery: robot.battery, // Use ACTUAL battery from robot data
       uptime: robot.metrics.successRate, // Use success rate as uptime proxy

@@ -112,6 +112,7 @@ export function ImprovedDraggableChat() {
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -588,6 +589,10 @@ export function ImprovedDraggableChat() {
     if (!activeConvId) {
       console.error("🐻 Failed to create conversation!");
       setIsLoading(false);
+      // Refocus input if chat is focused and not on mobile
+      if (isFocused && !isMobile && inputRef.current) {
+        setTimeout(() => inputRef.current?.focus(), 100);
+      }
       return;
     }
     
@@ -696,6 +701,10 @@ export function ImprovedDraggableChat() {
             });
             setIsLoading(false);
             setConnectionStatus("connected");
+            // Refocus input if chat is focused and not on mobile
+            if (isFocused && !isMobile && inputRef.current) {
+              setTimeout(() => inputRef.current?.focus(), 100);
+            }
             return; // STOP HERE - do not execute navigation
           }
           
@@ -715,6 +724,11 @@ export function ImprovedDraggableChat() {
           
           setIsLoading(false);
           setConnectionStatus("connected");
+          
+          // Refocus input briefly before navigation (if chat is focused and not on mobile)
+          if (isFocused && !isMobile && inputRef.current) {
+            inputRef.current.focus();
+          }
           
           // Hard navigation to ensure reliability across all pages
           // Chat state (open/minimized/position) preserved via localStorage
@@ -751,6 +765,11 @@ export function ImprovedDraggableChat() {
       }
       
       setConnectionStatus("connected");
+      
+      // Refocus input after message is added (if chat is focused and not on mobile)
+      if (isFocused && !isMobile && inputRef.current) {
+        setTimeout(() => inputRef.current?.focus(), 100);
+      }
     } catch (error: any) {
       console.error("🐻 Chat error:", error);
       setConnectionStatus("error");
@@ -772,6 +791,10 @@ export function ImprovedDraggableChat() {
       setTimeout(() => setConnectionStatus("connected"), 3000);
     } finally {
       setIsLoading(false);
+      // Refocus input if chat is still focused and not on mobile
+      if (isFocused && !isMobile && inputRef.current) {
+        setTimeout(() => inputRef.current?.focus(), 100);
+      }
     }
   };
 
@@ -1339,6 +1362,7 @@ export function ImprovedDraggableChat() {
             <form onSubmit={handleSendMessage} className={`chat-input chat-input-form border-t border-white/10 p-4 ${isMobile ? "flex-shrink-0" : ""}`}>
               <div className="flex items-center gap-2">
                 <input
+                  ref={inputRef}
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}

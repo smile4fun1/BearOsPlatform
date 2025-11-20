@@ -56,6 +56,7 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 | `/ai-models` | `src/app/ai-models/page.tsx` | AI training orchestration with model telemetry for 3 models |
 | `/data-lake` | `src/app/data-lake/page.tsx` | Data sources overview and pipeline architecture |
 | `/internal-demo-2025` | `src/app/internal-demo-2025/page.tsx` | 🎤 **Executive presentation deck** - 10 interactive slides showcasing platform capabilities (hidden route, not in navigation) |
+| `/formant-review` | `src/app/formant-review/page.tsx` | 📊 **Formant assessment presentation** - 5 strategic analysis slides covering integration benefits and risks (hidden route) |
 
 ### Components
 
@@ -72,7 +73,8 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 | `src/components/robots/RobotsManagement.tsx` | **NEW** Robot fleet management with search and filters |
 | `src/components/robots/RobotDetailView.tsx` | **NEW** Comprehensive robot detail view with tabs (Overview, Map, Telemetry, Diagnostics, Logs) |
 | `src/components/incidents/InteractiveIncidentRadar.tsx` | **🆕 NEW** Interactive incident monitoring with real-world robot problems, AI insights, SSH access, and chat integration |
-| `src/components/presentation/PresentationSlides.tsx` | **🎤 NEW** Executive presentation component with 10 interactive slides, keyboard navigation, and animated transitions |
+| `src/components/presentation/PresentationSlides.tsx` | **🎤 NEW** Executive presentation component with 10 interactive slides, mouse-only navigation, and animated transitions |
+| `src/components/presentation/FormantPresentation.tsx` | **📊 NEW** Formant assessment presentation with 5 strategic analysis slides |
 | `src/components/universe/KPICardGrid.tsx` | Grid of KPI cards with momentum indicators |
 | `src/components/universe/TrendPanel.tsx` | Line chart showing throughput, uptime, and satisfaction trends |
 | `src/components/universe/HeatmapPanel.tsx` | Facility demand and utilization heatmap |
@@ -157,6 +159,9 @@ Visit `http://localhost:3000` or `http://<your-machine-ip>:3000` from mobile.
 
 **🐻 NEW: Complete AI Command Guide Available!**  
 See [`URSA_MINOR_COMMANDS.md`](./URSA_MINOR_COMMANDS.md) for all available commands and natural language examples.
+
+**🎯 NEW: AI Demo Cheat Sheet!**  
+See [`AI_DEMO_CHEATSHEET.md`](./AI_DEMO_CHEATSHEET.md) for a quick reference guide on demonstrating Ursa Minor capabilities with specific questions and workflows.
 
 ### 5. Lint / Quality Check
 
@@ -591,17 +596,29 @@ Built with ❤️ for Bear Robotics · Seoul ↔ Silicon Valley
 
 ---
 
-## 🎤 Executive Presentation
+## 🎤 Executive Presentations
 
-A hidden presentation deck is available at `/internal-demo-2025` for team demos and stakeholder meetings:
+### Bear Universe Demo Deck
+Hidden presentation deck at `/internal-demo-2025` for team demos and stakeholder meetings:
 
 - **10 Interactive Slides** covering platform capabilities, AI agents, operations, incidents, data intelligence, roadmap, and business impact
-- **Keyboard Navigation** (Arrow keys or Space) with smooth transitions
+- **Mouse-Only Navigation** for seamless interaction without interfering with AI chat
 - **Professional Animations** using AnimatedCounter and slide transitions
 - **Progress Indicators** with clickable dots for quick navigation
+- **Full-Width Layout** optimized for large monitors
 - **Not Linked in UI** - Access only via direct URL for internal use
 
 Visit `http://localhost:3000/internal-demo-2025` after starting the dev server.
+
+### Formant Assessment Deck
+Strategic analysis presentation at `/formant-review` for internal review:
+
+- **5 Strategic Slides** covering benefits, risks, alignment concerns, and recommendations
+- **Same Professional Style** as Bear Universe deck
+- **Short URL** for easy sharing in meetings
+- **Independent Content** - Not tied to Bear Universe platform
+
+Visit `http://localhost:3000/formant-review` after starting the dev server.
 
 ## 🎉 Key Achievements
 

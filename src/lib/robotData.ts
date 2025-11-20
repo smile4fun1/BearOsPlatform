@@ -4,6 +4,13 @@ import dayjs from "dayjs";
 // Set seed for consistent data generation between server and client
 faker.seed(42);
 
+export interface RobotError {
+  message: string;
+  errorCode: string;
+  category: "navigation" | "battery" | "sensor" | "mechanical" | "network" | "software" | "collision" | "performance";
+  severity: "critical" | "high" | "medium" | "low";
+}
+
 export interface Robot {
   id: string;
   name: string;
@@ -22,7 +29,7 @@ export interface Robot {
   serialNumber: string;
   assignedZone?: string;
   currentTask?: string;
-  errors: string[];
+  errors: RobotError[];
   specs: {
     payloadCapacity: string;
     maxSpeed: string;
@@ -84,6 +91,33 @@ const modelSpecs = {
     weight: "180 kg"
   }
 };
+
+// Realistic error templates that match incident categories
+const errorTemplates: RobotError[] = [
+  // Navigation errors
+  { message: "Path planning deviation detected", errorCode: "NAV-2104", category: "navigation", severity: "medium" },
+  { message: "Localization drift exceeds threshold", errorCode: "NAV-3201", category: "navigation", severity: "high" },
+  { message: "Dynamic obstacle avoidance failure", errorCode: "NAV-4502", category: "navigation", severity: "critical" },
+  // Battery errors
+  { message: "Battery degradation warning", errorCode: "BAT-1203", category: "battery", severity: "medium" },
+  { message: "Charging station communication error", errorCode: "BAT-2401", category: "battery", severity: "high" },
+  // Sensor errors
+  { message: "LIDAR calibration drift detected", errorCode: "SEN-3104", category: "sensor", severity: "medium" },
+  { message: "Ultrasonic sensor array fault", errorCode: "SEN-4207", category: "sensor", severity: "high" },
+  // Mechanical errors
+  { message: "Drive motor unusual vibration", errorCode: "MEC-5301", category: "mechanical", severity: "high" },
+  { message: "Tray lift mechanism jam", errorCode: "MEC-6105", category: "mechanical", severity: "critical" },
+  // Network errors
+  { message: "WiFi signal weak", errorCode: "NET-7201", category: "network", severity: "medium" },
+  // Software errors
+  { message: "Task scheduler deadlock detected", errorCode: "SW-8403", category: "software", severity: "critical" },
+  // Collision errors
+  { message: "Collision event detected", errorCode: "COL-9101", category: "collision", severity: "critical" },
+  // Performance errors
+  { message: "Load sensor malfunction", errorCode: "PERF-1001", category: "performance", severity: "medium" },
+  { message: "Navigation path blocked", errorCode: "PERF-1102", category: "performance", severity: "low" },
+  { message: "Repeated docking failures", errorCode: "PERF-1205", category: "performance", severity: "high" },
+];
 
 // Task descriptions vary by model vertical
 const restaurantZones = ["Dining Area A", "Dining Area B", "Bar Section", "Kitchen Entrance", "Main Hall", "Private Rooms"];
@@ -163,8 +197,8 @@ function generateRobot(index: number): Robot {
     tasks = warehousingTasks;
   }
   
-  // Weighted status distribution
-  const statusWeights = [40, 30, 15, 8, 5, 2]; // active, idle, charging, maintenance, offline, error
+  // Weighted status distribution (more errors for better demo)
+  const statusWeights = [35, 25, 15, 10, 5, 10]; // active, idle, charging, maintenance, offline, error (increased error rate)
   const totalWeight = statusWeights.reduce((a, b) => a + b, 0);
   const random = (index * 137 + 42) % totalWeight; // Deterministic "random"
   let status: Robot["status"] = "active";
@@ -183,9 +217,8 @@ function generateRobot(index: number): Robot {
     : 15 + (index * 11) % 85;
   
   const hasError = status === "error";
-  const errors = hasError ? [
-    ["LIDAR calibration drift detected", "WiFi signal weak", "Load sensor malfunction", "Navigation path blocked", "Battery degradation warning"]
-    [(index * 13) % 5]
+  const errors: RobotError[] = hasError ? [
+    errorTemplates[(index * 13) % errorTemplates.length]
   ] : [];
   
   // Serial number prefix based on model
@@ -265,3 +298,7 @@ export function searchRobots(query: string): Robot[] {
   );
 }
 
+// Get robots with errors for incident generation
+export function getRobotsWithErrors(): Robot[] {
+  return robotFleet.filter(r => r.errors.length > 0);
+}

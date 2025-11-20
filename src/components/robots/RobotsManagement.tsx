@@ -288,7 +288,7 @@ export function RobotsManagement() {
                 {robot.errors.length > 0 && (
                   <div className="flex items-start gap-2 rounded-lg bg-rose-500/10 p-2 text-xs text-rose-400">
                     <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
-                    <span>{robot.errors[0]}</span>
+                    <span>{robot.errors[0].errorCode}: {robot.errors[0].message}</span>
                   </div>
                 )}
 

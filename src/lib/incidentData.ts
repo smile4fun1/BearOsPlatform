@@ -5,7 +5,7 @@
 
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
-import { robotFleet } from "./robotData";
+import { robotFleet, type RobotError } from "./robotData";
 
 faker.seed(42);
 
@@ -232,97 +232,92 @@ const incidentTemplates = {
 };
 
 /**
- * Generate realistic robot incidents
+ * Generate realistic robot incidents based on actual robot errors
  */
 export function generateIncidents(count: number = 20): RobotIncident[] {
   const incidents: RobotIncident[] = [];
-  const categories = Object.keys(incidentTemplates) as IncidentCategory[];
   
-  // Get robots with errors
-  const robotsWithErrors = robotFleet.filter(r => r.status === "error");
+  // Get robots with errors first - these are guaranteed to have incidents
+  const robotsWithErrors = robotFleet.filter(r => r.errors && r.errors.length > 0);
   
-  for (let i = 0; i < count; i++) {
-    const category = faker.helpers.arrayElement(categories);
-    const templates = incidentTemplates[category];
-    const template = faker.helpers.arrayElement(templates);
-    
-    // Pick a robot (prefer error status, but can use any)
-    const robot = i < robotsWithErrors.length 
-      ? robotsWithErrors[i]
-      : faker.helpers.arrayElement(robotFleet);
-    
-    // Weighted selection for severity (more medium/low than critical)
-    const severityRoll = faker.number.int({ min: 1, max: 100 });
-    const severity: IncidentSeverity = 
-      severityRoll <= 10 ? "critical" :  // 10%
-      severityRoll <= 30 ? "high" :      // 20%
-      severityRoll <= 70 ? "medium" :    // 40%
-      "low";                              // 30%
-    
-    // Weighted selection for status (more open/investigating than resolved)
-    const statusRoll = faker.number.int({ min: 1, max: 100 });
-    const status: IncidentStatus = 
-      statusRoll <= 30 ? "open" :         // 30%
-      statusRoll <= 50 ? "investigating" : // 20%
-      statusRoll <= 70 ? "in_progress" :  // 20%
-      statusRoll <= 90 ? "resolved" :     // 20%
-      "escalated";                        // 10%
-    
-    const detectedAt = dayjs().subtract(faker.number.int({ min: 10, max: 240 }), "minutes");
-    const downtime = faker.number.int({ min: 5, max: 180 });
-    
-    incidents.push({
-      id: `INC-${Date.now()}-${i}`,
-      robotId: robot.id,
-      robotName: robot.name,
-      facility: robot.facility,
-      city: robot.city,
-      region: robot.region,
+  // Create incidents for all robots with errors
+  robotsWithErrors.forEach((robot, i) => {
+    robot.errors.forEach((error) => {
+      const templates = incidentTemplates[error.category];
+      // Find matching template by error code or use first template
+      const template = templates.find(t => t.errorCode === error.errorCode) || templates[0];
       
-      title: template.title,
-      description: template.description,
-      category,
-      severity,
-      status,
+      // Weighted selection for status (more open/investigating than resolved)
+      const statusRoll = (i * 17 + 42) % 100; // Deterministic
+      const status: IncidentStatus = 
+        statusRoll <= 35 ? "open" :         // 35%
+        statusRoll <= 55 ? "investigating" : // 20%
+        statusRoll <= 75 ? "in_progress" :  // 20%
+        statusRoll <= 90 ? "resolved" :     // 15%
+        "escalated";                        // 10%
       
-      detectedAt: detectedAt.toISOString(),
-      lastUpdated: dayjs().subtract(faker.number.int({ min: 1, max: 30 }), "minutes").toISOString(),
-      resolvedAt: status === "resolved" ? dayjs().subtract(faker.number.int({ min: 1, max: 60 }), "minutes").toISOString() : undefined,
+      const detectedAt = dayjs().subtract((i * 13 + 10) % 230 + 10, "minutes");
+      const downtime = (i * 11) % 175 + 5;
       
-      errorCode: template.errorCode,
-      affectedSystems: template.affectedSystems,
-      telemetry: {
-        battery: robot.metrics.battery,
-        cpuTemp: faker.number.int({ min: 45, max: 85 }),
-        memoryUsage: faker.number.int({ min: 40, max: 95 }),
-        networkLatency: faker.number.int({ min: 5, max: 500 }),
-        lastPosition: { x: faker.number.float({ min: 0, max: 50, fractionDigits: 2 }), y: faker.number.float({ min: 0, max: 30, fractionDigits: 2 }) },
-      },
-      
-      aiInsights: {
-        rootCause: template.rootCause,
-        recommendedActions: template.actions,
-        estimatedResolutionTime: template.resolutionTime,
-        similarIncidents: faker.number.int({ min: 2, max: 45 }),
-        confidence: faker.number.int({ min: 75, max: 98 }),
-      },
-      
-      assignedTo: status !== "open" ? faker.helpers.arrayElement(["RFE-001", "RFE-002", "RFE-003", "Auto-Resolution"]) : undefined,
-      resolutionSteps: generateResolutionSteps(template.actions, status),
-      
-      downtime,
-      ordersAffected: Math.floor(downtime / 8), // ~8 min per order average
-      revenueImpact: Math.floor(downtime / 8) * faker.number.int({ min: 15, max: 45 }), // Revenue per order
+      incidents.push({
+        id: `INC-${robot.id}-${error.errorCode}`,
+        robotId: robot.id,
+        robotName: robot.name,
+        facility: robot.facility,
+        city: robot.city,
+        region: robot.region,
+        
+        title: template.title,
+        description: template.description,
+        category: error.category,
+        severity: error.severity,
+        status,
+        
+        detectedAt: detectedAt.toISOString(),
+        lastUpdated: dayjs().subtract((i * 7) % 30 + 1, "minutes").toISOString(),
+        resolvedAt: status === "resolved" ? dayjs().subtract((i * 5) % 60 + 1, "minutes").toISOString() : undefined,
+        
+        errorCode: error.errorCode,
+        affectedSystems: template.affectedSystems,
+        telemetry: {
+          battery: robot.battery,
+          cpuTemp: 45 + (i * 11) % 40,
+          memoryUsage: 40 + (i * 13) % 55,
+          networkLatency: 5 + (i * 17) % 495,
+          lastPosition: { 
+            x: parseFloat((i * 3.7 % 50).toFixed(2)), 
+            y: parseFloat((i * 2.3 % 30).toFixed(2)) 
+          },
+        },
+        
+        aiInsights: {
+          rootCause: template.rootCause,
+          recommendedActions: template.actions,
+          estimatedResolutionTime: template.resolutionTime,
+          similarIncidents: 2 + (i * 19) % 43,
+          confidence: 75 + (i * 23) % 23,
+        },
+        
+        assignedTo: status !== "open" ? ["RFE-001", "RFE-002", "RFE-003", "Auto-Resolution"][i % 4] : undefined,
+        resolutionSteps: generateResolutionSteps(template.actions, status),
+        
+        downtime,
+        ordersAffected: Math.floor(downtime / 8), // ~8 min per order average
+        revenueImpact: Math.floor(downtime / 8) * (15 + (i * 7) % 30), // Revenue per order
+      });
     });
-  }
+  });
   
   // Sort by severity first (hot to cold: critical > high > medium > low), then by time
   const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-  return incidents.sort((a, b) => {
+  const sorted = incidents.sort((a, b) => {
     const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
     if (severityDiff !== 0) return severityDiff;
     return new Date(b.detectedAt).getTime() - new Date(a.detectedAt).getTime();
   });
+  
+  // Return requested count
+  return sorted.slice(0, count);
 }
 
 function generateResolutionSteps(actions: string[], status: IncidentStatus): RobotIncident["resolutionSteps"] {

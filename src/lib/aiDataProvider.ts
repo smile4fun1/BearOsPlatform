@@ -36,7 +36,7 @@ export function getFleetStats(timeRange?: TimeRange) {
   const lowBatteryRobots = robotFleet.filter(r => r.status === "charging"); // Approximate low battery by charging status
   const errorMessages = robotFleet
     .filter(r => r.status === "error")
-    .map(r => ({ id: r.id, name: r.name, error: r.errors[0] || "Unknown error" }));
+    .map(r => ({ id: r.id, name: r.name, error: r.errors[0]?.message || "Unknown error", errorCode: r.errors[0]?.errorCode || "ERR-000" }));
 
   // Facility breakdown
   const facilityCounts = robotFleet.reduce((acc, r) => {
@@ -102,7 +102,8 @@ export function getRobotStats(robotId: string) {
       successRate: robot.metrics.successRate,
     },
     location: robot.location,
-    errorMessage: robot.errors[0] || null,
+    errorMessage: robot.errors[0]?.message || null,
+    errorCode: robot.errors[0]?.errorCode || null,
     lastSeen: robot.lastSeen,
   };
 }

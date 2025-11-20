@@ -125,10 +125,16 @@ export function RobotDetailView({ robot }: RobotDetailViewProps) {
           {robot.errors.length > 0 && (
             <div className="mt-6 flex items-start gap-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4">
               <AlertTriangle className="h-5 w-5 text-rose-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <div className="font-semibold text-rose-400 mb-1">Active Issues</div>
+              <div className="flex-1">
+                <div className="font-semibold text-rose-400 mb-2">Active Issues</div>
                 {robot.errors.map((error, idx) => (
-                  <div key={idx} className="text-sm text-white/80">{error}</div>
+                  <div key={idx} className="mb-2 last:mb-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-mono text-rose-300">{error.errorCode}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 uppercase">{error.severity}</span>
+                    </div>
+                    <div className="text-sm text-white/80">{error.message}</div>
+                  </div>
                 ))}
               </div>
             </div>

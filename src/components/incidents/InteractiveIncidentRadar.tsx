@@ -29,7 +29,7 @@ faker.seed(42);
 export function InteractiveIncidentRadar() {
   const [incidents, setIncidents] = useState<RobotIncident[]>([]);
   const [selectedIncident, setSelectedIncident] = useState<RobotIncident | null>(null);
-  const [filter, setFilter] = useState<"all" | "critical" | "high">("all");
+  const [filter, setFilter] = useState<"all" | "critical" | "high" | "medium" | "low">("all");
   const [isSSHOpen, setIsSSHOpen] = useState(false);
 
   useEffect(() => {
@@ -148,8 +148,8 @@ Please provide:
               </p>
             </div>
             
-            <div className="flex gap-2">
-              {["all", "critical", "high"].map((f) => (
+            <div className="flex flex-wrap gap-2">
+              {["all", "critical", "high", "medium", "low"].map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f as any)}

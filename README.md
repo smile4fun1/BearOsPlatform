@@ -55,6 +55,7 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 | `/robots/[id]` | `src/app/robots/[id]/page.tsx` | Individual robot detail page with live maps, telemetry, and diagnostics |
 | `/ai-models` | `src/app/ai-models/page.tsx` | AI training orchestration with model telemetry for 3 models |
 | `/data-lake` | `src/app/data-lake/page.tsx` | Data sources overview and pipeline architecture |
+| `/internal-demo-2025` | `src/app/internal-demo-2025/page.tsx` | 🎤 **Executive presentation deck** - 10 interactive slides showcasing platform capabilities (hidden route, not in navigation) |
 
 ### Components
 
@@ -71,6 +72,7 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 | `src/components/robots/RobotsManagement.tsx` | **NEW** Robot fleet management with search and filters |
 | `src/components/robots/RobotDetailView.tsx` | **NEW** Comprehensive robot detail view with tabs (Overview, Map, Telemetry, Diagnostics, Logs) |
 | `src/components/incidents/InteractiveIncidentRadar.tsx` | **🆕 NEW** Interactive incident monitoring with real-world robot problems, AI insights, SSH access, and chat integration |
+| `src/components/presentation/PresentationSlides.tsx` | **🎤 NEW** Executive presentation component with 10 interactive slides, keyboard navigation, and animated transitions |
 | `src/components/universe/KPICardGrid.tsx` | Grid of KPI cards with momentum indicators |
 | `src/components/universe/TrendPanel.tsx` | Line chart showing throughput, uptime, and satisfaction trends |
 | `src/components/universe/HeatmapPanel.tsx` | Facility demand and utilization heatmap |
@@ -583,9 +585,23 @@ To keep this README up to date:
 
 ---
 
-**Last Updated:** November 18, 2025 (Evening Update - AI Assistant & Robot Management)
+**Last Updated:** November 20, 2025 (Executive Presentation Deck Added)
 
 Built with ❤️ for Bear Robotics · Seoul ↔ Silicon Valley
+
+---
+
+## 🎤 Executive Presentation
+
+A hidden presentation deck is available at `/internal-demo-2025` for team demos and stakeholder meetings:
+
+- **10 Interactive Slides** covering platform capabilities, AI agents, operations, incidents, data intelligence, roadmap, and business impact
+- **Keyboard Navigation** (Arrow keys or Space) with smooth transitions
+- **Professional Animations** using AnimatedCounter and slide transitions
+- **Progress Indicators** with clickable dots for quick navigation
+- **Not Linked in UI** - Access only via direct URL for internal use
+
+Visit `http://localhost:3000/internal-demo-2025` after starting the dev server.
 
 ## 🎉 Key Achievements
 

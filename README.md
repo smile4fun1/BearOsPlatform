@@ -73,6 +73,7 @@ Everything runs locally with live mock data pipelines, making it perfect for dem
 | `src/components/robots/RobotsManagement.tsx` | **NEW** Robot fleet management with search and filters |
 | `src/components/robots/RobotDetailView.tsx` | **NEW** Comprehensive robot detail view with tabs (Overview, Map, Telemetry, Diagnostics, Logs) |
 | `src/components/robots/RFEDiagnosticPanel.tsx` | **🆕 NEW** Robotics Field Engineer diagnostic panel with AI-powered comprehensive analysis, quick action tools, anomaly detection, usage statistics, and smart recommendations |
+| `src/components/robots/ActionModals.tsx` | **🆕 NEW** Interactive action modals: Recalibrate Sensors (model-specific), Full Diagnostics, Soft Restart, Adjust Parameters, Clear Error Flags, Emergency Stop - all with smart animations and realistic workflows |
 | `src/components/incidents/InteractiveIncidentRadar.tsx` | **🆕 NEW** Interactive incident monitoring with real-world robot problems, AI insights, SSH access, and chat integration |
 | `src/components/presentation/PresentationSlides.tsx` | **🎤 NEW** Executive presentation component with 10 interactive slides, mouse-only navigation, and animated transitions |
 | `src/components/presentation/FormantPresentation.tsx` | **📊 NEW** Formant assessment presentation with 5 strategic analysis slides |

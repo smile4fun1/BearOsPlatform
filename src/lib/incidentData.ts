@@ -234,13 +234,13 @@ const incidentTemplates = {
 /**
  * Generate realistic robot incidents based on actual robot errors
  */
-export function generateIncidents(count: number = 20): RobotIncident[] {
+export function generateIncidents(maxCount?: number): RobotIncident[] {
   const incidents: RobotIncident[] = [];
   
   // Get robots with errors first - these are guaranteed to have incidents
   const robotsWithErrors = robotFleet.filter(r => r.errors && r.errors.length > 0);
   
-  // Create incidents for all robots with errors
+  // Create incidents for ALL robots with errors (no limit at generation)
   robotsWithErrors.forEach((robot, i) => {
     robot.errors.forEach((error) => {
       const templates = incidentTemplates[error.category];
@@ -316,8 +316,8 @@ export function generateIncidents(count: number = 20): RobotIncident[] {
     return new Date(b.detectedAt).getTime() - new Date(a.detectedAt).getTime();
   });
   
-  // Return requested count
-  return sorted.slice(0, count);
+  // Only limit if maxCount specified
+  return maxCount ? sorted.slice(0, maxCount) : sorted;
 }
 
 function generateResolutionSteps(actions: string[], status: IncidentStatus): RobotIncident["resolutionSteps"] {
@@ -335,16 +335,14 @@ function generateResolutionSteps(actions: string[], status: IncidentStatus): Rob
 
 // Real-time incident updates (simulates live system)
 export function getActiveIncidents(): RobotIncident[] {
-  // Generate more incidents for better demo visibility
-  const allIncidents = generateIncidents(30);
+  // Generate ALL incidents (no limit) - matches robot error count
+  const allIncidents = generateIncidents();
   
   // Add time-based variation to make incidents appear "live"
   const now = Date.now();
-  const cycleTime = 30000; // 30 second cycle
-  const offset = Math.floor(now / cycleTime) % 10;
   
   return allIncidents
-    .filter(i => i.status !== "resolved")
+    .filter(i => i.status !== "resolved") // Only show non-resolved
     .map((incident, idx) => {
       // Randomly vary status based on time to simulate activity
       const timeVariation = (now + idx * 1000) % 60000;
@@ -359,8 +357,8 @@ export function getActiveIncidents(): RobotIncident[] {
       }
       
       return { ...incident, status } as RobotIncident;
-    })
-    .slice(0, 20); // Show up to 20 active incidents
+    });
+  // No slice - show ALL active incidents to match robot errors
 }
 
 export function getIncidentById(id: string): RobotIncident | undefined {

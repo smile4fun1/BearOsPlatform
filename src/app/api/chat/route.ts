@@ -70,10 +70,25 @@ export async function POST(request: Request) {
     // Get REAL platform data based on user query
     const realData = getAIDataContext(userQuery);
     
-    // Build comprehensive context with auto-navigate instruction and REAL DATA
+    // Detect if query requires list formatting (add formatting rules only when needed)
+    const needsListFormatting = 
+      lowerQuery.includes("list") ||
+      lowerQuery.includes("show") && (lowerQuery.includes("robots") || lowerQuery.includes("all") || lowerQuery.includes("faulty") || lowerQuery.includes("error")) ||
+      lowerQuery.includes("find") && lowerQuery.includes("robots") ||
+      lowerQuery.includes("which robots");
+    
+    // Build lean, contextual system message (only add what's needed)
     const contextMessage = {
       role: "system" as const,
       content: `${URSA_MINOR_SYSTEM_PROMPT}
+${needsListFormatting ? `
+
+📋 LIST FORMATTING (Use for multiple items):
+• One item per line with bullet points
+• Format: "Robot Name - Battery: XX% - Error Code: Description"
+• Group by severity if listing errors
+• Keep it clean and scannable
+` : ''}
 
 ## USER PREFERENCES & CURRENT STATE
 **Auto-Navigate**: ${autoNavigate ? '✅ ENABLED' : '❌ DISABLED'}

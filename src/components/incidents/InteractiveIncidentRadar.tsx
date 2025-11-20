@@ -228,7 +228,7 @@ Please provide:
               <ChevronRight className="h-5 w-5 text-white/60" />
             </div>
           </button>
-        )))
+        ))
             )}
           </div>
         </div>

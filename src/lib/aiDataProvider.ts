@@ -24,8 +24,8 @@ export function getFleetStats(timeRange?: TimeRange) {
   const errorRobots = robotFleet.filter(r => r.status === "error").length;
   const maintenanceRobots = robotFleet.filter(r => r.status === "maintenance").length;
 
-  // Calculate averages
-  const avgBattery = 85; // Mock average battery level
+  // Calculate averages - USE ACTUAL DATA
+  const avgBattery = robotFleet.reduce((sum, r) => sum + r.battery, 0) / totalRobots;
   const avgUptime = robotFleet.reduce((sum, r) => sum + r.metrics.successRate, 0) / totalRobots;
   const avgTrips = robotFleet.reduce((sum, r) => sum + (r.metrics.tripsCompleted || 0), 0) / totalRobots;
   const totalDistance = robotFleet.reduce((sum, r) => sum + (r.metrics.totalDistanceKm || 0), 0);
@@ -65,10 +65,17 @@ export function getFleetStats(timeRange?: TimeRange) {
       lowBattery: lowBatteryRobots.map(r => ({
         id: r.id,
         name: r.name,
-        battery: 15, // Mock low battery value
+        battery: r.battery, // USE ACTUAL battery level
         facility: r.facility,
       })),
-      errors: errorMessages,
+      errors: errorMessages.map(e => ({
+        id: e.id,
+        name: e.name,
+        error: e.error,
+        errorCode: e.errorCode,
+        battery: robotFleet.find(r => r.id === e.id)?.battery || 0, // ADD actual battery
+        facility: robotFleet.find(r => r.id === e.id)?.facility || "Unknown",
+      })),
     },
     facilities: facilityCounts,
   };

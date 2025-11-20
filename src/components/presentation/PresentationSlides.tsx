@@ -1190,7 +1190,7 @@ export function PresentationSlides() {
   ];
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-x-hidden">
       {/* Slide Content */}
       <div
         className={`transition-all duration-300 ${

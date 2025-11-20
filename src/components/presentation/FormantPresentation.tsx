@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, TrendingUp, Zap, AlertTriangle, Target, Shield, CheckCircle2, Clock, DollarSign, Lock, Database, Users, GitBranch } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Brain, Zap, AlertTriangle, Target, Shield, CheckCircle2, Clock, DollarSign, Lock, Database, Users, GitBranch, Award, TrendingUp, Code, Network, Search } from "lucide-react";
 
 export function FormantPresentation() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -33,157 +33,276 @@ export function FormantPresentation() {
   };
 
   const slides = [
-    // Slide 1: Why Formant Is Attractive
+    // Slide 1: Formant Strengths Based on Public Positioning
     <div key="slide-1" className="flex flex-col justify-center min-h-[80vh] px-16 pb-32">
       <div className="max-w-[1600px] mx-auto w-full">
         <div className="flex items-center gap-3 mb-8">
-          <TrendingUp className="h-12 w-12 text-emerald-400" />
-          <h2 className="text-5xl font-bold text-white">Why Formant Is Attractive Right Now</h2>
+          <Award className="h-12 w-12 text-emerald-400" />
+          <h2 className="text-5xl font-bold text-white">Formant Strengths Based on Public Positioning</h2>
         </div>
         
         <p className="text-2xl text-white/70 mb-12 leading-relaxed">
-          Clear advantages that make Formant a compelling option for robotics operations
+          What Formant claims and demonstrates in the market
         </p>
 
         <div className="grid gap-8">
+          <div className="rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 p-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500/30 to-indigo-600/30 flex items-center justify-center">
+                <Brain className="h-8 w-8 text-indigo-300" />
+              </div>
+              <h3 className="text-3xl font-bold text-white">AI-Native Operations Layer</h3>
+            </div>
+            <p className="text-xl text-white/70 leading-relaxed">
+              Formant presents F3 as a generative AI and agentic reasoning platform that can interpret data and automate decisions. 
+              Positioned as intelligent infrastructure, not just passive telemetry.
+            </p>
+          </div>
+
           <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 p-10">
             <div className="flex items-center gap-4 mb-6">
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 flex items-center justify-center">
                 <Shield className="h-8 w-8 text-emerald-300" />
               </div>
-              <h3 className="text-3xl font-bold text-white">Enterprise-Grade Readiness</h3>
+              <h3 className="text-3xl font-bold text-white">Enterprise-Ready Robotics Infrastructure</h3>
             </div>
             <p className="text-xl text-white/70 leading-relaxed">
-              Mature telemetry platform, incident tracking systems, and data infrastructure available immediately. 
-              No need to build foundational systems from scratch.
+              Robust telemetry, data ingestion, events, observability, and operational tooling. 
+              Built for commercial-scale deployments with proven reliability.
             </p>
           </div>
 
           <div className="rounded-3xl border border-sky-500/30 bg-gradient-to-br from-sky-500/10 to-sky-500/5 p-10">
             <div className="flex items-center gap-4 mb-6">
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-sky-500/30 to-sky-600/30 flex items-center justify-center">
-                <Zap className="h-8 w-8 text-sky-300" />
+                <TrendingUp className="h-8 w-8 text-sky-300" />
               </div>
-              <h3 className="text-3xl font-bold text-white">Operational Efficiency Gains</h3>
+              <h3 className="text-3xl font-bold text-white">Focus on Efficiency Uplift</h3>
             </div>
             <p className="text-xl text-white/70 leading-relaxed">
-              Their model focuses on delivering measurable 5–20% improvements in fleet operations. 
-              Proven track record with robotics deployments at scale.
+              Positioned to deliver measurable operational improvements through insights and automation. 
+              Claims to optimize fleet performance and reduce operational overhead.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-500/5 p-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500/30 to-amber-600/30 flex items-center justify-center">
+                <Users className="h-8 w-8 text-amber-300" />
+              </div>
+              <h3 className="text-3xl font-bold text-white">Established Robotics Experience</h3>
+            </div>
+            <p className="text-xl text-white/70 leading-relaxed">
+              Years of work with commercial fleets and complex deployments across multiple robotics domains. 
+              Deep understanding of operational challenges at scale.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>,
+
+    // Slide 2: What Formant's AI Actually Represents
+    <div key="slide-2" className="flex flex-col justify-center min-h-[80vh] px-16 pb-32">
+      <div className="max-w-[1600px] mx-auto w-full">
+        <div className="flex items-center gap-3 mb-8">
+          <Brain className="h-12 w-12 text-indigo-400" />
+          <h2 className="text-5xl font-bold text-white">What Formant's AI Actually Represents</h2>
+        </div>
+        
+        <p className="text-2xl text-white/70 mb-12 leading-relaxed">
+          Technical reality behind the marketing claims
+        </p>
+
+        <div className="grid gap-8">
+          <div className="rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 p-10">
+            <div className="flex items-start gap-6">
+              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500/30 to-indigo-600/30 flex items-center justify-center">
+                <Network className="h-8 w-8 text-indigo-300" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-4">AI Orchestration Rather Than Full AI Models</h3>
+                <p className="text-xl text-white/70 leading-relaxed">
+                  The intelligence appears centered on automation logic, workflow execution, and agentic reasoning 
+                  rather than supplying deep AI models. They coordinate AI, not create it.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-sky-500/30 bg-gradient-to-br from-sky-500/10 to-sky-500/5 p-10">
+            <div className="flex items-start gap-6">
+              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-sky-500/30 to-sky-600/30 flex items-center justify-center">
+                <Sparkles className="h-8 w-8 text-sky-300" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-4">Insight Generation</h3>
+                <p className="text-xl text-white/70 leading-relaxed">
+                  Transforms ingested fleet data into recommendations, anomaly detection, and early-warning signals. 
+                  Analytics layer, not perception layer.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 p-10">
+            <div className="flex items-start gap-6">
+              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 flex items-center justify-center">
+                <Search className="h-8 w-8 text-emerald-300" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-4">Knowledge Intelligence</h3>
+                <p className="text-xl text-white/70 leading-relaxed">
+                  Supports searchable documentation, context-aware reasoning, and structured knowledge exploration. 
+                  RAG-style systems for operational context.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-500/5 p-10">
+            <div className="flex items-start gap-6">
+              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500/30 to-amber-600/30 flex items-center justify-center">
+                <Code className="h-8 w-8 text-amber-300" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-4">Interface-Level Intelligence</h3>
+                <p className="text-xl text-white/70 leading-relaxed mb-4">
+                  Voice and text command handling for natural-language control. 
+                  UX convenience, not core robotics intelligence.
+                </p>
+                <div className="flex items-center gap-3 bg-white/5 rounded-xl p-4 border border-rose-500/30">
+                  <AlertTriangle className="h-6 w-6 text-rose-400 flex-shrink-0" />
+                  <div className="text-lg text-white/70">
+                    <span className="font-semibold text-white">Critical:</span> No domain-specific AI models. 
+                    Perception, recognition, or detection models must be supplied by us.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>,
+
+    // Slide 3: Benefits of Working with Formant Now
+    <div key="slide-3" className="flex flex-col justify-center min-h-[80vh] px-16 pb-32">
+      <div className="max-w-[1600px] mx-auto w-full">
+        <div className="flex items-center gap-3 mb-8">
+          <Zap className="h-12 w-12 text-emerald-400" />
+          <h2 className="text-5xl font-bold text-white">Benefits of Working with Formant Now</h2>
+        </div>
+        
+        <p className="text-2xl text-white/70 mb-12 leading-relaxed">
+          Concrete advantages for accelerating operations
+        </p>
+
+        <div className="grid gap-8">
+          <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 p-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 flex items-center justify-center">
+                <Clock className="h-8 w-8 text-emerald-300" />
+              </div>
+              <h3 className="text-3xl font-bold text-white">Faster Implementation</h3>
+            </div>
+            <p className="text-xl text-white/70 leading-relaxed">
+              Provides an immediate foundation for telemetry, event pipelines, monitoring, and operational dashboards. 
+              Skips months of infrastructure development.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-sky-500/30 bg-gradient-to-br from-sky-500/10 to-sky-500/5 p-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-sky-500/30 to-sky-600/30 flex items-center justify-center">
+                <Sparkles className="h-8 w-8 text-sky-300" />
+              </div>
+              <h3 className="text-3xl font-bold text-white">AI-Enabled Workflows Available</h3>
+            </div>
+            <p className="text-xl text-white/70 leading-relaxed">
+              Even if limited, their automation and insight engine accelerates operational improvements. 
+              Useful for immediate efficiency gains while we build our own models.
             </p>
           </div>
 
           <div className="rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 p-10">
             <div className="flex items-center gap-4 mb-6">
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500/30 to-indigo-600/30 flex items-center justify-center">
-                <Users className="h-8 w-8 text-indigo-300" />
+                <Database className="h-8 w-8 text-indigo-300" />
               </div>
-              <h3 className="text-3xl font-bold text-white">Robotics Domain Expertise</h3>
+              <h3 className="text-3xl font-bold text-white">Strong Data Pipeline Environment</h3>
             </div>
             <p className="text-xl text-white/70 leading-relaxed">
-              Years of experience with complex robotic deployments and fleet environments. 
-              Deep understanding of telemetry, diagnostics, and operational challenges.
+              Well-suited to ingest outputs from our models such as detection events or observations. 
+              They handle the plumbing, we provide the intelligence.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-500/5 p-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500/30 to-amber-600/30 flex items-center justify-center">
+                <Shield className="h-8 w-8 text-amber-300" />
+              </div>
+              <h3 className="text-3xl font-bold text-white">Mature Robotics Tooling</h3>
+            </div>
+            <p className="text-xl text-white/70 leading-relaxed">
+              Includes scheduling, monitoring, remote access, and incident handling. 
+              Proven tools that reduce operational burden immediately.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-500/10 to-violet-500/5 p-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-500/30 to-violet-600/30 flex items-center justify-center">
+                <Award className="h-8 w-8 text-violet-300" />
+              </div>
+              <h3 className="text-3xl font-bold text-white">Operational Credibility</h3>
+            </div>
+            <p className="text-xl text-white/70 leading-relaxed">
+              Helpful when working with enterprise clients and scaling deployments. 
+              Their brand recognition adds legitimacy to our operations.
             </p>
           </div>
         </div>
       </div>
     </div>,
 
-    // Slide 2: Acceleration Benefits
-    <div key="slide-2" className="flex flex-col justify-center min-h-[80vh] px-16 pb-32">
+    // Slide 4: Key Risks and Concerns
+    <div key="slide-4" className="flex flex-col justify-center min-h-[80vh] px-16 pb-32">
       <div className="max-w-[1600px] mx-auto w-full">
         <div className="flex items-center gap-3 mb-8">
-          <Zap className="h-12 w-12 text-sky-400" />
-          <h2 className="text-5xl font-bold text-white">Acceleration Benefits</h2>
+          <AlertTriangle className="h-12 w-12 text-rose-400" />
+          <h2 className="text-5xl font-bold text-white">Key Risks and Concerns</h2>
         </div>
         
         <p className="text-2xl text-white/70 mb-12 leading-relaxed">
-          How Formant speeds up deployment and reduces operational burden
-        </p>
-
-        <div className="grid grid-cols-3 gap-8">
-          <div className="rounded-3xl border border-sky-500/30 bg-gradient-to-br from-sky-500/10 to-sky-500/5 p-10 transform transition-all hover:scale-105">
-            <div className="flex justify-center mb-6">
-              <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-sky-500/30 to-sky-600/30 flex items-center justify-center">
-                <Clock className="h-10 w-10 text-sky-300" />
-              </div>
-            </div>
-            <h3 className="text-2xl font-semibold text-white mb-4 text-center">Faster Implementation</h3>
-            <p className="text-base text-white/70 leading-relaxed text-center">
-              Skips months of building foundational systems from scratch. 
-              Get operational telemetry and incident tracking up and running quickly.
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 p-10 transform transition-all hover:scale-105">
-            <div className="flex justify-center mb-6">
-              <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-indigo-500/30 to-indigo-600/30 flex items-center justify-center">
-                <Users className="h-10 w-10 text-indigo-300" />
-              </div>
-            </div>
-            <h3 className="text-2xl font-semibold text-white mb-4 text-center">Access to Embedded Engineers</h3>
-            <p className="text-base text-white/70 leading-relaxed text-center">
-              Formant deploys specialists on-site, reducing internal support load 
-              and accelerating insights from telemetry data.
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 p-10 transform transition-all hover:scale-105">
-            <div className="flex justify-center mb-6">
-              <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 flex items-center justify-center">
-                <Database className="h-10 w-10 text-emerald-300" />
-              </div>
-            </div>
-            <h3 className="text-2xl font-semibold text-white mb-4 text-center">Scalable Backbone</h3>
-            <p className="text-base text-white/70 leading-relaxed text-center">
-              Reliable infrastructure that can support large-scale operations from day one. 
-              Built to handle enterprise fleet complexity.
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-12 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8">
-          <div className="grid grid-cols-3 gap-6 text-center">
-            <div>
-              <div className="text-3xl font-bold text-emerald-400 mb-2">Immediate</div>
-              <div className="text-base text-white/60">Time to Value</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-sky-400 mb-2">Proven</div>
-              <div className="text-base text-white/60">Infrastructure</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-indigo-400 mb-2">Reduced</div>
-              <div className="text-base text-white/60">Internal Burden</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>,
-
-    // Slide 3: Risks and Concerns
-    <div key="slide-3" className="flex flex-col justify-center min-h-[80vh] px-16 pb-32">
-      <div className="max-w-[1600px] mx-auto w-full">
-        <div className="flex items-center gap-3 mb-8">
-          <AlertTriangle className="h-12 w-12 text-amber-400" />
-          <h2 className="text-5xl font-bold text-white">Risks and Concerns</h2>
-        </div>
-        
-        <p className="text-2xl text-white/70 mb-12 leading-relaxed">
-          Critical considerations that must be evaluated before committing
+          Critical issues that require careful evaluation and mitigation
         </p>
 
         <div className="grid gap-8">
+          <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-500/5 p-10">
+            <div className="flex items-start gap-6">
+              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500/30 to-amber-600/30 flex items-center justify-center">
+                <AlertTriangle className="h-8 w-8 text-amber-300" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-4">Ambiguity in AI Capabilities</h3>
+                <p className="text-xl text-white/70 leading-relaxed">
+                  Public claims of generative AI contrast with the expectation that we supply our own models. 
+                  This gap requires immediate clarification before deep integration.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div className="rounded-3xl border border-rose-500/30 bg-gradient-to-br from-rose-500/10 to-rose-500/5 p-10">
             <div className="flex items-start gap-6">
               <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-rose-500/30 to-rose-600/30 flex items-center justify-center">
                 <Lock className="h-8 w-8 text-rose-300" />
               </div>
               <div>
-                <h3 className="text-3xl font-bold text-white mb-4">Vendor Lock-In</h3>
+                <h3 className="text-3xl font-bold text-white mb-4">Vendor Dependency</h3>
                 <p className="text-xl text-white/70 leading-relaxed">
-                  Deep dependency on their platform, tools, and roadmap. Migration becomes exponentially 
-                  harder over time as operational processes intertwine with Formant architecture. 
-                  Exit strategy must be considered from day one.
+                  Deep integration makes future migration costly and complex. 
+                  Every operational process that intertwines with Formant increases switching costs exponentially.
                 </p>
               </div>
             </div>
@@ -197,25 +316,38 @@ export function FormantPresentation() {
               <div>
                 <h3 className="text-3xl font-bold text-white mb-4">Data Exposure</h3>
                 <p className="text-xl text-white/70 leading-relaxed">
-                  Operational data contributes to their AI models unless tightly restricted contractually. 
-                  IP and competitive intelligence risk if data handling terms aren't explicit. 
-                  Requires careful legal review.
+                  Our model outputs and operational data sit within their ecosystem unless contractually controlled. 
+                  IP protection and competitive intelligence require explicit legal safeguards.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-amber-500/5 p-10">
+          <div className="rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-500/10 to-violet-500/5 p-10">
             <div className="flex items-start gap-6">
-              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500/30 to-amber-600/30 flex items-center justify-center">
-                <Shield className="h-8 w-8 text-amber-300" />
+              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-500/30 to-violet-600/30 flex items-center justify-center">
+                <Shield className="h-8 w-8 text-violet-300" />
               </div>
               <div>
-                <h3 className="text-3xl font-bold text-white mb-4">Limited Customization</h3>
+                <h3 className="text-3xl font-bold text-white mb-4">Limited Control</h3>
                 <p className="text-xl text-white/70 leading-relaxed">
-                  Their architecture, UI, and model behavior are not fully under our control. 
-                  Custom features require their development cycles. Cannot rapidly iterate on 
-                  proprietary workflows or competitive advantages.
+                  Customization of their AI layer and pipelines is constrained. 
+                  Cannot rapidly iterate on proprietary workflows or competitive advantages.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-red-500/30 bg-gradient-to-br from-red-500/10 to-red-500/5 p-10">
+            <div className="flex items-start gap-6">
+              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-red-500/30 to-red-600/30 flex items-center justify-center">
+                <DollarSign className="h-8 w-8 text-red-300" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-4">Cost Scaling</h3>
+                <p className="text-xl text-white/70 leading-relaxed">
+                  Usage-based pricing may escalate with high-volume AI outputs and data loads. 
+                  Financial risk grows as the fleet scales and data volume increases.
                 </p>
               </div>
             </div>
@@ -224,155 +356,109 @@ export function FormantPresentation() {
       </div>
     </div>,
 
-    // Slide 4: Strategic Alignment Risks
-    <div key="slide-4" className="flex flex-col justify-center min-h-[80vh] px-16 pb-32">
-      <div className="max-w-[1600px] mx-auto w-full">
-        <div className="flex items-center gap-3 mb-8">
-          <Target className="h-12 w-12 text-rose-400" />
-          <h2 className="text-5xl font-bold text-white">Strategic Alignment Risks</h2>
-        </div>
-        
-        <p className="text-2xl text-white/70 mb-12 leading-relaxed">
-          Long-term concerns about business direction and cost structure
-        </p>
-
-        <div className="grid gap-8">
-          <div className="rounded-3xl border border-rose-500/30 bg-gradient-to-br from-rose-500/10 to-rose-500/5 p-10">
-            <div className="flex items-start gap-6">
-              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-rose-500/30 to-rose-600/30 flex items-center justify-center">
-                <GitBranch className="h-8 w-8 text-rose-300" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-3xl font-bold text-white mb-4">Different Long-Term Goals</h3>
-                <p className="text-xl text-white/70 leading-relaxed mb-6">
-                  Formant has repositioned away from robotics tooling toward enterprise AI efficiency. 
-                  Their strategic priorities may diverge from robotics-specific needs over time.
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-5">
-                    <div className="font-semibold text-white mb-2 text-base">Formant's Focus</div>
-                    <div className="text-base text-white/60">Enterprise AI efficiency, cross-industry solutions</div>
-                  </div>
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-5">
-                    <div className="font-semibold text-white mb-2 text-base">Our Needs</div>
-                    <div className="text-base text-white/60">Robotics-specific tools, competitive differentiation</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-orange-500/5 p-10">
-            <div className="flex items-start gap-6">
-              <div className="flex-shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br from-orange-500/30 to-orange-600/30 flex items-center justify-center">
-                <DollarSign className="h-8 w-8 text-orange-300" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-3xl font-bold text-white mb-4">Cost and Complexity Escalation</h3>
-                <p className="text-xl text-white/70 leading-relaxed mb-6">
-                  Usage fees and storage costs can scale aggressively with fleet growth. 
-                  Migration becomes prohibitively difficult after deep integration.
-                </p>
-                <div className="flex items-center gap-3">
-                  <AlertTriangle className="h-6 w-6 text-orange-400" />
-                  <div className="text-base text-white/70">
-                    Financial risk increases as operational dependency deepens
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>,
-
-    // Slide 5: Recommended Positioning
+    // Slide 5: Strategic Position for Bear
     <div key="slide-5" className="flex flex-col justify-center min-h-[80vh] px-16 pb-32">
       <div className="max-w-[1600px] mx-auto w-full">
         <div className="flex items-center gap-3 mb-8">
-          <CheckCircle2 className="h-12 w-12 text-emerald-400" />
-          <h2 className="text-5xl font-bold text-white">Recommended Positioning</h2>
+          <Target className="h-12 w-12 text-sky-400" />
+          <h2 className="text-5xl font-bold text-white">Strategic Position for Bear</h2>
         </div>
         
         <p className="text-2xl text-white/70 mb-12 leading-relaxed">
-          Balanced approach to maximize benefits while minimizing long-term risk
+          Clear separation of responsibilities with long-term independence
         </p>
 
-        <div className="grid grid-cols-2 gap-8 mb-12">
+        <div className="grid gap-8">
+          {/* Short-term Practicality */}
           <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 p-10">
             <div className="flex items-center gap-4 mb-6">
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 flex items-center justify-center">
                 <Zap className="h-8 w-8 text-emerald-300" />
               </div>
-              <h3 className="text-3xl font-bold text-white">Short-Term Strategy</h3>
+              <h3 className="text-3xl font-bold text-white">Short-Term Practicality</h3>
             </div>
-            <p className="text-xl text-white/70 leading-relaxed mb-6">
-              Use Formant to gain stability, speed, insight, and knowledge.
+            <p className="text-xl text-white/70 leading-relaxed">
+              Use Formant as the operational substrate for telemetry, dashboards, insights, and workflow automation. 
+              Leverage their infrastructure while we focus on intelligence development.
             </p>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <div className="text-base text-white/70">Accelerate operational visibility immediately</div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <div className="text-base text-white/70">Learn from their robotics expertise and patterns</div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <div className="text-base text-white/70">Reduce internal development burden during growth phase</div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <div className="text-base text-white/70">Gain embedded engineering support while building team</div>
-              </div>
-            </div>
           </div>
 
+          {/* Bear Supplies the Core Intelligence */}
+          <div className="rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 p-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500/30 to-indigo-600/30 flex items-center justify-center">
+                <Brain className="h-8 w-8 text-indigo-300" />
+              </div>
+              <h3 className="text-3xl font-bold text-white">Bear Supplies the Core Intelligence</h3>
+            </div>
+            <p className="text-xl text-white/70 leading-relaxed">
+              Our models provide the actual perception, event detection, and domain-specific reasoning. 
+              We own the differentiation, not the plumbing.
+            </p>
+          </div>
+
+          {/* Clear Separation */}
           <div className="rounded-3xl border border-sky-500/30 bg-gradient-to-br from-sky-500/10 to-sky-500/5 p-10">
             <div className="flex items-center gap-4 mb-6">
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-sky-500/30 to-sky-600/30 flex items-center justify-center">
-                <Target className="h-8 w-8 text-sky-300" />
+                <GitBranch className="h-8 w-8 text-sky-300" />
               </div>
-              <h3 className="text-3xl font-bold text-white">Long-Term Strategy</h3>
+              <h3 className="text-3xl font-bold text-white">Clear Separation of Responsibilities</h3>
             </div>
-            <p className="text-xl text-white/70 leading-relaxed mb-6">
-              Plan for gradual decoupling to maintain independent control, IP, and data ownership.
-            </p>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 text-sky-400 mt-0.5 flex-shrink-0" />
-                <div className="text-base text-white/70">Build internal capabilities while using Formant</div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="rounded-xl bg-white/5 border border-white/10 p-6">
+                <div className="font-bold text-white mb-3 text-xl flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-sky-400" />
+                  Formant's Domain
+                </div>
+                <p className="text-lg text-white/70">
+                  Orchestration, infrastructure, data pipelines, operational tooling, and monitoring dashboards
+                </p>
               </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 text-sky-400 mt-0.5 flex-shrink-0" />
-                <div className="text-base text-white/70">Design data architecture with migration in mind</div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 text-sky-400 mt-0.5 flex-shrink-0" />
-                <div className="text-base text-white/70">Develop proprietary features on separate infrastructure</div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 text-sky-400 mt-0.5 flex-shrink-0" />
-                <div className="text-base text-white/70">Retain strategic control over competitive advantages</div>
+              <div className="rounded-xl bg-white/5 border border-white/10 p-6">
+                <div className="font-bold text-white mb-3 text-xl flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-indigo-400" />
+                  Bear's Domain
+                </div>
+                <p className="text-lg text-white/70">
+                  Intelligence, perception models, detection algorithms, domain expertise, and competitive innovation
+                </p>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 p-10 text-center">
-          <h3 className="text-3xl font-bold text-white mb-5">Balanced Approach</h3>
-          <p className="text-xl text-white/70 max-w-4xl mx-auto leading-relaxed">
-            Leverage Formant's strengths now while building the foundation for independence later. 
-            Maximize immediate value without compromising long-term strategic flexibility.
-          </p>
+          {/* Long-term Independence */}
+          <div className="rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-500/10 to-violet-500/5 p-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-500/30 to-violet-600/30 flex items-center justify-center">
+                <Target className="h-8 w-8 text-violet-300" />
+              </div>
+              <h3 className="text-3xl font-bold text-white">Long-Term Independence</h3>
+            </div>
+            <p className="text-xl text-white/70 leading-relaxed">
+              Maintaining control of our model stack preserves IP, differentiation, and strategic flexibility. 
+              Design for decoupling from day one, execute migration when we have internal capability.
+            </p>
+          </div>
+
+          {/* Strategic Summary */}
+          <div className="rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 p-10 text-center">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+              <h3 className="text-3xl font-bold text-white">Strategic Summary</h3>
+            </div>
+            <p className="text-xl text-white/80 max-w-5xl mx-auto leading-relaxed">
+              Formant manages orchestration and infrastructure. Bear owns intelligence and innovation. 
+              Use them now, plan for independence later, never lose control of our competitive advantage.
+            </p>
+          </div>
         </div>
       </div>
     </div>,
   ];
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-x-hidden">
       {/* Slide Content */}
       <div
         className={`transition-all duration-300 ${
@@ -448,4 +534,3 @@ export function FormantPresentation() {
     </div>
   );
 }
-

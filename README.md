@@ -1,5 +1,8 @@
 # Bear Universe — Bearrobotics.ai Data Constellation
 
+> **Latest Analysis (Dec 6, 2025):** comprehensive project analysis completed. See [LEARNING_REPORT.md](./LEARNING_REPORT.md) for a detailed breakdown of the architecture and feature set.
+> **Status:** ✅ Active • 🟢 Production Ready • 🚀 Next.js 16.0.7 (Patched)
+
 A comprehensive, production-grade automation platform for **Bear Robotics** (Bearrobotics.ai) featuring:
 
 - **Live operational telemetry** with real-time data pipelines from Seoul to Silicon Valley

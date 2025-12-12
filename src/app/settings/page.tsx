@@ -146,7 +146,7 @@ export default function SettingsPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Timezone</label>
-                        <select className="bear-select w-full">
+                        <select className="w-full rounded-lg sm:rounded-xl bg-white/10 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white outline-none transition-colors focus:bg-white/15 focus:ring-2 focus:ring-bear-blue/50 [&>option]:bg-gray-800 [&>option]:text-white">
                           <option>Europe/London</option>
                           <option>Europe/Paris</option>
                           <option>America/New_York</option>
@@ -155,7 +155,7 @@ export default function SettingsPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Language</label>
-                        <select className="bear-select w-full">
+                        <select className="w-full rounded-lg sm:rounded-xl bg-white/10 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white outline-none transition-colors focus:bg-white/15 focus:ring-2 focus:ring-bear-blue/50 [&>option]:bg-gray-800 [&>option]:text-white">
                           <option>English (UK)</option>
                           <option>English (US)</option>
                           <option>Français</option>

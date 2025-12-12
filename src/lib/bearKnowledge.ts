@@ -99,3 +99,58 @@ export const categories = [
   { id: 'connectivity', label: 'Connectivity', description: 'WiFi and network setup' },
   { id: 'troubleshooting', label: 'Troubleshooting', description: 'Fix common issues' },
 ];
+
+export const BEAR_ROBOTICS_KNOWLEDGE = `
+BEAR ROBOTICS KNOWLEDGE BASE
+===========================
+
+MODELS & SPECS
+-------------
+Servi Plus:
+- Heavy-duty service robot
+- 40kg payload capacity (10-13kg per tray)
+- 4 adjustable trays + bus tub
+- 12+ hours battery life
+- Auto-return to charger
+- Multi-robot collaboration enabled
+- Use cases: Food running, bussing, hosting, drinks service
+
+Carti 100:
+- Autonomous Material Handling (AMR)
+- 100kg payload capacity
+- Customizable top modules (shelves, bin, conveyor)
+- Warehouse & logistics optimization
+- Narrow aisle navigation
+- Integration with WMS systems
+
+CHARGING & POWER
+---------------
+- Charge time: 4-6 hours (0-100%)
+- Quick charge: 2-3 hours (0-80%)
+- Recommended: Charge overnight
+- Behavior: Auto-docks when idle or low battery (<20%)
+- Troubleshooting: Clean contacts if not charging. Check wall power.
+
+NAVIGATION & SENSORS
+-------------------
+- LIDAR: Primary navigation sensor (360 degree view)
+- 3D Cameras: Obstacle avoidance and depth perception
+- Cliff Sensors: Prevents falling down stairs/ledges
+- QR Codes: Used for localization recovery if lost
+- Issues: Keep sensors clean. Ensure good lighting. Don't block QR codes.
+
+CONNECTIVITY
+-----------
+- Requires stable WiFi (2.4GHz or 5GHz)
+- WPA2-Personal or Enterprise supported
+- Static IP recommended for enterprise fleets
+- Port 443/80 outbound access required
+- Error handling: Check signal strength bars. Verify SSID/Password.
+
+MAINTENANCE
+----------
+- Daily: Clean trays, wipe sensors with microfiber cloth
+- Weekly: Inspect wheels for debris/hair
+- Monthly: Deep clean chassis
+- Safety: Don't spray water directly on sensors or screens
+`;

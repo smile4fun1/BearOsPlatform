@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, FormEvent } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import {
   Bot,
   X,
@@ -86,6 +87,7 @@ export function ImprovedDraggableChat() {
   const [isDraggingIcon, setIsDraggingIcon] = useState(false);
   const [iconDragStart, setIconDragStart] = useState({ x: 0, y: 0 });
   const [hasIconMoved, setHasIconMoved] = useState(false);
+  const iconDragStartAbs = useRef({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const [hasHydrated, setHasHydrated] = useState(false);
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
@@ -309,9 +311,13 @@ export function ImprovedDraggableChat() {
       newX = Math.max(0, Math.min(window.innerWidth - 56, newX));
       newY = Math.max(0, Math.min(window.innerHeight - 56, newY));
 
-      // Track if icon has actually moved
-      const moved = Math.abs(newX - iconPosition.x) > 3 || Math.abs(newY - iconPosition.y) > 3;
-      if (moved) {
+      // Track if icon has actually moved based on absolute distance from start
+      const distMoved = Math.sqrt(
+        Math.pow(clientX - iconDragStartAbs.current.x, 2) + 
+        Math.pow(clientY - iconDragStartAbs.current.y, 2)
+      );
+      
+      if (distMoved > 5) { // 5px threshold
         setHasIconMoved(true);
       }
 
@@ -858,6 +864,7 @@ export function ImprovedDraggableChat() {
               e.preventDefault();
               setIsDraggingIcon(true);
               setHasIconMoved(false); // Reset movement flag
+              iconDragStartAbs.current = { x: e.clientX, y: e.clientY };
               setIconDragStart({
                 x: e.clientX - iconPosition.x,
                 y: e.clientY - iconPosition.y,
@@ -868,6 +875,7 @@ export function ImprovedDraggableChat() {
               const touch = e.touches[0];
               setIsDraggingIcon(true);
               setHasIconMoved(false); // Reset movement flag
+              iconDragStartAbs.current = { x: touch.clientX, y: touch.clientY };
               setIconDragStart({
                 x: touch.clientX - iconPosition.x,
                 y: touch.clientY - iconPosition.y,
@@ -892,14 +900,22 @@ export function ImprovedDraggableChat() {
               }
               setHasIconMoved(false); // Reset for next interaction
             }}
-            className={`flex h-14 w-14 items-center justify-center transition-all hover:scale-110 z-50 ${
-              isDraggingIcon ? "cursor-grabbing" : "cursor-grab"
-            } ${hasUnreadMessage ? "animate-pulse" : ""}`}
+            className={`flex h-14 w-14 items-center justify-center transition-all hover:scale-110 z-50 rounded-full overflow-hidden border-2 ${
+              hasUnreadMessage ? "border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]" : "border-white/20 shadow-lg bg-[#020511]"
+            } ${isDraggingIcon ? "cursor-grabbing" : "cursor-grab"}`}
             aria-label="Open Ursa Minor"
           >
-            <div className="text-4xl">🐻</div>
+            <div className="relative w-full h-full">
+              <Image 
+                src="/cartoon-bear-face-clipart-vector-design_780593-20643.png" 
+                alt="Bear AI" 
+                fill
+                className="object-cover p-1"
+                priority
+              />
+            </div>
             {hasUnreadMessage && (
-              <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse" />
+              <div className="absolute top-0 right-0 h-4 w-4 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse z-10" />
             )}
           </button>
 
@@ -1031,12 +1047,17 @@ export function ImprovedDraggableChat() {
           onMouseDown={handleMouseDown}
         >
           <div className="flex items-center gap-3">
-            <div className={`flex items-center justify-center relative ${
-              isMinimized && !isMobile ? "h-12 w-12 text-5xl" : "h-10 w-10 text-3xl"
+            <div className={`relative flex items-center justify-center rounded-full overflow-hidden border border-white/10 bg-[#020511] ${
+              isMinimized && !isMobile ? "h-12 w-12" : "h-10 w-10"
             }`}>
-              🐻
+              <Image 
+                src="/cartoon-bear-face-clipart-vector-design_780593-20643.png" 
+                alt="Bear AI" 
+                fill
+                className="object-cover p-0.5"
+              />
               {isMinimized && hasUnreadMessage && (
-                <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 border-2 border-[#020511] animate-pulse" />
+                <div className="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500 border border-[#020511] animate-pulse z-10" />
               )}
             </div>
             <div>

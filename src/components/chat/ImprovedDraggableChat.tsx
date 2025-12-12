@@ -900,9 +900,9 @@ export function ImprovedDraggableChat() {
               }
               setHasIconMoved(false); // Reset for next interaction
             }}
-            className={`flex h-14 w-14 items-center justify-center transition-all hover:scale-110 z-50 rounded-full overflow-hidden border-2 ${
-              hasUnreadMessage ? "border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]" : "border-white/20 shadow-lg bg-[#020511]"
-            } ${isDraggingIcon ? "cursor-grabbing" : "cursor-grab"}`}
+            className={`flex h-16 w-16 items-center justify-center transition-all hover:scale-110 z-50 ${
+              isDraggingIcon ? "cursor-grabbing" : "cursor-grab"
+            }`}
             aria-label="Open Ursa Minor"
           >
             <div className="relative w-full h-full">
@@ -910,7 +910,7 @@ export function ImprovedDraggableChat() {
                 src="/cartoon-bear-face-clipart-vector-design_780593-20643.png" 
                 alt="Bear AI" 
                 fill
-                className="object-cover p-1"
+                className="object-contain drop-shadow-xl"
                 priority
               />
             </div>

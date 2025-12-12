@@ -189,16 +189,29 @@ body {
   overflow-x: hidden;
 }
 
-/* Prevent text selection on UI elements */
-button, a, nav, header, aside {
+/* ========================================
+   Global Interaction Prevention (STRICT)
+   ======================================== */
+
+/* Disable text selection and dragging globally */
+*, *::before, *::after {
   -webkit-user-select: none;
   user-select: none;
+  -webkit-user-drag: none;
 }
 
-/* Allow selection on content areas */
-p, span, h1, h2, h3, h4, h5, h6, li, td, th, pre, code {
+/* Re-enable selection for interactive text inputs */
+input, textarea, [contenteditable="true"] {
   -webkit-user-select: text;
   user-select: text;
+  cursor: text;
+}
+
+/* Ensure images and links are not draggable */
+img, a {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: auto; /* Ensure clicks still work */
 }
 
 /* ========================================

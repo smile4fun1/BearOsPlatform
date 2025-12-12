@@ -238,9 +238,13 @@ function KnowledgeContent() {
                   </div>
                 ) : (
                   <>
-                    <p className="text-gray-200 leading-relaxed whitespace-pre-wrap mb-6 text-lg">
-                      {aiResponse?.answer}
-                    </p>
+                    <div className="text-gray-200 leading-relaxed whitespace-pre-wrap mb-6 text-lg font-light">
+                      {aiResponse?.answer.split(/(\*\*.*?\*\*)/g).map((part, i) => 
+                        part.startsWith('**') && part.endsWith('**') 
+                          ? <strong key={i} className="text-white font-semibold">{part.slice(2, -2)}</strong> 
+                          : part
+                      )}
+                    </div>
                     <div className="flex flex-wrap gap-2">
                       {aiResponse?.sources.map((source, i) => (
                         <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-400">

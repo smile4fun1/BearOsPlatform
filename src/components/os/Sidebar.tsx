@@ -85,8 +85,12 @@ export function Sidebar() {
       {/* Header */}
       <div className="p-6 border-b border-white/5">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-bear-blue flex items-center justify-center shadow-lg shadow-bear-blue/30">
-            <Bot className="w-6 h-6 text-white" />
+          <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-bear-blue/30">
+            <img 
+              src="/download.png" 
+              alt="Bear Robotics" 
+              className="h-full w-full object-cover"
+            />
           </div>
           <div>
             <span className="block font-bold text-xl tracking-tight text-white leading-none">BearOS</span>

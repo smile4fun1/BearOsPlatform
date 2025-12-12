@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -23,7 +23,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
   'troubleshooting': <Settings className="w-6 h-6" />,
 };
 
-export default function KnowledgePage() {
+function KnowledgeContent() {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState('');
   const [isAiMode, setIsAiMode] = useState(false);
@@ -408,12 +408,12 @@ export default function KnowledgePage() {
                         {cat.description}
                       </p>
                     </div>
-                    <ChevronRight className={`w-5 h-5 flex-shrink-0 transition-all duration-300 ${
-                      activeCategory === cat.id 
-                        ? 'text-bear-blue translate-x-1' 
-                        : 'text-gray-600 group-hover:text-gray-400 group-hover:translate-x-1'
-                    }`} />
                   </div>
+                  <ChevronRight className={`w-5 h-5 flex-shrink-0 transition-all duration-300 ${
+                    activeCategory === cat.id 
+                      ? 'text-bear-blue translate-x-1' 
+                      : 'text-gray-600 group-hover:text-gray-400 group-hover:translate-x-1'
+                  }`} />
                 </motion.button>
               ))}
             </div>
@@ -529,5 +529,17 @@ export default function KnowledgePage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function KnowledgePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center">
+        <div className="w-8 h-8 border-4 border-bear-blue border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <KnowledgeContent />
+    </Suspense>
   );
 }

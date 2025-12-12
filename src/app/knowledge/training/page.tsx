@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -22,6 +22,8 @@ import {
   ArrowRight as ArrowRightIcon,
   AlertTriangle as ExclamationTriangleIcon,
   ChevronLeft as ChevronLeftIcon,
+  Menu as MenuIcon,
+  LayoutDashboard as LayoutIcon
 } from 'lucide-react';
 
 export default function TrainingPage() {
@@ -29,237 +31,222 @@ export default function TrainingPage() {
   const [completedModules, setCompletedModules] = useState<number[]>([]);
   const [showCongrats, setShowCongrats] = useState(false);
   const [trainingStarted, setTrainingStarted] = useState(false);
-  const trainingContentRef = useRef<HTMLDivElement>(null);
+  const topRef = useRef<HTMLDivElement>(null);
+
+  // Load progress from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('bear-training-progress');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCompletedModules(parsed);
+          setTrainingStarted(true);
+          // Resume at next incomplete module or the last one
+          const nextModule = parsed.length < modules.length ? parsed.length : parsed.length - 1;
+          // Don't auto-set to 0 if we have progress, start at the dashboard or next step
+          if (nextModule > 0) {
+             setCurrentModule(nextModule);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load training progress", e);
+      }
+    }
+  }, []);
+
+  // Save progress
+  useEffect(() => {
+    if (completedModules.length > 0) {
+      localStorage.setItem('bear-training-progress', JSON.stringify(completedModules));
+    }
+  }, [completedModules]);
 
   const modules = [
     {
       id: 0,
       title: 'Welcome',
-      icon: <AcademicCapIcon className="w-6 h-6" />,
+      subtitle: 'Introduction',
+      icon: <AcademicCapIcon className="w-5 h-5" />,
       duration: '2 min',
     },
     {
       id: 1,
       title: 'Meet Servi',
-      icon: <CubeIcon className="w-6 h-6" />,
+      subtitle: 'Hardware Overview',
+      icon: <CubeIcon className="w-5 h-5" />,
       duration: '3 min',
     },
     {
       id: 2,
       title: 'Getting Started',
-      icon: <BoltIcon className="w-6 h-6" />,
+      subtitle: 'Start of Shift',
+      icon: <BoltIcon className="w-5 h-5" />,
       duration: '5 min',
     },
     {
       id: 3,
       title: 'Using Servi',
-      icon: <PlayCircleIcon className="w-6 h-6" />,
+      subtitle: 'Core Operations',
+      icon: <PlayCircleIcon className="w-5 h-5" />,
       duration: '5 min',
     },
     {
       id: 4,
       title: 'Best Practices',
-      icon: <SparklesIcon className="w-6 h-6" />,
+      subtitle: 'Pro Tips',
+      icon: <SparklesIcon className="w-5 h-5" />,
       duration: '3 min',
     },
     {
       id: 5,
       title: 'Quick Tips',
-      icon: <LightBulbIcon className="w-6 h-6" />,
+      subtitle: 'Troubleshooting',
+      icon: <LightBulbIcon className="w-5 h-5" />,
       duration: '2 min',
     },
   ];
 
-  const scrollToTraining = () => {
-    setTimeout(() => {
-      if (trainingContentRef.current) {
-        const element = trainingContentRef.current;
-        const offset = 100; // Offset for navbar
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.scrollY - offset;
-        
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
-    }, 100);
-  };
-
   const startTraining = () => {
     setTrainingStarted(true);
-    setCompletedModules([0]); // Mark Welcome as completed
+    if (!completedModules.includes(0)) {
+        setCompletedModules(prev => [...prev, 0]);
+    }
     setCurrentModule(1);
-    scrollToTraining();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const completeModule = (moduleId: number) => {
     if (!completedModules.includes(moduleId)) {
-      setCompletedModules([...completedModules, moduleId]);
+      setCompletedModules(prev => [...prev, moduleId]);
     }
+    
     if (moduleId === modules.length - 1) {
       setShowCongrats(true);
     } else {
-      setCurrentModule(moduleId + 1);
-      scrollToTraining();
+      const nextId = moduleId + 1;
+      setCurrentModule(nextId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const goBack = () => {
-    if (currentModule > 1) {
-      setCurrentModule(currentModule - 1);
-      scrollToTraining();
+  const jumpToModule = (id: number) => {
+    if (id === 0 || completedModules.includes(id - 1) || completedModules.includes(id)) {
+        setCurrentModule(id);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const progress = (completedModules.length / modules.length) * 100;
-
-  const leftModules = modules.slice(0, 3);
-  const rightModules = modules.slice(3, 6);
+  const progress = Math.round((completedModules.length / modules.length) * 100);
 
   return (
-    <div className="min-h-screen bg-bear-dark text-white p-6">
-      {/* Header Breadcrumbs */}
-      <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-        <Link href="/knowledge" className="hover:text-bear-blue transition-colors">Knowledge Base</Link>
-        <ChevronRightIcon className="w-4 h-4" />
-        <span className="text-white">Training</span>
-      </div>
+    <div className="min-h-screen bg-[#020511] text-white" ref={topRef}>
+      {/* Compact Header */}
+      <header className="sticky top-0 z-40 bg-[#020511]/80 backdrop-blur-md border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <Link href="/knowledge" className="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+                        <ChevronLeftIcon className="w-5 h-5" />
+                    </Link>
+                    <div>
+                        <h1 className="text-xl font-bold text-white flex items-center gap-2">
+                            Servi Training
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-bear-blue/20 text-bear-blue border border-bear-blue/20">
+                                NEW STAFF
+                            </span>
+                        </h1>
+                    </div>
+                </div>
 
-      {/* Hero Section */}
-      <section className="relative py-12 lg:py-20 overflow-hidden rounded-3xl bear-glass-card mb-8">
-        <div className="absolute inset-0">
-          <motion.div
-            className="absolute -top-20 -right-20 w-96 h-96 bg-bear-blue/10 rounded-full filter blur-3xl"
-            animate={{
-              scale: [1, 1.1, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-block px-5 py-2 bg-white/5 border border-white/10 text-bear-blue rounded-full text-sm font-semibold mb-6"
-            >
-              NEW STAFF TRAINING
-            </motion.span>
-            
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight leading-tight"
-            >
-              Welcome to
-              <span className="block text-gradient">
-                Servi Training
-              </span>
-            </motion.h1>
-            
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xl lg:text-2xl text-gray-400 mb-4 max-w-3xl mx-auto font-medium"
-            >
-              Learn to work with Servi Plus in 20 minutes
-            </motion.p>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="max-w-2xl mx-auto mt-12"
-            >
-              <div className="bg-white/5 rounded-full h-3 overflow-hidden shadow-inner border border-white/10">
-                <motion.div
-                  className="bg-bear-blue h-full rounded-full shadow-[0_0_10px_rgba(81,166,214,0.5)]"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.5 }}
-                />
-              </div>
-              <p className="text-sm text-gray-400 mt-3">
-                {completedModules.length} of {modules.length} modules completed
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Training Content */}
-      <section className="py-8" ref={trainingContentRef}>
-        <div className="max-w-7xl mx-auto">
-          {!trainingStarted ? (
-            <ModuleWelcome onComplete={startTraining} />
-          ) : (
-            <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
-              {/* Left Module Cards */}
-              <div className="hidden lg:flex flex-col gap-4 w-64 flex-shrink-0">
-                {leftModules.map((module, index) => (
-                  <ModuleCard 
-                    key={module.id} 
-                    module={module} 
-                    currentModule={currentModule} 
-                    completedModules={completedModules} 
-                    onClick={() => setCurrentModule(module.id)}
-                    index={index}
-                    direction={-1}
-                  />
-                ))}
-              </div>
-
-              {/* Main Content Area */}
-              <div className="flex-1 w-full max-w-3xl">
-                <AnimatePresence mode="wait">
-                  {currentModule === 1 && (
-                    <ModuleMeetServi key="meet" onComplete={() => completeModule(1)} onBack={goBack} showBack={false} />
-                  )}
-                  {currentModule === 2 && (
-                    <ModuleGettingStarted key="start" onComplete={() => completeModule(2)} onBack={goBack} showBack={true} />
-                  )}
-                  {currentModule === 3 && (
-                    <ModuleUsingServi key="using" onComplete={() => completeModule(3)} onBack={goBack} showBack={true} />
-                  )}
-                  {currentModule === 4 && (
-                    <ModuleBestPractices key="practices" onComplete={() => completeModule(4)} onBack={goBack} showBack={true} />
-                  )}
-                  {currentModule === 5 && (
-                    <ModuleQuickTips key="tips" onComplete={() => completeModule(5)} onBack={goBack} showBack={true} />
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Right Module Cards */}
-              <div className="hidden lg:flex flex-col gap-4 w-64 flex-shrink-0">
-                {rightModules.map((module, index) => (
-                   <ModuleCard 
-                    key={module.id} 
-                    module={module} 
-                    currentModule={currentModule} 
-                    completedModules={completedModules} 
-                    onClick={() => setCurrentModule(module.id)}
-                    index={index}
-                    direction={1}
-                  />
-                ))}
-              </div>
+                <div className="flex items-center gap-4">
+                    <div className="hidden sm:block text-right">
+                        <div className="text-xs text-gray-400 mb-1">Progress</div>
+                        <div className="text-sm font-bold text-white">{progress}%</div>
+                    </div>
+                    <div className="w-32 h-2 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                            className="h-full bg-gradient-to-r from-bear-blue to-cyan-400"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progress}%` }}
+                            transition={{ duration: 0.5 }}
+                        />
+                    </div>
+                </div>
             </div>
-          )}
         </div>
-      </section>
+      </header>
 
-      {/* Congratulations Modal */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Sidebar Navigation - Smart Sticky */}
+            <aside className="hidden lg:block col-span-3 sticky top-24">
+                <nav className="space-y-2">
+                    {modules.map((module, idx) => {
+                        const isActive = currentModule === module.id;
+                        const isCompleted = completedModules.includes(module.id);
+                        const isLocked = !isCompleted && !isActive && (idx > 0 && !completedModules.includes(idx - 1));
+
+                        return (
+                            <button
+                                key={module.id}
+                                onClick={() => !isLocked && jumpToModule(module.id)}
+                                disabled={isLocked}
+                                className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-200 group ${
+                                    isActive 
+                                        ? 'bg-bear-blue text-white shadow-lg shadow-bear-blue/20' 
+                                        : isCompleted
+                                        ? 'bg-white/5 text-gray-300 hover:bg-white/10'
+                                        : 'text-gray-500 opacity-60 cursor-not-allowed'
+                                }`}
+                            >
+                                <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                                    isActive ? 'bg-white/20' : isCompleted ? 'bg-green-500/20 text-green-400' : 'bg-white/5'
+                                }`}>
+                                    {isCompleted && !isActive ? <CheckCircleIcon className="w-5 h-5" /> : module.icon}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-semibold truncate">{module.title}</div>
+                                    <div className={`text-xs truncate ${isActive ? 'text-blue-100' : 'text-gray-500'}`}>
+                                        {module.subtitle}
+                                    </div>
+                                </div>
+                                {isActive && (
+                                    <motion.div layoutId="active-indicator" className="w-1.5 h-1.5 rounded-full bg-white" />
+                                )}
+                            </button>
+                        );
+                    })}
+                </nav>
+            </aside>
+
+            {/* Main Content Area */}
+            <div className="col-span-12 lg:col-span-9 min-h-[600px]">
+                <AnimatePresence mode="wait">
+                    {!trainingStarted ? (
+                        <ModuleWelcome key="welcome" onComplete={startTraining} />
+                    ) : (
+                        <motion.div
+                            key={currentModule}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {currentModule === 1 && <ModuleMeetServi onComplete={() => completeModule(1)} />}
+                            {currentModule === 2 && <ModuleGettingStarted onComplete={() => completeModule(2)} />}
+                            {currentModule === 3 && <ModuleUsingServi onComplete={() => completeModule(3)} />}
+                            {currentModule === 4 && <ModuleBestPractices onComplete={() => completeModule(4)} />}
+                            {currentModule === 5 && <ModuleQuickTips onComplete={() => completeModule(5)} />}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </div>
+      </main>
+
+      {/* Congrats Modal */}
       <AnimatePresence>
         {showCongrats && (
           <motion.div
@@ -273,35 +260,51 @@ export default function TrainingPage() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-[#1a1f36] border border-white/10 rounded-3xl p-8 lg:p-12 max-w-2xl w-full relative shadow-2xl"
+              className="bg-[#0a0f1c] border border-white/10 rounded-3xl p-8 lg:p-12 max-w-lg w-full relative shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
+                {/* Confetti-like decoration */}
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                    <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle,rgba(81,166,214,0.1)_0%,transparent_50%)] animate-spin-slow" />
+                </div>
+
               <button
                 onClick={() => setShowCongrats(false)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors z-10"
               >
                 <XMarkIcon className="w-6 h-6 text-gray-400" />
               </button>
 
-              <div className="text-center">
-                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
-                  <CheckCircleIcon className="w-12 h-12 text-green-500" />
-                </div>
-                <h2 className="text-4xl font-bold text-white mb-6">
+              <div className="text-center relative z-10">
+                <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
+                    className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/30"
+                >
+                  <CheckCircleIcon className="w-12 h-12 text-white" />
+                </motion.div>
+                <h2 className="text-3xl font-bold text-white mb-4">
                   Training Complete!
                 </h2>
-                <div className="text-xl text-gray-300 mb-8 leading-relaxed space-y-2">
-                  <p>You're now ready to work with Servi Plus.</p>
-                  <p>Welcome to the team!</p>
-                </div>
+                <p className="text-gray-400 mb-8 leading-relaxed">
+                  You've successfully completed the Servi training modules. You're now certified to work with Servi Plus!
+                </p>
                 
-                <Link
-                  href="/knowledge"
-                  className="px-8 py-4 bg-bear-blue text-white font-semibold rounded-full hover:bg-opacity-90 transition-all shadow-lg hover:shadow-bear-blue/20 inline-flex items-center justify-center gap-2"
-                >
-                  Back to Knowledge Base
-                  <ArrowRightIcon className="w-5 h-5" />
-                </Link>
+                <div className="flex flex-col gap-3">
+                    <Link
+                    href="/knowledge"
+                    className="w-full py-3.5 bg-bear-blue text-white font-semibold rounded-xl hover:bg-bear-blue-light transition-all shadow-lg shadow-bear-blue/20 flex items-center justify-center gap-2"
+                    >
+                    Back to Knowledge Base
+                    </Link>
+                    <button
+                        onClick={() => setShowCongrats(false)}
+                        className="w-full py-3.5 bg-white/5 text-gray-300 font-semibold rounded-xl hover:bg-white/10 transition-all"
+                    >
+                        Review Training
+                    </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -311,349 +314,336 @@ export default function TrainingPage() {
   );
 }
 
-// Reusable Module Card Component
-function ModuleCard({ module, currentModule, completedModules, onClick, index, direction }: any) {
-    const isActive = currentModule === module.id;
-    const isCompleted = completedModules.includes(module.id);
-    
-    return (
-        <motion.button
-            onClick={onClick}
-            initial={{ opacity: 0, x: direction * 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
-            className={`relative p-4 rounded-2xl border transition-all duration-300 text-left w-full ${
-                isActive
-                ? 'border-bear-blue bg-bear-blue/10 shadow-lg shadow-bear-blue/10'
-                : isCompleted
-                ? 'border-green-500/50 bg-green-500/5 hover:bg-green-500/10'
-                : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
-            }`}
-        >
-            {isCompleted && (
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-                <CheckCircleIcon className="w-4 h-4 text-white" />
-                </div>
-            )}
-            <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
-                isActive
-                    ? 'bg-bear-blue text-white'
-                    : isCompleted
-                    ? 'bg-green-500/20 text-green-500'
-                    : 'bg-white/10 text-gray-400'
-                }`}>
-                {module.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                <h3 className={`font-bold text-sm mb-0.5 truncate ${isActive ? 'text-white' : 'text-gray-300'}`}>{module.title}</h3>
-                <p className="text-xs text-gray-500">{module.duration}</p>
-                </div>
-            </div>
-        </motion.button>
-    )
-}
+// --- Module Components with Rich Data ---
 
-
-// Module Components (Dark Mode Adapted)
 function ModuleWelcome({ onComplete }: { onComplete: () => void }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="bear-glass-card p-6 md:p-8 lg:p-12 max-w-4xl mx-auto"
-    >
-      <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-bear-blue rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-bear-blue/30">
-          <AcademicCapIcon className="w-10 h-10 text-white" />
-        </div>
-        <h2 className="text-4xl font-bold text-white mb-4">Welcome to the Team</h2>
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-          This training will help you feel confident working with Servi Plus
-        </p>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        {[
-            { icon: ClockIcon, title: "20 Minutes", sub: "Quick and easy to complete", color: "text-bear-blue", bg: "bg-blue-500/20" },
-            { icon: PlayCircleIcon, title: "Interactive", sub: "Learn by doing", color: "text-green-500", bg: "bg-green-500/20" },
-            { icon: UserGroupIcon, title: "Practical", sub: "Real-world scenarios", color: "text-purple-500", bg: "bg-purple-500/20" }
-        ].map((item, i) => (
-             <div key={i} className="bg-white/5 rounded-2xl p-6 text-center border border-white/10 hover:border-white/20 transition-all">
-                <div className={`w-12 h-12 ${item.bg} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                    <item.icon className={`w-6 h-6 ${item.color}`} />
-                </div>
-                <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                <p className="text-gray-400 text-sm">{item.sub}</p>
-            </div>
-        ))}
-      </div>
-
-      <div className="bg-white/5 rounded-2xl p-6 mb-8 border border-white/10">
-        <h3 className="font-bold text-white mb-4 text-lg">What you'll learn:</h3>
-        <ul className="space-y-3">
-            {[
-                "How to safely work with Servi Plus",
-                "Starting and stopping your shift",
-                "Loading and sending deliveries",
-                "Handling common situations"
-            ].map((text, i) => (
-                <li key={i} className="flex items-center text-gray-300">
-                    <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
-                    {text}
-                </li>
-            ))}
-        </ul>
-      </div>
-
-      <button
-        onClick={onComplete}
-        className="w-full py-5 bg-bear-blue text-white font-bold rounded-full hover:shadow-xl hover:shadow-bear-blue/20 transform hover:scale-105 transition-all text-lg flex items-center justify-center gap-2"
-      >
-        Start Training
-        <ChevronRightIcon className="w-6 h-6" />
-      </button>
-    </motion.div>
-  );
-}
-
-function ModuleMeetServi({ onComplete, onBack, showBack }: { onComplete: () => void; onBack: () => void; showBack: boolean }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      className="bear-glass-card p-6 md:p-8 flex flex-col min-h-[600px]"
-    >
-      {showBack && (
-        <button onClick={onBack} className="mb-4 text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
-          <ChevronLeftIcon className="w-5 h-5" /> Back
-        </button>
-      )}
-      <div className="text-center mb-6">
-        <div className="w-16 h-16 bg-bear-blue rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-bear-blue/20">
-          <CubeIcon className="w-10 h-10 text-white" />
-        </div>
-        <h2 className="text-3xl font-bold text-white mb-2">Meet Servi Plus</h2>
-        <p className="text-lg text-gray-400">Your new co-worker designed to help you deliver efficiently</p>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4 mb-6">
-          {[
-              { icon: WrenchScrewdriverIcon, title: "Three Trays", desc: "Max 40kg total capacity.", color: "text-bear-blue", bg: "bg-blue-500/20" },
-              { icon: ShieldCheckIcon, title: "Smart & Safe", desc: "Built-in obstacle avoidance.", color: "text-green-500", bg: "bg-green-500/20" },
-              { icon: MapIcon, title: "Easy Control", desc: "Simple touchscreen interface.", color: "text-purple-500", bg: "bg-purple-500/20" },
-              { icon: BoltIcon, title: "All-Day Battery", desc: "Runs for 8-12 hours.", color: "text-orange-500", bg: "bg-orange-500/20" },
-          ].map((item, i) => (
-             <div key={i} className="bg-white/5 rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-colors">
-                <div className={`w-10 h-10 ${item.bg} rounded-full flex items-center justify-center mb-3`}>
-                    <item.icon className={`w-5 h-5 ${item.color}`} />
-                </div>
-                <h4 className="font-bold text-white mb-1">{item.title}</h4>
-                <p className="text-gray-400 text-sm">{item.desc}</p>
-            </div>
-          ))}
-      </div>
-
-      <button onClick={onComplete} className="mt-auto w-full py-4 bg-bear-blue text-white font-bold rounded-full hover:scale-105 transition-transform flex items-center justify-center gap-2">
-        Continue <ChevronRightIcon className="w-6 h-6" />
-      </button>
-    </motion.div>
-  );
-}
-
-function ModuleGettingStarted({ onComplete, onBack, showBack }: { onComplete: () => void; onBack: () => void; showBack: boolean }) {
-    return (
-        <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -50 }}
-        className="bear-glass-card p-6 md:p-8 flex flex-col min-h-[600px]"
+    <div className="bear-glass-card p-8 lg:p-12 text-center h-full flex flex-col justify-center items-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-bear-blue/5 to-transparent pointer-events-none" />
+        
+        <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-20 h-20 bg-bear-blue rounded-2xl flex items-center justify-center mb-8 shadow-xl shadow-bear-blue/20 rotate-3"
         >
-        {showBack && (
-            <button onClick={onBack} className="mb-4 text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
-            <ChevronLeftIcon className="w-5 h-5" /> Back
-            </button>
-        )}
-        <div className="text-center mb-8">
-             <div className="w-16 h-16 bg-bear-blue rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-bear-blue/20">
-            <BoltIcon className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold text-white mb-2">Getting Started</h2>
-            <p className="text-lg text-gray-400">Simple steps to start your shift</p>
+            <AcademicCapIcon className="w-10 h-10 text-white" />
+        </motion.div>
+
+        <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Welcome to the Team</h2>
+        <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+            This interactive training will guide you through everything you need to know about working with your new robot colleague, Servi Plus.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-3xl mb-12">
+            {[
+                { icon: ClockIcon, label: "20 Minutes", desc: "Short & sweet" },
+                { icon: PlayCircleIcon, label: "Interactive", desc: "Learn by doing" },
+                { icon: ShieldCheckIcon, label: "Certified", desc: "Get ready" },
+            ].map((item, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors">
+                    <item.icon className="w-6 h-6 text-bear-blue mx-auto mb-2" />
+                    <div className="font-semibold text-white">{item.label}</div>
+                    <div className="text-xs text-gray-500">{item.desc}</div>
+                </div>
+            ))}
         </div>
 
-        <div className="space-y-6 mb-8 bg-white/5 p-6 rounded-2xl border border-white/10">
-             <StepItem num="1" title="Check the Battery" text="Screen should show green battery (80-100%)." />
-             <StepItem num="2" title="Visual Inspection" text="Check trays and wheels are clean." />
-             <StepItem num="3" title="Clean the Trays" text="Wipe with a clean cloth." />
-             <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold text-xl flex-shrink-0">
-                  <CheckCircleIcon className="w-6 h-6" />
+        <button
+            onClick={onComplete}
+            className="group px-8 py-4 bg-white text-bear-dark font-bold rounded-full hover:scale-105 transition-all shadow-xl hover:shadow-white/20 flex items-center gap-2"
+        >
+            Start Training
+            <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        </button>
+    </div>
+  );
+}
+
+function ModuleMeetServi({ onComplete }: { onComplete: () => void }) {
+    return (
+        <div className="space-y-6">
+            <div className="bear-glass-card p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-bear-blue/5 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                    <div className="flex-1">
+                        <div className="flex items-center gap-3 text-bear-blue mb-2">
+                            <CubeIcon className="w-5 h-5" />
+                            <span className="text-sm font-bold uppercase tracking-wider">Overview</span>
+                        </div>
+                        <h2 className="text-3xl font-bold text-white mb-4">Meet Servi Plus</h2>
+                        <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                            Servi Plus is an autonomous service robot that helps deliver food and clear tables. It works alongside you to make service faster and more efficient.
+                        </p>
+                    </div>
+                    {/* Placeholder for Robot Image/Graphic */}
+                    <div className="w-32 h-32 bg-gradient-to-br from-bear-blue to-cyan-500 rounded-full flex items-center justify-center shadow-2xl shadow-bear-blue/20">
+                        <CubeIcon className="w-16 h-16 text-white" />
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                    { icon: WrenchScrewdriverIcon, title: "Three Trays", desc: "Can carry multiple dishes at once. Maximum 40kg total capacity.", color: "text-blue-400", bg: "bg-blue-500/10" },
+                    { icon: ShieldCheckIcon, title: "Smart & Safe", desc: "Automatically stops if someone is in the way. Built-in safety features.", color: "text-green-400", bg: "bg-green-500/10" },
+                    { icon: MapIcon, title: "Easy Control", desc: "Simple touchscreen interface - tap where you want it to go.", color: "text-purple-400", bg: "bg-purple-500/10" },
+                    { icon: BoltIcon, title: "All-Day Battery", desc: "Runs for 8-12 hours on a full charge. Perfect for busy shifts.", color: "text-orange-400", bg: "bg-orange-500/10" },
+                ].map((item, i) => (
+                    <motion.div 
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="bg-[#0f1423] border border-white/5 p-5 rounded-2xl hover:border-white/10 transition-colors"
+                    >
+                        <div className={`w-10 h-10 ${item.bg} rounded-lg flex items-center justify-center mb-4`}>
+                            <item.icon className={`w-6 h-6 ${item.color}`} />
+                        </div>
+                        <h3 className="font-bold text-white mb-2">{item.title}</h3>
+                        <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
+                    </motion.div>
+                ))}
+            </div>
+
+            <div className="flex justify-end pt-4">
+                <button onClick={onComplete} className="btn-primary">
+                    Continue <ChevronRightIcon className="w-5 h-5" />
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function ModuleGettingStarted({ onComplete }: { onComplete: () => void }) {
+    return (
+        <div className="space-y-6">
+            <div className="bear-glass-card p-8">
+                <h2 className="text-3xl font-bold text-white mb-2">Getting Started</h2>
+                <p className="text-gray-400 text-lg mb-8">Follow this morning checklist to start your shift right.</p>
+
+                <div className="space-y-4">
+                    {[
+                        { 
+                            title: "Check the Battery", 
+                            desc: "Look at the screen - you should see a green battery icon showing 80-100%. This means Servi is ready to work.",
+                            icon: "1"
+                        },
+                        { 
+                            title: "Visual Inspection", 
+                            desc: "Check if the trays look good and the wheels are clean. Takes just a few seconds.",
+                            icon: "2"
+                        },
+                        { 
+                            title: "Clean the Trays", 
+                            desc: "Give the trays a quick wipe with a clean cloth to ensure everything is sanitary.",
+                            icon: "3"
+                        },
+                    ].map((step, i) => (
+                        <motion.div 
+                            key={i}
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: i * 0.15 }}
+                            className="flex gap-5 bg-white/5 p-5 rounded-2xl border border-white/5"
+                        >
+                            <div className="flex-shrink-0 w-10 h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-lg shadow-lg shadow-bear-blue/20">
+                                {step.icon}
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-1">{step.title}</h3>
+                                <p className="text-gray-400 leading-relaxed">{step.desc}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+
+                    <motion.div 
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                        className="flex gap-5 bg-green-500/10 p-5 rounded-2xl border border-green-500/20"
+                    >
+                        <div className="flex-shrink-0 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/20">
+                            <CheckCircleIcon className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-green-400 mb-1">You're Ready</h3>
+                            <p className="text-green-200/70 leading-relaxed">That's it! Servi is ready to help you have a productive shift.</p>
+                        </div>
+                    </motion.div>
+                </div>
+            </div>
+
+            <div className="flex justify-end pt-4">
+                <button onClick={onComplete} className="btn-primary">
+                    Continue <ChevronRightIcon className="w-5 h-5" />
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function ModuleUsingServi({ onComplete }: { onComplete: () => void }) {
+    return (
+        <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+                <div className="bear-glass-card p-6 h-full">
+                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <CheckCircleIcon className="w-5 h-5 text-green-500" />
+                        Correct Loading
+                    </h3>
+                    <div className="space-y-3">
+                        {[
+                            "Place items in the center of trays",
+                            "Distribute weight evenly",
+                            "Use all three trays when possible",
+                            "Make sure items are stable"
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-start gap-3 text-sm text-gray-300">
+                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0" />
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="bear-glass-card p-6 h-full border-red-500/20">
+                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <XMarkIcon className="w-5 h-5 text-red-500" />
+                        Avoid This
+                    </h3>
+                    <div className="space-y-3">
+                        {[
+                            "Overload (max 40kg total)",
+                            "Stack items too high",
+                            "Rush - take your time",
+                            "Let items hang off edges"
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-start gap-3 text-sm text-gray-300">
+                                <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 flex-shrink-0" />
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="bear-glass-card p-8">
+                <h3 className="text-2xl font-bold text-white mb-6">Sending Servi</h3>
+                <div className="grid md:grid-cols-3 gap-6">
+                    {[
+                        { title: "Tap Screen", desc: "Select where you want Servi to go from the map." },
+                        { title: "Confirm", desc: "Tap 'Yes' and Servi will start moving to destination." },
+                        { title: "Walk Ahead", desc: "Clear the path and inform customers if needed." },
+                    ].map((step, i) => (
+                        <div key={i} className="text-center relative">
+                            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-xl font-bold mx-auto mb-4 border border-white/10">
+                                {i + 1}
+                            </div>
+                            <h4 className="font-bold text-white mb-2">{step.title}</h4>
+                            <p className="text-sm text-gray-400">{step.desc}</p>
+                            {i < 2 && (
+                                <div className="hidden md:block absolute top-6 left-1/2 w-full h-[1px] bg-gradient-to-r from-white/20 to-transparent -z-10" />
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="flex justify-end pt-4">
+                <button onClick={onComplete} className="btn-primary">
+                    Continue <ChevronRightIcon className="w-5 h-5" />
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function ModuleBestPractices({ onComplete }: { onComplete: () => void }) {
+    return (
+        <div className="space-y-6">
+            <div className="bear-glass-card p-8">
+                <h2 className="text-3xl font-bold text-white mb-6">Best Practices</h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                    {[
+                        { icon: UserGroupIcon, title: "Communicate", desc: "Always announce when Servi is approaching. A simple heads-up keeps everyone aware and comfortable.", color: "text-blue-400" },
+                        { icon: WrenchScrewdriverIcon, title: "Efficient Loading", desc: "Use all three trays to maximize each trip. Heavy items on bottom, lighter items on top.", color: "text-green-400" },
+                        { icon: MapIcon, title: "Clear Paths", desc: "Watch for obstacles like chairs and bags. A clear path means faster and smoother service.", color: "text-purple-400" },
+                        { icon: ClipboardDocumentCheckIcon, title: "End of Shift", desc: "Quick wipe down, check for debris, and park on charger. Takes 2 minutes and keeps Servi ready.", color: "text-orange-400" },
+                    ].map((item, i) => (
+                        <div key={i} className="bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
+                            <div className="flex items-start gap-4">
+                                <item.icon className={`w-6 h-6 ${item.color} mt-1`} />
+                                <div>
+                                    <h3 className="font-bold text-white mb-2">{item.title}</h3>
+                                    <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 p-6 rounded-2xl border border-yellow-500/20 flex items-start gap-4">
+                <div className="bg-yellow-500/20 p-3 rounded-lg">
+                    <LightBulbIcon className="w-6 h-6 text-yellow-500" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-green-400 mb-1">You're Ready</h4>
-                  <p className="text-gray-400 text-sm">Servi is ready to help!</p>
+                    <h3 className="font-bold text-white mb-1">Key Reminder</h3>
+                    <p className="text-gray-300">If something doesn't feel right, tell your manager. It's always better to ask than to guess.</p>
                 </div>
             </div>
-        </div>
 
-        <button onClick={onComplete} className="mt-auto w-full py-4 bg-bear-blue text-white font-bold rounded-full hover:scale-105 transition-transform flex items-center justify-center gap-2">
-            Continue <ChevronRightIcon className="w-6 h-6" />
-        </button>
-        </motion.div>
-    )
+            <div className="flex justify-end pt-4">
+                <button onClick={onComplete} className="btn-primary">
+                    Continue <ChevronRightIcon className="w-5 h-5" />
+                </button>
+            </div>
+        </div>
+    );
 }
 
-function StepItem({ num, title, text }: { num: string, title: string, text: string }) {
+function ModuleQuickTips({ onComplete }: { onComplete: () => void }) {
     return (
-        <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-bear-blue text-white flex items-center justify-center font-bold text-xl flex-shrink-0 shadow-lg shadow-bear-blue/20">
-                {num}
-            </div>
-            <div>
-                <h4 className="font-bold text-white mb-1">{title}</h4>
-                <p className="text-gray-400 text-sm">{text}</p>
-            </div>
-        </div>
-    )
-}
+        <div className="space-y-6">
+            <div className="bear-glass-card p-8">
+                <h2 className="text-3xl font-bold text-white mb-2">Quick Tips</h2>
+                <p className="text-gray-400 mb-8">Common situations and simple solutions</p>
 
-function ModuleUsingServi({ onComplete, onBack, showBack }: { onComplete: () => void; onBack: () => void; showBack: boolean }) {
-     return (
-        <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -50 }}
-        className="bear-glass-card p-6 md:p-8 flex flex-col min-h-[600px]"
-        >
-        {showBack && (
-            <button onClick={onBack} className="mb-4 text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
-            <ChevronLeftIcon className="w-5 h-5" /> Back
-            </button>
-        )}
-        <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-bear-blue rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-bear-blue/20">
-            <PlayCircleIcon className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold text-white mb-2">Using Servi</h2>
-            <p className="text-lg text-gray-400">Loading and Sending</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-green-500/10 p-5 rounded-2xl border border-green-500/20">
-                 <h4 className="font-bold text-green-400 mb-4 flex items-center gap-2"><CheckCircleIcon className="w-5 h-5"/> Do This</h4>
-                 <ul className="space-y-2 text-sm text-gray-300">
-                    <li>• Center items on trays</li>
-                    <li>• Distribute weight evenly</li>
-                    <li>• Use all 3 trays</li>
-                 </ul>
-            </div>
-            <div className="bg-red-500/10 p-5 rounded-2xl border border-red-500/20">
-                 <h4 className="font-bold text-red-400 mb-4 flex items-center gap-2"><XMarkIcon className="w-5 h-5"/> Don't Do This</h4>
-                 <ul className="space-y-2 text-sm text-gray-300">
-                    <li>• Overload (max 40kg)</li>
-                    <li>• Stack too high</li>
-                    <li>• Rush loading</li>
-                 </ul>
-            </div>
-        </div>
-
-        <button onClick={onComplete} className="mt-auto w-full py-4 bg-bear-blue text-white font-bold rounded-full hover:scale-105 transition-transform flex items-center justify-center gap-2">
-            Continue <ChevronRightIcon className="w-6 h-6" />
-        </button>
-        </motion.div>
-    )
-}
-
-function ModuleBestPractices({ onComplete, onBack, showBack }: { onComplete: () => void; onBack: () => void; showBack: boolean }) {
-     return (
-        <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -50 }}
-        className="bear-glass-card p-6 md:p-8 flex flex-col min-h-[600px]"
-        >
-        {showBack && (
-            <button onClick={onBack} className="mb-4 text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
-            <ChevronLeftIcon className="w-5 h-5" /> Back
-            </button>
-        )}
-        <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-bear-blue rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-bear-blue/20">
-            <SparklesIcon className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold text-white mb-2">Best Practices</h2>
-            <p className="text-lg text-gray-400">Tips from the pros</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            {[
-                { title: "Communicate", text: "Announce when Servi is approaching.", icon: UserGroupIcon, color: "text-bear-blue", bg: "bg-blue-500/20" },
-                { title: "Efficient Loading", text: "Heavy items on bottom.", icon: WrenchScrewdriverIcon, color: "text-green-500", bg: "bg-green-500/20" },
-                { title: "Clear Paths", text: "Watch for bags and chairs.", icon: MapIcon, color: "text-purple-500", bg: "bg-purple-500/20" },
-                { title: "End of Shift", text: "Wipe down and charge.", icon: ClipboardDocumentCheckIcon, color: "text-orange-500", bg: "bg-orange-500/20" },
-            ].map((item, i) => (
-                <div key={i} className="bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
-                    <div className={`w-8 h-8 ${item.bg} rounded-full flex items-center justify-center mb-2`}>
-                        <item.icon className={`w-4 h-4 ${item.color}`} />
+                <div className="space-y-4">
+                    <div className="bg-white/5 p-5 rounded-2xl border border-white/10 flex gap-4">
+                        <BoltIcon className="w-6 h-6 text-yellow-500 flex-shrink-0" />
+                        <div>
+                            <h3 className="font-bold text-white mb-1">Low Battery</h3>
+                            <p className="text-sm text-gray-400">Servi will automatically return to the charger. If it seems lost, send it to "Home" on the screen.</p>
+                        </div>
                     </div>
-                    <h3 className="font-bold text-white text-sm">{item.title}</h3>
-                    <p className="text-xs text-gray-400">{item.text}</p>
+
+                    <div className="bg-white/5 p-5 rounded-2xl border border-white/10 flex gap-4">
+                        <ExclamationTriangleIcon className="w-6 h-6 text-red-500 flex-shrink-0" />
+                        <div>
+                            <h3 className="font-bold text-white mb-1">Servi Won't Move</h3>
+                            <p className="text-sm text-gray-400">Check if the red emergency button on the base is pressed. Twist it clockwise to release.</p>
+                        </div>
+                    </div>
+
+                    <div className="bg-white/5 p-5 rounded-2xl border border-white/10 flex gap-4">
+                        <ClockIcon className="w-6 h-6 text-blue-500 flex-shrink-0" />
+                        <div>
+                            <h3 className="font-bold text-white mb-1">Screen Not Working</h3>
+                            <p className="text-sm text-gray-400">Wipe it with a clean cloth first. Still not working? Restart Servi by holding the power button for 10 seconds.</p>
+                        </div>
+                    </div>
                 </div>
-            ))}
-        </div>
-
-        <button onClick={onComplete} className="mt-auto w-full py-4 bg-bear-blue text-white font-bold rounded-full hover:scale-105 transition-transform flex items-center justify-center gap-2">
-            Continue <ChevronRightIcon className="w-6 h-6" />
-        </button>
-        </motion.div>
-    )
-}
-
-function ModuleQuickTips({ onComplete, onBack, showBack }: { onComplete: () => void; onBack: () => void; showBack: boolean }) {
-    return (
-        <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -50 }}
-        className="bear-glass-card p-6 md:p-8 flex flex-col min-h-[600px]"
-        >
-        {showBack && (
-            <button onClick={onBack} className="mb-4 text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
-            <ChevronLeftIcon className="w-5 h-5" /> Back
-            </button>
-        )}
-        <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-bear-blue rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-bear-blue/20">
-            <LightBulbIcon className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-white mb-2">Quick Tips</h2>
-            <p className="text-lg text-gray-400">Common situations</p>
-        </div>
 
-        <div className="space-y-4 mb-8">
-            <TipCard title="Low Battery" text="Servi will auto-return. If lost, send to Home." icon={BoltIcon} color="text-yellow-500" border="border-yellow-500/30" />
-            <TipCard title="Servi Won't Move" text="Check Emergency Stop button." icon={ExclamationTriangleIcon} color="text-red-500" border="border-red-500/30" />
-            <TipCard title="Screen Issues" text="Wipe clean or restart (hold power 10s)." icon={ClockIcon} color="text-blue-500" border="border-blue-500/30" />
+            <div className="flex justify-end pt-4">
+                <button 
+                    onClick={onComplete} 
+                    className="px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-full shadow-lg shadow-green-500/30 hover:scale-105 transition-all flex items-center gap-2"
+                >
+                    Complete Training <CheckCircleIcon className="w-5 h-5" />
+                </button>
+            </div>
         </div>
-
-        <button onClick={onComplete} className="mt-auto w-full py-4 bg-green-500 text-white font-bold rounded-full hover:scale-105 hover:bg-green-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-500/20">
-            Complete Training <CheckCircleIcon className="w-6 h-6" />
-        </button>
-        </motion.div>
-    )
-}
-
-function TipCard({ title, text, icon: Icon, color, border }: any) {
-    return (
-        <div className={`bg-white/5 p-4 rounded-xl border ${border} flex items-start gap-3`}>
-             <Icon className={`w-5 h-5 ${color} mt-0.5 flex-shrink-0`} />
-             <div>
-                 <h4 className="font-bold text-white text-sm">{title}</h4>
-                 <p className="text-xs text-gray-400">{text}</p>
-             </div>
-        </div>
-    )
+    );
 }

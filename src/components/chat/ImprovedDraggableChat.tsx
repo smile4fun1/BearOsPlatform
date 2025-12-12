@@ -1310,7 +1310,14 @@ export function ImprovedDraggableChat() {
             >
               {!currentConversation && (
                 <div className="flex h-full flex-col items-center justify-center text-center text-white/40">
-                  <div className="text-5xl mb-3">🐻</div>
+                  <div className="relative w-24 h-24 mb-4 opacity-80">
+                    <Image 
+                      src="/cartoon-bear-face-clipart-vector-design_780593-20643.png" 
+                      alt="Bear AI" 
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                   <p className="text-sm font-medium text-white/60">No active conversation</p>
                   <p className="text-xs mt-2 max-w-xs text-white/40">Start typing below to begin a new conversation with Ursa Minor!</p>
                 </div>
@@ -1318,7 +1325,14 @@ export function ImprovedDraggableChat() {
               
               {currentConversation?.messages.length === 0 && (
                 <div className="flex h-full flex-col items-center justify-center text-center text-white/40">
-                  <div className="text-5xl mb-3">🐻</div>
+                  <div className="relative w-24 h-24 mb-4 opacity-80">
+                    <Image 
+                      src="/cartoon-bear-face-clipart-vector-design_780593-20643.png" 
+                      alt="Bear AI" 
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                   <p className="text-sm font-medium">Hi! I'm Ursa Minor, your Bear Universe assistant.</p>
                   <p className="text-xs mt-2 max-w-xs">I can help you navigate, manage robots, query telemetry, and execute commands. Try asking me something!</p>
                 </div>

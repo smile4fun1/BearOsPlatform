@@ -1039,7 +1039,7 @@ export function ImprovedDraggableChat() {
           ? "border-white/20 bg-[#020511]/95 backdrop-blur-xl" 
           : "border-white/10 bg-[#020511]/40 backdrop-blur-sm"
       }`}>
-        {/* Header */}
+            {/* Header */}
         <div
           className={`flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-indigo-500/20 to-sky-500/20 p-4 ${
             !isMobile && isDragging ? "cursor-grabbing" : ""
@@ -1082,12 +1082,17 @@ export function ImprovedDraggableChat() {
                     <span className="text-red-400">Connection Error</span>
                   </>
                 )}
-                {deepResearchMode && (
-                  <span className="ml-2 bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded text-[10px]">🔬 Research</span>
-                )}
               </div>
             </div>
           </div>
+          
+          {deepResearchMode && !isMinimized && (
+            <div className="hidden sm:flex flex-col items-center justify-center px-2 py-1 bg-purple-500/20 border border-purple-500/30 rounded-md mx-2 animate-in fade-in duration-300">
+              <span className="text-xs">🔬</span>
+              <span className="text-[9px] font-medium text-purple-200 leading-none mt-0.5">Research</span>
+            </div>
+          )}
+
           <div className="flex items-center gap-2">
             {!isMinimized && (
               <>
@@ -1202,52 +1207,60 @@ export function ImprovedDraggableChat() {
 
             {/* Settings Panel */}
             {showSettings && (
-              <div className="border-b border-white/10 bg-black/20 p-4">
-                <div className="mb-3 text-sm font-medium text-white/80">Settings</div>
-                <div className="space-y-3">
-                  <label className="flex items-start gap-3 cursor-pointer selectable">
-                    <input
-                      type="checkbox"
-                      checked={autoNavigate}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setAutoNavigate(checked);
-                        localStorage.setItem("bear-auto-navigate", String(checked));
-                      }}
-                      className="mt-0.5 rounded border-white/20 bg-white/10 text-indigo-500 focus:ring-indigo-500/50"
-                    />
+              <div className="border-b border-white/10 bg-[#020511]/80 backdrop-blur-md p-5 animate-in slide-in-from-top-2 duration-200">
+                <div className="mb-4 text-sm font-semibold text-white/90">Settings</div>
+                <div className="space-y-4">
+                  <div 
+                    onClick={() => {
+                      const newValue = !autoNavigate;
+                      setAutoNavigate(newValue);
+                      localStorage.setItem("bear-auto-navigate", String(newValue));
+                    }}
+                    className="flex items-start gap-3 cursor-pointer group select-none"
+                  >
+                    <div className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-all duration-200 ${
+                      autoNavigate 
+                        ? "border-sky-500 bg-sky-500 text-white shadow-[0_0_10px_rgba(14,165,233,0.3)]" 
+                        : "border-white/30 bg-white/5 group-hover:border-white/50"
+                    }`}>
+                      {autoNavigate && <CheckCircle className="h-3.5 w-3.5" strokeWidth={3} />}
+                    </div>
                     <div className="flex-1">
-                      <div className="text-sm text-white">Auto-navigate</div>
-                      <div className="text-xs text-white/50 mt-0.5">
+                      <div className="text-sm font-medium text-white group-hover:text-sky-200 transition-colors">Auto-navigate</div>
+                      <div className="text-xs text-white/50 mt-0.5 leading-relaxed">
                         Automatically navigate to pages without asking for confirmation
                       </div>
                     </div>
-                  </label>
+                  </div>
                   
-                  <label className="flex items-start gap-3 cursor-pointer selectable">
-                    <input
-                      type="checkbox"
-                      checked={deepResearchMode}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setDeepResearchMode(checked);
-                        localStorage.setItem("bear-deep-research", String(checked));
-                      }}
-                      className="mt-0.5 rounded border-white/20 bg-white/10 text-purple-500 focus:ring-purple-500/50"
-                    />
+                  <div 
+                    onClick={() => {
+                      const newValue = !deepResearchMode;
+                      setDeepResearchMode(newValue);
+                      localStorage.setItem("bear-deep-research", String(newValue));
+                    }}
+                    className="flex items-start gap-3 cursor-pointer group select-none"
+                  >
+                    <div className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-all duration-200 ${
+                      deepResearchMode 
+                        ? "border-purple-500 bg-purple-500 text-white shadow-[0_0_10px_rgba(168,85,247,0.3)]" 
+                        : "border-white/30 bg-white/5 group-hover:border-white/50"
+                    }`}>
+                      {deepResearchMode && <CheckCircle className="h-3.5 w-3.5" strokeWidth={3} />}
+                    </div>
                     <div className="flex-1">
-                      <div className="text-sm text-white flex items-center gap-2">
-                        🔬 Deep Research Mode
-                        <span className="text-xs bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">Beta</span>
+                      <div className="text-sm font-medium text-white flex items-center gap-2 group-hover:text-purple-200 transition-colors">
+                        Deep Research Mode
+                        <span className="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded font-semibold border border-purple-500/20">Beta</span>
                       </div>
-                      <div className="text-xs text-white/50 mt-0.5">
+                      <div className="text-xs text-white/50 mt-0.5 leading-relaxed">
                         Enhanced analysis with detailed investigations, cross-referencing, and comprehensive answers. Auto-detects when deep research is needed.
                       </div>
                     </div>
-                  </label>
+                  </div>
                   
-                  <div className="pt-3 border-t border-white/10">
-                    <div className="text-sm text-white mb-2">Font Size</div>
+                  <div className="pt-4 border-t border-white/10">
+                    <div className="text-sm font-semibold text-white/90 mb-3">Font Size</div>
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => {
@@ -1256,15 +1269,15 @@ export function ImprovedDraggableChat() {
                           localStorage.setItem("bear-font-size", String(newSize));
                         }}
                         disabled={fontSize <= 12}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex items-center justify-center h-9 w-9 rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 transition-all border border-white/10 disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100"
                         title="Decrease font size"
                       >
-                        <span className="text-lg font-bold">−</span>
+                        <Minus className="h-4 w-4" />
                       </button>
                       
-                      <div className="flex-1 text-center">
-                        <div className="text-sm text-white/90">{fontSize}px</div>
-                        <div className="text-xs text-white/40">Range: 12-18px</div>
+                      <div className="flex-1 flex flex-col items-center justify-center bg-white/5 rounded-lg h-9 border border-white/5">
+                        <span className="text-sm font-medium text-white">{fontSize}px</span>
+                        <span className="text-[9px] text-white/40 leading-none">Range: 12-18px</span>
                       </div>
                       
                       <button
@@ -1274,10 +1287,10 @@ export function ImprovedDraggableChat() {
                           localStorage.setItem("bear-font-size", String(newSize));
                         }}
                         disabled={fontSize >= 18}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex items-center justify-center h-9 w-9 rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 transition-all border border-white/10 disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100"
                         title="Increase font size"
                       >
-                        <span className="text-lg font-bold">+</span>
+                        <span className="text-lg font-medium leading-none">+</span>
                       </button>
                       
                       <button
@@ -1285,7 +1298,7 @@ export function ImprovedDraggableChat() {
                           setFontSize(14);
                           localStorage.setItem("bear-font-size", "14");
                         }}
-                        className="px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 text-xs transition-colors"
+                        className="h-9 px-4 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 text-xs font-medium transition-all border border-indigo-500/20 hover:border-indigo-500/40 active:scale-95 ml-1"
                         title="Reset to default"
                       >
                         Reset

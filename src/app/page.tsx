@@ -1,461 +1,440 @@
-import Link from "next/link";
-import { ArrowRight, Sparkles, BarChart3, Brain, Database, Zap, Globe2, Shield, Bot, Network, CheckCircle2, Target, Users, Workflow } from "lucide-react";
-import { composeCurationResponse } from "@/lib/dataCurator";
-import { HomeStats } from "@/components/HomeStats";
+'use client';
 
-export default async function Home() {
-  const universe = composeCurationResponse();
-  const latestKPI = universe.kpis[0];
-  const latestFinancials = universe.financials.at(-1);
+import { useRole } from '@/lib/roleContext';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { 
+  Bot, 
+  MessageSquare, 
+  BookOpen, 
+  Activity, 
+  Zap, 
+  ArrowRight,
+  ShieldAlert,
+  FileText,
+  Search,
+  CheckCircle,
+  HelpCircle,
+  Building2,
+  Battery,
+  ChevronRight,
+  AlertTriangle
+} from 'lucide-react';
+import { AnimatedCounter } from '@/components/AnimatedCounter';
+import { getUserRobots, getUserStats } from '@/lib/locationData';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
+
+export default function Dashboard() {
+  const { role, getRoleLabel } = useRole();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/knowledge?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push('/knowledge');
+    }
+  };
+
+  const isInternalUser = role === 'internal_admin' || role === 'internal_rfe';
+  const isPartnerOrCustomer = role === 'partner_qcom' || role === 'customer_manager';
+  
+  // Get user's robots for the quick access section
+  const myRobots = getUserRobots().slice(0, 4);
+  const userStats = getUserStats();
+
+  // Metrics for different roles
+  const metrics = {
+    internal_admin: [
+      { label: 'Active Fleet', value: 1247, suffix: '', icon: Bot, color: 'text-bear-blue', bgColor: 'bg-bear-blue/20' },
+      { label: 'System Uptime', value: 99.9, suffix: '%', icon: Activity, color: 'text-emerald-400', bgColor: 'bg-emerald-500/20' },
+      { label: 'Active Alerts', value: 3, suffix: '', icon: ShieldAlert, color: 'text-rose-400', bgColor: 'bg-rose-500/20', hasAlert: true },
+      { label: 'AI Requests', value: 45.2, suffix: 'k', icon: Zap, color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
+    ],
+    internal_rfe: [
+      { label: 'Assigned Robots', value: 12, suffix: '', icon: Bot, color: 'text-bear-blue', bgColor: 'bg-bear-blue/20' },
+      { label: 'Open Tickets', value: 4, suffix: '', icon: FileText, color: 'text-amber-400', bgColor: 'bg-amber-500/20' },
+      { label: 'Avg Response', value: 14, suffix: 'm', icon: Activity, color: 'text-emerald-400', bgColor: 'bg-emerald-500/20' },
+      { label: 'Today\'s Tasks', value: 8, suffix: '', icon: CheckCircle, color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
+    ],
+    partner_qcom: [
+      { label: 'Locations', value: userStats.totalLocations, suffix: '', icon: Building2, color: 'text-bear-blue', bgColor: 'bg-bear-blue/20' },
+      { label: 'Robots Online', value: userStats.activeRobots, suffix: `/${userStats.totalRobots}`, icon: Bot, color: 'text-emerald-400', bgColor: 'bg-emerald-500/20' },
+      { label: 'Issues', value: userStats.issueRobots, suffix: '', icon: AlertTriangle, color: 'text-rose-400', bgColor: 'bg-rose-500/20', hasAlert: userStats.issueRobots > 0 },
+      { label: 'Avg Battery', value: userStats.averageBattery, suffix: '%', icon: Battery, color: 'text-amber-400', bgColor: 'bg-amber-500/20' },
+    ],
+    customer_manager: [
+      { label: 'Locations', value: userStats.totalLocations, suffix: '', icon: Building2, color: 'text-bear-blue', bgColor: 'bg-bear-blue/20' },
+      { label: 'Robots Online', value: userStats.activeRobots, suffix: `/${userStats.totalRobots}`, icon: Bot, color: 'text-emerald-400', bgColor: 'bg-emerald-500/20' },
+      { label: 'Issues', value: userStats.issueRobots, suffix: '', icon: AlertTriangle, color: 'text-rose-400', bgColor: 'bg-rose-500/20', hasAlert: userStats.issueRobots > 0 },
+      { label: 'Avg Battery', value: userStats.averageBattery, suffix: '%', icon: Battery, color: 'text-amber-400', bgColor: 'bg-amber-500/20' },
+    ]
+  };
+
+  const currentMetrics = metrics[role] || metrics.internal_admin;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(56,189,248,0.1),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(236,72,153,0.1),transparent_50%)]" />
-        
-        <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
-          <div className="flex flex-col items-center text-center">
-            {/* Badge */}
-            <div className="flex items-center gap-2 rounded-full border border-[#5DADE2]/20 bg-[#5DADE2]/10 px-4 py-2 text-sm font-medium text-[#85C1E9] backdrop-blur-sm">
-              <Sparkles className="h-4 w-4" />
-              <span>AI-Powered · Agentic Automation · Real-time Intelligence</span>
-            </div>
-
-            {/* Main Heading */}
-            <h1 className="mt-8 max-w-4xl text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
-              The Bear Universe
-              <span className="block mt-2 bg-gradient-to-r from-sky-400 via-indigo-400 to-rose-400 bg-clip-text text-transparent">
-                Intelligent Automation Ecosystem
-              </span>
-            </h1>
-
-            <p className="mt-6 max-w-2xl text-xl text-white/70 leading-relaxed">
-              Centralized operations platform powered by multi-agent AI systems. 
-              Monitor fleet health, diagnose incidents in real-time, and leverage AI-assisted 
-              troubleshooting for field engineers and operations teams.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-              <Link
-                href="/features"
-                className="group flex items-center justify-center gap-2 rounded-xl bg-[#5DADE2] hover:bg-[#3498DB] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#5DADE2]/30 transition-all hover:shadow-[#5DADE2]/50 hover:scale-105"
+    <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-[1600px] mx-auto min-h-screen relative">
+      {/* BearEmeaSupport Style Decorative Elements */}
+      <div className="fixed top-20 right-0 w-[400px] lg:w-[600px] h-[400px] lg:h-[600px] bg-bear-blue/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed bottom-20 left-0 w-[300px] lg:w-[400px] h-[300px] lg:h-[400px] bg-purple-500/3 rounded-full blur-3xl pointer-events-none" />
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative"
+      >
+        {/* Hero Header - BearEmeaSupport Inspired */}
+        <header className="mb-6 sm:mb-8 lg:mb-10 relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#0a0f1c] via-[#111827] to-[#0a0f1c] p-5 sm:p-8 lg:p-12 border border-white/10 shadow-2xl">
+          <div className="relative z-10 flex flex-col gap-6">
+            <div>
+              <motion.div 
+                className="flex items-center gap-3 mb-3 sm:mb-4"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
               >
-                Explore Features
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link
-                href="/operations"
-                className="flex items-center justify-center gap-2 rounded-xl border border-[#5DADE2]/30 bg-white/5 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-[#5DADE2]/10 hover:border-[#5DADE2]/50"
+                <span className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-bear-blue/20 border border-bear-blue/30 text-[10px] sm:text-xs font-bold text-bear-blue uppercase tracking-wider">
+                  {getRoleLabel(role)}
+                </span>
+              </motion.div>
+              <motion.h1 
+                className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white mb-2 sm:mb-4 tracking-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
               >
-                View Operations
-              </Link>
+                {getGreeting()}, <span className="text-gradient">George</span>.
+              </motion.h1>
+              <motion.p 
+                className="text-gray-400 text-sm sm:text-base lg:text-lg max-w-2xl font-medium leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                {isPartnerOrCustomer 
+                  ? 'Monitor your robots and get instant support.'
+                  : 'Your operational command center is ready.'}
+              </motion.p>
             </div>
-
-            {/* Live Stats with Animated Counters */}
-            <HomeStats 
-              ordersValue={latestKPI?.value || "12.4M"}
-              ordersDelta={latestKPI?.delta || "+8.2%"}
-              deployments={latestFinancials?.deployments || 1247}
-              aiModels={universe.trainingPlans.length}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Bear AI Agents Section */}
-      <section className="relative py-24 border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="text-center mb-16">
-            <div className="flex items-center justify-center gap-2 text-indigo-400 mb-4">
-              <Bot className="h-6 w-6" />
-              <span className="text-sm font-medium uppercase tracking-wider">Bear AI Constellation</span>
-            </div>
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Multi-Agent Intelligence
-            </h2>
-            <p className="mt-4 text-lg text-white/60 max-w-3xl mx-auto">
-              Our ecosystem of specialized AI agents, each named after bear species, 
-              work together to orchestrate operations, solve problems, and optimize performance.
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            {/* Ursa Minor */}
-            <div className="rounded-3xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 p-8 relative overflow-hidden group hover:border-indigo-500/40 transition-all">
-              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-indigo-500/10 blur-3xl transition-all group-hover:bg-indigo-500/20" />
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/30 to-indigo-600/30">
-                    <Bot className="h-6 w-6 text-indigo-300" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold">Ursa Minor</h3>
-                    <p className="text-sm text-white/50">Interactive Assistant</p>
-                  </div>
-                </div>
-                <p className="text-white/70 leading-relaxed mb-4">
-                  Your personal Bear Universe companion. Navigate dashboards, modify robot parameters, 
-                  and execute commands with intelligent permission controls.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs text-indigo-300">40B params</span>
-                  <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs text-indigo-300">Tool Calling</span>
-                  <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs text-indigo-300">Context Aware</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Grizzly */}
-            <div className="rounded-3xl border border-rose-500/20 bg-gradient-to-br from-rose-500/10 to-rose-500/5 p-8 relative overflow-hidden group hover:border-rose-500/40 transition-all">
-              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-rose-500/10 blur-3xl transition-all group-hover:bg-rose-500/20" />
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500/30 to-rose-600/30">
-                    <Database className="h-6 w-6 text-rose-300" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold">Grizzly</h3>
-                    <p className="text-sm text-white/50">Knowledge Core</p>
-                  </div>
-                </div>
-                <p className="text-white/70 leading-relaxed mb-4">
-                  Institutional memory for Bear Robotics. Answers questions about products, 
-                  partnerships, compliance, and brand voice with encyclopedic accuracy.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-rose-500/20 px-3 py-1 text-xs text-rose-300">120B params</span>
-                  <span className="rounded-full bg-rose-500/20 px-3 py-1 text-xs text-rose-300">Knowledge</span>
-                  <span className="rounded-full bg-rose-500/20 px-3 py-1 text-xs text-rose-300">Training</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Ursa Major */}
-            <div className="rounded-3xl border border-sky-500/20 bg-gradient-to-br from-sky-500/10 to-sky-500/5 p-8 relative overflow-hidden group hover:border-sky-500/40 transition-all">
-              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-sky-500/10 blur-3xl transition-all group-hover:bg-sky-500/20" />
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/30 to-sky-600/30">
-                    <Brain className="h-6 w-6 text-sky-300" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold">Ursa Major</h3>
-                    <p className="text-sm text-white/50">Fleet Orchestrator</p>
-                  </div>
-                </div>
-                <p className="text-white/70 leading-relaxed mb-4">
-                  Analyzes fleet telemetry, surfaces KPIs, auto-drafts diagnostics, and orchestrates 
-                  multi-agent task delegation across the entire Bear ecosystem.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs text-sky-300">70B params</span>
-                  <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs text-sky-300">Multi-Agent</span>
-                  <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs text-sky-300">Ready</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Upcoming Features Section */}
-      <section className="relative py-24 border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="text-center mb-16">
-            <div className="flex items-center justify-center gap-2 text-emerald-400 mb-4">
-              <Sparkles className="h-6 w-6" />
-              <span className="text-sm font-medium uppercase tracking-wider">Coming Soon</span>
-            </div>
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Next-Generation Capabilities
-            </h2>
-            <p className="mt-4 text-lg text-white/60 max-w-3xl mx-auto">
-              Advanced agentic features currently in development to revolutionize robotic fleet management
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* Feature 1 */}
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/20">
-                  <Workflow className="h-5 w-5 text-emerald-400" />
-                </div>
-                <h3 className="font-semibold text-lg">Agentic Task Delegation</h3>
-              </div>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Automatically distribute complex tasks across specialized bear agents. 
-                Each agent handles its domain expertise while coordinating seamlessly.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-500/20">
-                  <Target className="h-5 w-5 text-sky-400" />
-                </div>
-                <h3 className="font-semibold text-lg">Proactive Problem Solving</h3>
-              </div>
-              <p className="text-white/60 text-sm leading-relaxed">
-                AI agents scan telemetry 24/7, identifying and resolving issues before they impact operations. 
-                Autonomous fixes with human oversight.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-500/20">
-                  <Shield className="h-5 w-5 text-rose-400" />
-                </div>
-                <h3 className="font-semibold text-lg">Permission Blacklisting</h3>
-              </div>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Granular control over agent capabilities. Define what each agent can and cannot do 
-                with role-based access and action constraints.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/20">
-                  <Network className="h-5 w-5 text-indigo-400" />
-                </div>
-                <h3 className="font-semibold text-lg">Multi-Agent Aggregation</h3>
-              </div>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Orchestrate teams of bear agents for complex workflows. Combine Ursa Major's 
-                analytics with Aurora's knowledge for comprehensive insights.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/20">
-                  <CheckCircle2 className="h-5 w-5 text-amber-400" />
-                </div>
-                <h3 className="font-semibold text-lg">Hallucination Prevention</h3>
-              </div>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Keep agent conversations short and precise. Structured prompts and fact-checking 
-                pipelines ensure 99.9%+ accuracy on critical operations.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-500/20">
-                  <Users className="h-5 w-5 text-violet-400" />
-                </div>
-                <h3 className="font-semibold text-lg">Real-time Robot Dashboards</h3>
-              </div>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Individual robot monitoring with live status updates. Agents automatically update 
-                dashboards when completing tasks or detecting anomalies.
-              </p>
-            </div>
-          </div>
-
-          {/* Additional Features List */}
-          <div className="mt-12 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8">
-            <h3 className="text-xl font-bold mb-6">Additional Capabilities</h3>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <div className="font-medium">Tool Calling Framework</div>
-                  <div className="text-sm text-white/60">Agents can invoke APIs, query databases, and modify parameters safely</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <div className="font-medium">Context-Aware Memory</div>
-                  <div className="text-sm text-white/60">LangChain-powered conversation memory across sessions</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <div className="font-medium">Permission-Gated Commands</div>
-                  <div className="text-sm text-white/60">All actions require explicit user approval before execution</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <div className="font-medium">Robot-Specific Navigation</div>
-                  <div className="text-sm text-white/60">Ask "show me robot c44e79" to jump to detailed interface</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Platform Capabilities */}
-      <section className="relative py-24 border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Platform Capabilities
-            </h2>
-            <p className="mt-4 text-lg text-white/60">
-              Everything you need to monitor, analyze, and optimize robotic operations
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {/* Feature Cards */}
-            <Link
-              href="/operations"
-              className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 transition-all hover:border-[#5DADE2]/30 hover:shadow-lg hover:shadow-[#5DADE2]/10"
+            
+            {/* Quick Action Buttons - BearEmeaSupport Style */}
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-3"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/20 to-indigo-500/20 text-sky-400">
-                <BarChart3 className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 text-xl font-semibold">Real-time Operations</h3>
-              <p className="mt-3 text-white/60 leading-relaxed">
-                Live telemetry monitoring across all deployed facilities 
-                with shift-level granularity and instant health diagnostics.
-              </p>
-              <div className="mt-6 flex items-center text-sm font-medium text-[#5DADE2] transition-colors group-hover:text-[#85C1E9]">
-                View Dashboard
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </div>
-            </Link>
-
-            <Link
-              href="/ai-models"
-              className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 transition-all hover:border-[#5DADE2]/30 hover:shadow-lg hover:shadow-[#5DADE2]/10"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/20 to-rose-500/20 text-indigo-400">
-                <Brain className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 text-xl font-semibold">AI Model Orchestration</h3>
-              <p className="mt-3 text-white/60 leading-relaxed">
-                Track training progress for Ursa Minor, Ursa Major, and Grizzly with milestone monitoring.
-              </p>
-              <div className="mt-6 flex items-center text-sm font-medium text-[#5DADE2] transition-colors group-hover:text-[#85C1E9]">
-                Monitor Training
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </div>
-            </Link>
-
-            <Link
-              href="/data-lake"
-              className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 transition-all hover:border-[#5DADE2]/30 hover:shadow-lg hover:shadow-[#5DADE2]/10"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500/20 to-orange-500/20 text-rose-400">
-                <Database className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 text-xl font-semibold">Data Lake Insights</h3>
-              <p className="mt-3 text-white/60 leading-relaxed">
-                Curated operational datasets with KPI aggregation, demand heatmaps, 
-                and incident radar across all facilities.
-              </p>
-              <div className="mt-6 flex items-center text-sm font-medium text-[#5DADE2] transition-colors group-hover:text-[#85C1E9]">
-                Explore Data
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </div>
-            </Link>
-
-            <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-400">
-                <Sparkles className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 text-xl font-semibold">ChatGPT Integration</h3>
-              <p className="mt-3 text-white/60 leading-relaxed">
-                Ask ad-hoc questions about operations, KPIs, and training progress 
-                with context-aware AI responses.
-              </p>
-            </div>
-
-            <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-400">
-                <Shield className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 text-xl font-semibold">Knowledge Base</h3>
-              <p className="mt-3 text-white/60 leading-relaxed">
-                Comprehensive documentation of Bear products, partnerships, 
-                and GTM strategies with confidence scoring.
-              </p>
-            </div>
-
-            <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 text-violet-400">
-                <Zap className="h-6 w-6" />
-              </div>
-              <h3 className="mt-6 text-xl font-semibold">API Catalog</h3>
-              <p className="mt-3 text-white/60 leading-relaxed">
-                RESTful endpoints for curation data, insights, and model telemetry 
-                with latency monitoring.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="relative py-24 border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="rounded-[40px] border border-white/10 bg-gradient-to-br from-[#090f2f] via-[#080d24] to-[#02040c] p-12 text-center lg:p-16">
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Ready to explore the Bear Universe?
-            </h2>
-            <p className="mt-4 text-lg text-white/60">
-              Start monitoring operations, tracking AI training, and accessing insights with Ursa Minor.
-            </p>
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Link
-                href="/features"
-                className="group flex items-center justify-center gap-2 rounded-xl bg-[#5DADE2] hover:bg-[#3498DB] px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[#5DADE2]/30 transition-all hover:shadow-[#5DADE2]/50 hover:scale-105"
-              >
-                Get Started
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              <Link href="/robots" className="btn-primary text-center justify-center">
+                <Bot className="w-4 h-4 sm:w-5 sm:h-5" />
+                {isPartnerOrCustomer ? 'My Robots' : 'Fleet Overview'}
               </Link>
-              <Link
-                href="/data-lake"
-                className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10"
-              >
-                View Documentation
+              <Link href="/knowledge" className="btn-secondary text-center justify-center">
+                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
+                Get Help
               </Link>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      </section>
+          
+          {/* Decorative Background */}
+          <div className="absolute top-0 right-0 -mt-32 -mr-32 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-bear-blue/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 -mb-32 -ml-32 w-[200px] sm:w-[400px] h-[200px] sm:h-[400px] bg-purple-500/5 rounded-full blur-3xl" />
+        </header>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-12">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg overflow-hidden">
-                <img 
-                  src="/download.png" 
-                  alt="Bear Robotics" 
-                  className="h-full w-full object-cover"
-                />
+        {/* Metrics Grid - BearEmeaSupport Card Style */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 lg:mb-10">
+          {currentMetrics.map((metric, index) => (
+            <motion.div
+              key={metric.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + index * 0.05 }}
+              className="bear-glass-card p-4 sm:p-5 lg:p-6 group cursor-pointer min-h-[120px] sm:min-h-[140px] flex flex-col justify-between"
+            >
+              <div className="flex justify-between items-start mb-2 sm:mb-3">
+                <div className={`p-2 sm:p-2.5 lg:p-3 rounded-lg sm:rounded-xl ${metric.bgColor} ${metric.color} group-hover:scale-110 transition-transform duration-300`}>
+                  <metric.icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+                </div>
+                {metric.hasAlert && (
+                  <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_12px_rgba(244,63,94,0.6)]" />
+                )}
               </div>
               <div>
-                <div className="text-sm font-semibold">Bear Universe</div>
-                <div className="text-xs text-white/50">Bearrobotics.ai</div>
+                <div className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-white mb-0.5 sm:mb-1 tracking-tight">
+                  <AnimatedCounter value={metric.value} />
+                  <span className="text-sm sm:text-base lg:text-lg xl:text-xl text-gray-500 font-medium ml-0.5 sm:ml-1">{metric.suffix}</span>
+                </div>
+                <div className="text-xs sm:text-sm font-medium text-gray-400 truncate">{metric.label}</div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* My Robots Quick Access - For Partners & Customers */}
+        {isPartnerOrCustomer && myRobots.length > 0 && (
+          <section className="mb-6 sm:mb-8 lg:mb-10">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
+                <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-bear-blue" />
+                Quick Access
+              </h2>
+              <Link href="/robots" className="text-bear-blue text-xs sm:text-sm font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+                View All <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              {myRobots.map((robot, index) => (
+                <motion.div
+                  key={robot.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + index * 0.05 }}
+                >
+                  <Link
+                    href={`/robots/${robot.id}`}
+                    className="block bear-glass-card p-4 sm:p-5 group h-full"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <div className="p-2 rounded-lg bg-bear-blue/20 group-hover:bg-bear-blue/30 transition-colors flex-shrink-0">
+                          <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-bear-blue" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-white group-hover:text-bear-blue transition-colors text-sm sm:text-base truncate">
+                            {robot.name}
+                          </div>
+                          <div className="text-[10px] sm:text-xs text-gray-500 truncate">{robot.model}</div>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-bear-blue group-hover:translate-x-1 transition-all flex-shrink-0" />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] sm:text-xs font-medium ${
+                        robot.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
+                        robot.status === 'error' ? 'bg-rose-500/20 text-rose-400' :
+                        robot.status === 'charging' ? 'bg-amber-500/20 text-amber-400' :
+                        'bg-white/10 text-gray-400'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                          robot.status === 'active' ? 'bg-emerald-400' :
+                          robot.status === 'error' ? 'bg-rose-400 animate-pulse' :
+                          robot.status === 'charging' ? 'bg-amber-400' :
+                          'bg-gray-400'
+                        }`} />
+                        <span className="capitalize">{robot.status}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500">
+                        <Battery className="w-3 h-3" />
+                        <span className={robot.battery < 30 ? 'text-rose-400' : 'text-gray-400'}>{robot.battery}%</span>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 lg:mb-10">
+          {/* Main Action Card - Knowledge Base */}
+          <motion.div 
+            className="lg:col-span-2 bear-feature-card p-6 sm:p-7 lg:p-9 relative overflow-hidden group min-h-[300px] sm:min-h-[340px] flex flex-col"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <div>
+                <div className="flex items-center gap-3 sm:gap-4 mb-4">
+                  <div className="p-3 sm:p-3.5 lg:p-4 bg-bear-blue/20 rounded-xl shadow-lg shadow-bear-blue/10">
+                    <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-bear-blue" />
+                  </div>
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">Knowledge Base</h2>
+                </div>
+                <p className="text-gray-400 mb-5 sm:mb-6 lg:mb-8 max-w-md text-sm sm:text-base lg:text-lg leading-relaxed">
+                  {isPartnerOrCustomer 
+                    ? 'Find answers and troubleshooting guides for your robots.'
+                    : 'Instant answers for Servi Plus, Carti 100, and fleet management.'}
+                </p>
+                
+                {/* Functional Search Bar */}
+                <form onSubmit={handleSearch} className="max-w-xl mb-5 sm:mb-6 lg:mb-8">
+                  <div className="relative group/search">
+                    <div className="absolute inset-0 bg-gradient-to-r from-bear-blue/20 to-purple-500/20 rounded-xl sm:rounded-2xl opacity-0 group-hover/search:opacity-100 blur transition-opacity duration-300" />
+                    <div className="relative bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center gap-3 text-gray-400 text-sm sm:text-base focus-within:border-bear-blue/50 focus-within:bg-white/10 transition-all">
+                      <Search className="w-5 h-5 sm:w-6 sm:h-6 text-bear-blue flex-shrink-0" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search for &quot;LIDAR error&quot; or &quot;robot won't start&quot;..."
+                        className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-gray-500 text-sm sm:text-base"
+                      />
+                      {searchQuery && (
+                        <button
+                          type="submit"
+                          className="flex-shrink-0 p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-bear-blue hover:bg-bear-blue/80 text-white transition-all hover:scale-105 active:scale-95"
+                        >
+                          <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/knowledge" className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-bear-blue to-bear-blue/80 hover:from-bear-blue/90 hover:to-bear-blue/70 text-white font-semibold text-sm sm:text-base transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl shadow-bear-blue/30">
+                  Open Knowledge Base <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                </Link>
+                <Link href="/connect" className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white font-semibold text-sm sm:text-base transition-all hover:scale-[1.02] active:scale-[0.98]">
+                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
+                  Contact Support
+                </Link>
               </div>
             </div>
-            <div className="text-sm text-white/50">
-              <div>© 2025 Bear Robotics Operations Platform.</div>
-              <div className="mt-1">Developed by George Oprea</div>
+
+            {/* Background Robot Image */}
+            <div className="absolute right-0 bottom-0 w-48 sm:w-60 lg:w-72 h-48 sm:h-60 lg:h-72 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
+               <Image 
+                 src="/assets/Servi.png" 
+                 alt="Servi Robot" 
+                 width={288} 
+                 height={288} 
+                 className="object-contain translate-y-10 translate-x-10 transform group-hover:scale-105 transition-transform duration-500 w-full h-full"
+               />
             </div>
+          </motion.div>
+
+          {/* Secondary Actions */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-6">
+            <motion.div 
+              className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer min-h-[130px] sm:min-h-[140px] flex flex-col justify-between"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <Link href="/connect" className="block h-full flex flex-col justify-between">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-3 sm:p-3.5 lg:p-4 rounded-xl bg-emerald-500/20 text-emerald-400 group-hover:scale-110 transition-transform">
+                    <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-bold text-white group-hover:text-emerald-400 transition-colors text-base sm:text-lg truncate">Team Connect</h3>
+                    <p className="text-sm text-gray-400 truncate">3 Unread Messages</p>
+                  </div>
+                </div>
+                <div className="text-emerald-400 text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                  Open Channel <ArrowRight className="w-4 h-4" />
+                </div>
+              </Link>
+            </motion.div>
+
+            <motion.div 
+              className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer min-h-[130px] sm:min-h-[140px] flex flex-col justify-between"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <Link href="/robots" className="block h-full flex flex-col justify-between">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-3 sm:p-3.5 lg:p-4 rounded-xl bg-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform">
+                    <Bot className="w-6 h-6 sm:w-7 sm:h-7" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-bold text-white group-hover:text-purple-400 transition-colors text-base sm:text-lg truncate">
+                      {isPartnerOrCustomer ? 'My Robots' : 'Fleet Status'}
+                    </h3>
+                    <p className="text-sm text-gray-400 truncate">
+                      {isPartnerOrCustomer ? `${userStats.activeRobots} Online` : '99.9% Uptime'}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-purple-400 text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                  {isPartnerOrCustomer ? 'View Robots' : 'View Telemetry'} <ArrowRight className="w-4 h-4" />
+                </div>
+              </Link>
+            </motion.div>
+
+            {isPartnerOrCustomer && (
+              <motion.div 
+                className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer sm:col-span-2 lg:col-span-1 min-h-[130px] sm:min-h-[140px] flex flex-col justify-between"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <Link href="/robots" className="block h-full flex flex-col justify-between">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3 sm:p-3.5 lg:p-4 rounded-xl bg-bear-blue/20 text-bear-blue group-hover:scale-110 transition-transform">
+                      <Building2 className="w-6 h-6 sm:w-7 sm:h-7" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-bold text-white group-hover:text-bear-blue transition-colors text-base sm:text-lg truncate">My Locations</h3>
+                      <p className="text-sm text-gray-400 truncate">{userStats.totalLocations} Sites</p>
+                    </div>
+                  </div>
+                  <div className="text-bear-blue text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                    Manage Locations <ArrowRight className="w-4 h-4" />
+                  </div>
+                </Link>
+              </motion.div>
+            )}
           </div>
         </div>
-      </footer>
+
+        {/* Quick Help Topics - BearEmeaSupport Style */}
+        <section className="mb-6 sm:mb-8 lg:mb-10">
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-5 sm:mb-6 flex items-center gap-2 sm:gap-3">
+            <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6 text-bear-blue" />
+            Common Questions
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            {['Robot Won\'t Start', 'Connection Issues', 'Maintenance Guide'].map((topic, i) => (
+              <Link href="/knowledge" key={topic}>
+                <motion.div 
+                  className="bear-glass-card p-5 sm:p-6 flex items-center justify-between group cursor-pointer h-full min-h-[70px] sm:min-h-[80px]"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + i * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                    <div className="p-2.5 sm:p-3 rounded-xl bg-bear-blue/10 group-hover:bg-bear-blue/20 transition-colors flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 group-hover:text-bear-blue transition-colors" />
+                    </div>
+                    <span className="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm sm:text-base lg:text-lg truncate">{topic}</span>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-bear-blue opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0 flex-shrink-0 hidden sm:block" />
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+      </motion.div>
     </div>
   );
 }

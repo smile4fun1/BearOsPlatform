@@ -10,11 +10,9 @@ import {
   Database,
   Bot,
   Menu,
-  X 
+  X,
+  LifeBuoy
 } from "lucide-react";
-import { useState, useRef } from "react";
-import { LiveStatusPopup } from "./LiveStatusPopup";
-import { SystemStatus } from "./SystemStatus";
 
 const navigation = [
   { name: "Home", href: "/", icon: Rocket },
@@ -23,6 +21,7 @@ const navigation = [
   { name: "AI Models", href: "/ai-models", icon: Cpu },
   { name: "Data Lake", href: "/data-lake", icon: Database },
   { name: "Features", href: "/features", icon: LayoutDashboard },
+  { name: "Support", href: "/support", icon: LifeBuoy },
 ];
 
 export function Header() {

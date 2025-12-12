@@ -63,6 +63,19 @@ const facilities = [
 
 const models: Robot["model"][] = ["Servi Plus", "Carti 100", "Carti 600"];
 
+// Robot images based on model type
+export const modelImages: Record<Robot["model"], string> = {
+  "Servi": "/assets/Servi.png",
+  "Servi Plus": "/assets/Servi.png",
+  "Carti 100": "/assets/Carti.png",
+  "Carti 600": "/assets/Carti.png",
+};
+
+// Get robot image path
+export function getRobotImage(model: Robot["model"]): string {
+  return modelImages[model] || "/assets/Servi.png";
+}
+
 // Model specifications based on actual Bear Robotics products
 const modelSpecs = {
   "Servi Plus": {

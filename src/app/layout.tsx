@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/Header";
+// Header removed in favor of OS Sidebar
 import { ChatProvider } from "@/components/chat/ChatProvider";
 import { ImprovedDraggableChat } from "@/components/chat/ImprovedDraggableChat";
 import { BearFunPopup } from "@/components/BearFunPopup";
+import { Sidebar } from "@/components/os/Sidebar";
+import { RoleProvider } from "@/lib/roleContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -19,16 +21,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bear Universe · Intelligent Automation Ecosystem",
+  title: "BearOS · Intelligent Automation Platform",
   description:
-    "AI-powered operations platform for Bear Robotics featuring multi-agent orchestration, real-time telemetry, and intelligent task delegation across Seoul to Silicon Valley.",
+    "Unified operating system for Bear Robotics fleet management, knowledge, and communication.",
   icons: {
     icon: "/favicon.ico",
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Bear Universe",
+    title: "BearOS",
   },
 };
 
@@ -48,14 +50,22 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#020511] text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#020511] text-white flex h-screen overflow-hidden`}
       >
-        <ChatProvider>
-          <Header />
-        {children}
-          <ImprovedDraggableChat />
-          <BearFunPopup />
-        </ChatProvider>
+        <RoleProvider>
+          <ChatProvider>
+            {/* Sidebar Navigation */}
+            <Sidebar />
+            
+            {/* Main Content Area */}
+            <main className="flex-1 overflow-y-auto relative bg-[#020511]">
+              {children}
+            </main>
+
+            <ImprovedDraggableChat />
+            <BearFunPopup />
+          </ChatProvider>
+        </RoleProvider>
         <SpeedInsights />
         <Analytics />
       </body>

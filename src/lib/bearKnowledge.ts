@@ -1,212 +1,101 @@
-/**
- * Comprehensive Bear Robotics Knowledge Base
- * For Ursa Minor AI Assistant Context
- */
+export interface FAQItem {
+  id: number;
+  question: string;
+  answer: string;
+  keywords: string[];
+  category: string;
+}
 
-export const BEAR_ROBOTICS_KNOWLEDGE = `
-# Bear Robotics Company Overview
-
-## Company Profile
-- **Founded**: 2017 in Redwood City, California
-- **Headquarters**: Seoul, South Korea & Silicon Valley, USA
-- **Mission**: Transform the hospitality industry with innovative robotic solutions
-- **Focus**: Service robotics for restaurants, hotels, and healthcare facilities
-
-## Product Line
-
-### Servi Plus
-- **Type**: Enhanced food service robot
-- **Capacity**: 88 lbs (40 kg)
-- **Trays**: 4 large trays
-- **Speed**: 1.2 m/s
-- **Use Case**: High-volume restaurant operations
-- **Features**: Enhanced payload, faster navigation, longer battery life (14-18 hours)
-
-### Carti 100
-- **Type**: Multi-purpose autonomous cart
-- **Capacity**: 220 lbs (100 kg)
-- **Speed**: 1.5 m/s
-- **Use Case**: Staff aid (cleaning supplies, tools), light warehousing
-- **Features**: Flatbed design, industrial durability, 10-14 hour runtime
-- **Dimensions**: 600×800×1100 mm
-
-### Carti 600
-- **Type**: Heavy-duty industrial robot
-- **Capacity**: 1320 lbs (600 kg)
-- **Speed**: 1.0 m/s
-- **Use Case**: Warehouse operations, pallet movement, heavy goods transport
-- **Features**: Reinforced chassis, advanced load sensors, 8-12 hour runtime
-- **Dimensions**: 800×1200×1400 mm
-- **Weight**: 180 kg
-
-## Technical Specifications
-
-### Navigation System
-- **LIDAR**: 360° scanning at 10Hz
-- **Cameras**: 6x RGB cameras for obstacle avoidance
-- **Sensors**: Ultrasonic proximity sensors, cliff detection
-- **SLAM**: Simultaneous Localization and Mapping
-- **Path Planning**: Dynamic A* with real-time obstacle avoidance
-- **Localization Accuracy**: ±2cm position, ±1° orientation
-
-### Connectivity
-- **WiFi**: 802.11ac (2.4GHz + 5GHz)
-- **Cloud**: Bear Cloud API for fleet management
-- **Updates**: OTA (Over-The-Air) firmware updates
-- **Telemetry**: Real-time performance metrics streaming
-
-### Safety Features
-- **Emergency Stop**: Physical button + software kill switch
-- **Obstacle Detection**: 360° coverage, 0.5-3m range
-- **Speed Limiting**: Adaptive based on environment density
-- **Audio Alerts**: Warning sounds for pedestrians
-- **Collision Avoidance**: Predictive trajectory planning
-
-## Operations Metrics
-
-### Key Performance Indicators (KPIs)
-- **Uptime Target**: 95%+ operational availability
-- **Orders Per Shift**: 50-150 depending on facility
-- **Avg Trip Time**: 45-180 seconds per delivery
-- **Incidents Per 1K Jobs**: <2 target
-- **NPS Score**: 70+ target
-- **Energy Efficiency**: 15-25 kWh per shift
-
-### Maintenance Schedule
-- **Daily**: Battery check, tray cleaning
-- **Weekly**: Sensor calibration, firmware updates
-- **Monthly**: Deep cleaning, mechanical inspection
-- **Quarterly**: LIDAR recalibration, safety audit
-
-## Monitored Facilities (in Bear Universe Platform)
-
-### Americas Region
-1. **Redwood City HQ** - Primary operations center (California, USA)
-2. **Los Angeles Distribution** - West coast logistics (California, USA)
-
-### Europe Region
-3. **London Service Hub** - UK operations (London, UK)
-4. **Paris Operations** - France operations (Paris, France)
-5. **Berlin Tech Center** - Germany operations (Berlin, Germany)
-
-### APAC Region
-6. **Seoul Operations Center** - Korea headquarters (Seoul, South Korea)
-7. **Tokyo Service Center** - Japan operations (Tokyo, Japan)
-8. **Singapore Hub** - Singapore operations (Singapore)
-
-### Deployment Verticals
-- **Restaurant Service**: Food delivery, bussing (Servi Plus)
-- **Staff Operations**: Cleaning, tools, supplies (Carti 100)
-- **Warehousing**: Heavy loads, pallets, logistics (Carti 600)
-- **Healthcare**: Hospital meal/supply delivery (Servi Plus, Carti 100)
-
-## RFE (Robotics Field Engineer) Operations
-
-### Diagnostic Tools
-- **Dashboard Access**: Real-time robot status monitoring
-- **Log Analysis**: System logs, error codes, event timelines
-- **Sensor Diagnostics**: LIDAR health, camera calibration status
-- **Battery Analytics**: Charge cycles, degradation tracking
-- **Map Editor**: Environment mapping, no-go zones, waypoints
-
-### Common Issues & Fixes
-1. **Navigation Drift**: LIDAR recalibration
-2. **Battery Drain**: Check sensor power consumption
-3. **WiFi Dropouts**: Channel optimization, repeater placement
-4. **Tray Sensor Failure**: Recalibrate weight sensors
-5. **Slow Performance**: Clear cache, optimize map
-
-### Emergency Protocols
-- **Level 1 (Low)**: Non-critical warnings, log and monitor
-- **Level 2 (Medium)**: Performance degradation, schedule maintenance
-- **Level 3 (High)**: Service disruption, dispatch RFE within 6 hours
-- **Level 4 (Critical)**: Safety concern, immediate shutdown and RFE dispatch
-
-## Bear Universe Platform Overview
-
-**Purpose**: Centralized operations platform for monitoring and managing Bear Robotics fleets in real-time. Designed for field engineers, operations teams, and facility managers.
-
-**Core Value Propositions**:
-- Monitor 100+ robots across 8 global facilities in real-time
-- Diagnose incidents with AI-powered root cause analysis
-- Reduce downtime through predictive maintenance alerts
-- Optimize fleet performance with actionable insights
-- Enable remote troubleshooting for field engineers
-
-### For Operations Teams
-- **Real-time Fleet Monitoring**: Live telemetry from all robots
-- **Incident Radar**: Priority-sorted incidents with severity levels
-- **KPI Dashboards**: Uptime, deliveries, performance metrics
-- **Alert Management**: Proactive notifications for issues
-- **Performance Analytics**: Historical trends and comparisons
-
-### For Field Engineers (RFE)
-- Diagnostic tools and logs
-- Map editing and waypoint management
-- Live robot screen streaming
-- Remote troubleshooting
-- Maintenance scheduling
-
-### For Executives
-- Financial metrics (ARR, pipeline, margins)
-- Deployment tracking
-- Performance trends
-- AI training progress
-- Knowledge base access
-
-## Bear AI Agents
-
-### Ursa Minor (40B)
-- **Role**: Interactive assistant
-- **Capabilities**: Navigation, robot control, query answering
-- **Permissions**: User-approved commands only
-
-### Ursa Major (70B)
-- **Role**: Fleet orchestrator
-- **Capabilities**: Multi-agent task delegation, KPI analysis
-- **Deployment**: Universe automation planners
-
-### Grizzly (120B)
-- **Role**: Knowledge core
-- **Capabilities**: Product info, partnerships, compliance
-- **Deployment**: Customer copilots, executive briefings
-
-## Commands & Navigation
-
-### Navigation Commands
-- "go to [page]" - Navigate to specific dashboard
-- "show me robot [id]" - Display robot details
-- "operations dashboard" - View live telemetry
-
-### Query Commands
-- "what's the uptime?" - Current fleet uptime
-- "show me alerts" - Active incident alerts
-- "facility status" - Per-facility breakdown
-
-### Control Commands (Require Permission)
-- "modify [robot] [parameter] [value]" - Adjust robot settings
-- "execute [command]" - Run system commands
-- "update firmware" - Trigger OTA updates
-
-Remember: Always ask for user permission before executing any command that modifies robot state or system configuration.
-`;
-
-export const BEAR_CONTEXT_EXAMPLES = [
+export const faqData: FAQItem[] = [
+  // General
   {
-    question: "What's our current fleet performance?",
-    context: "Reference latest KPI data including uptime, orders served, and NPS scores.",
+    id: 1,
+    category: 'general',
+    question: 'What robots does Bear Robotics make?',
+    answer: 'Bear Robotics makes two main robots for the hospitality industry: Servi Plus, a food service robot designed for restaurants, and Carti 100, a delivery robot for various indoor environments. Both robots help businesses operate more efficiently by automating routine delivery tasks.',
+    keywords: ['about', 'robots', 'what is', 'servi plus', 'carti 100', 'models']
   },
   {
-    question: "Show me robot c44e79",
-    context: "Navigate to /robots/c44e79 to display detailed robot interface.",
+    id: 2,
+    category: 'general',
+    question: 'How do I turn on my robot?',
+    answer: 'First, make sure the robot is charged by placing it on the charging station for at least 30 minutes.\n\nThe power button is located on the back or side of the robot base.\n\nPress and hold the power button for 3-5 seconds until you hear a sound and see the screen light up.\n\nWait about 1 minute for the robot to fully start up before using it.',
+    keywords: ['power on', 'start', 'turn on', 'boot', 'startup']
   },
   {
-    question: "How do I recalibrate LIDAR?",
-    context: "Provide RFE instructions: 1) Access diagnostic panel, 2) Run calibration wizard, 3) Verify accuracy within ±1° tolerance.",
+    id: 3,
+    category: 'general',
+    question: 'How do I turn off my robot at the end of the day?',
+    answer: 'The easiest way is to simply place the robot on its charging station - it will automatically go into charging mode.\n\nIf you need to fully power off, look for the power menu on the screen (usually under settings or by tapping the power icon), then select "Power Off" or "Shutdown".\n\nWait for the screen to turn off completely before moving the robot.',
+    keywords: ['shutdown', 'power off', 'turn off', 'stop', 'end of day']
   },
   {
-    question: "What robots are deployed in Seoul?",
-    context: "Query operations dataset filtered by city='Seoul', list robot models and facilities.",
+    id: 4,
+    category: 'general',
+    question: 'How much weight can the robot carry?',
+    answer: 'Servi Plus can carry up to 40kg (88 lbs) total across all its trays. Each individual tray can hold about 10-13kg (22-29 lbs).\n\nCarti 100 can carry up to 100kg (220 lbs) in its main compartment.\n\nAlways distribute weight evenly and never exceed these limits. If overloaded, the robot may move slower or show a warning message.',
+    keywords: ['capacity', 'weight', 'load', 'how much', 'carry', 'limits']
   },
+  // Power
+  {
+    id: 6,
+    category: 'power',
+    question: 'My robot won\'t charge. What should I do?',
+    answer: 'If your robot won\'t charge, try these steps:\n\n1) Check that the charging station is plugged in and the power indicator light is on.\n\n2) Inspect charging contacts on both robot and station for dirt or debris - clean with a dry cloth.\n\n3) Ensure the robot is properly aligned with the charging station (you should hear a click).\n\n4) Check the wall outlet with another device to confirm power.\n\n5) Look for error messages on the robot screen.\n\n6) Try manually positioning the robot on the charger.\n\nIf problem persists, the charging contacts or battery may need service.',
+    keywords: ['charging', 'won\'t charge', 'not charging', 'battery', 'charger']
+  },
+  {
+    id: 7,
+    category: 'power',
+    question: 'How long does it take to fully charge the battery?',
+    answer: 'A full charge from 0% to 100% typically takes 4-6 hours for both Servi Plus and Carti 100.\n\nBoth robots use intelligent charging: they charge quickly to 80% (about 2-3 hours) for rapid return to service, then slowly charge the final 20% to preserve battery life.\n\nFor optimal battery health, we recommend charging overnight. The robots can operate while charging up to 20%, making them suitable for continuous operation during slow periods.',
+    keywords: ['charging time', 'how long', 'battery time', 'charge duration']
+  },
+  // Operation
+  {
+    id: 12,
+    category: 'operation',
+    question: 'The robot keeps bumping into things. Why?',
+    answer: 'If your robot is bumping into objects, the sensors may be dirty. Clean all sensors on the front, sides, and bottom of the robot with a soft, dry cloth.\n\nMake sure there\'s good lighting in your space - sensors don\'t work well in very dark areas.\n\nAlso check if you\'ve moved furniture recently - the robot may need help relocalizing. Try positioning it near a QR code marker to help it reorient.\n\nIf bumping continues after cleaning sensors and relocalizing, contact support.',
+    keywords: ['bumping', 'collision', 'hitting', 'crashes', 'obstacles', 'sensors']
+  },
+  {
+    id: 33,
+    category: 'operation',
+    question: 'The robot seems confused about its location. What are QR codes and how do they help?',
+    answer: 'QR codes are special markers placed around your space that help the robot know exactly where it is.\n\nIf your robot seems lost or confused (spinning in circles, not going to the right places, or showing location errors), try moving it close to one of these QR code markers. The robot will scan the code and instantly know its position again.\n\nThese codes are usually placed on walls or pillars around your facility at eye-level.\n\nIf you can\'t find your QR codes or they seem damaged or covered, contact support for assistance.',
+    keywords: ['QR code', 'lost', 'location', 'confused', 'localization', 'position', 'markers', 'spinning']
+  },
+  // Connectivity
+  {
+    id: 17,
+    category: 'connectivity',
+    question: 'How do I connect the robot to WiFi?',
+    answer: 'To connect to WiFi:\n\n1) On the robot screen, tap Settings, then Network, then WiFi.\n\n2) Make sure WiFi is turned ON.\n\n3) Wait for the list of networks to appear.\n\n4) Tap on your facility\'s WiFi network name.\n\n5) Type in your WiFi password carefully (it\'s case-sensitive).\n\n6) Tap Connect and wait for a checkmark.\n\n7) Look for the WiFi icon at the top of the screen - it should show signal bars.\n\nIf you have trouble connecting, ask your IT person for help with the password.',
+    keywords: ['wifi', 'wireless', 'connect', 'network', 'internet', 'setup']
+  },
+  // Troubleshooting
+  {
+    id: 27,
+    category: 'troubleshooting',
+    question: 'The robot is showing an error message. What should I do?',
+    answer: 'When you see an error message:\n\n1) Write down or take a photo of the exact error code and message.\n\n2) Try restarting the robot - hold the power button for 10 seconds until it shuts off, wait 30 seconds, then power it back on.\n\n3) If the error comes back, note when it happens (moving, charging, idle, etc.).\n\n4) Contact support with the error code and information about when it occurs.\n\nDon\'t try to fix advanced settings yourself as this can make the problem worse.',
+    keywords: ['error', 'error message', 'error code', 'problem', 'issue']
+  },
+  {
+    id: 32,
+    category: 'troubleshooting',
+    question: 'Where can I find my robot\'s serial number?',
+    answer: 'The serial number is located on a label on the bottom of the robot base. You may need to carefully tilt the robot or place it on its side to see it.\n\nThe serial number usually starts with letters followed by numbers (example: SERVI-2023-1234).\n\nYou can also find it in the robot\'s settings: Go to Settings > About > Robot Information.\n\nWrite down your serial number and keep it handy - you\'ll need it when contacting support or ordering parts.',
+    keywords: ['serial number', 'model number', 'robot id', 'identification']
+  }
 ];
 
+export const categories = [
+  { id: 'general', label: 'Getting Started', description: 'Basic information about your robot' },
+  { id: 'power', label: 'Power & Charging', description: 'Battery and charging help' },
+  { id: 'operation', label: 'Daily Operations', description: 'Common usage tips' },
+  { id: 'cleaning', label: 'Cleaning & Care', description: 'Maintenance guidelines' },
+  { id: 'connectivity', label: 'Connectivity', description: 'WiFi and network setup' },
+  { id: 'troubleshooting', label: 'Troubleshooting', description: 'Fix common issues' },
+];

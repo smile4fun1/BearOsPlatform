@@ -127,34 +127,35 @@ Please provide:
   return (
     <div className="relative">
       {/* Fixed Container Card */}
-      <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#020511]/95 via-[#0a1628]/95 to-[#020511]/95 backdrop-blur-xl shadow-2xl overflow-hidden">
+      <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl shadow-xl overflow-hidden">
         {/* Header with filters - Fixed */}
-        <div className="p-6 pb-4 border-b border-white/10 bg-gradient-to-r from-red-500/5 to-orange-500/5">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-white/10 bg-gradient-to-r from-red-500/5 to-orange-500/5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3 sm:mb-4">
             <div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                <Activity className="h-6 w-6 text-red-400" />
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
+                <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-red-400" />
                 Incident Radar
               </h2>
-              <p className="text-sm text-white/60 mt-1">
+              <p className="text-xs sm:text-sm text-white/60 mt-1">
                 Real-time monitoring · {filteredIncidents.length} active incident{filteredIncidents.length !== 1 ? "s" : ""}
               </p>
             </div>
             
-            <div className="flex flex-wrap gap-2">
+            {/* Filter Buttons - Scrollable on mobile */}
+            <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1 -mx-1 px-1 sm:overflow-visible sm:pb-0 sm:mx-0 sm:px-0 scrollbar-hide">
               {["all", "critical", "high", "medium", "low"].map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f as any)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
                     filter === f
-                      ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
-                      : "bg-white/5 text-white/60 hover:bg-white/10"
+                      ? "bg-bear-blue text-white shadow-lg shadow-bear-blue/20"
+                      : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10"
                   }`}
                 >
                   {f.charAt(0).toUpperCase() + f.slice(1)}
                   {f !== "all" && (
-                    <span className="ml-2 text-xs opacity-70">
+                    <span className={`ml-1.5 text-[10px] sm:text-xs ${filter === f ? 'text-white/80' : 'text-white/50'}`}>
                       ({incidents.filter(i => i.severity === f).length})
                     </span>
                   )}
@@ -164,67 +165,67 @@ Please provide:
           </div>
         </div>
 
-        {/* Scrollable Incident Grid - Fixed Height */}
-        <div className="h-[600px] overflow-y-auto p-6 custom-scrollbar">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Scrollable Incident Grid - Responsive Height */}
+        <div className="h-[400px] sm:h-[500px] lg:h-[600px] overflow-y-auto p-4 sm:p-6">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {filteredIncidents.length === 0 ? (
-              <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
-                <AlertCircle className="h-12 w-12 text-white/30 mb-4" />
-                <p className="text-white/50 text-lg">No {filter !== "all" ? filter : ""} incidents found</p>
-                <p className="text-white/30 text-sm mt-2">System operating normally</p>
+              <div className="col-span-full flex flex-col items-center justify-center py-12 sm:py-20 text-center">
+                <AlertCircle className="h-10 w-10 sm:h-12 sm:w-12 text-white/30 mb-3 sm:mb-4" />
+                <p className="text-white/50 text-base sm:text-lg">No {filter !== "all" ? filter : ""} incidents found</p>
+                <p className="text-white/30 text-xs sm:text-sm mt-2">System operating normally</p>
               </div>
             ) : (
               filteredIncidents.map((incident) => (
           <button
             key={incident.id}
             onClick={() => setSelectedIncident(incident)}
-            className={`group relative rounded-2xl border bg-gradient-to-br p-5 text-left transition-all hover:scale-[1.02] hover:shadow-lg ${getSeverityColor(incident.severity)}`}
+            className={`group relative rounded-xl sm:rounded-2xl border bg-gradient-to-br p-4 sm:p-5 text-left transition-all hover:scale-[1.01] sm:hover:scale-[1.02] hover:shadow-lg ${getSeverityColor(incident.severity)}`}
           >
             {/* Status badge */}
-            <div className={`absolute top-3 right-3 rounded-full border px-2 py-0.5 text-xs font-medium ${getStatusBadge(incident.status)}`}>
+            <div className={`absolute top-2 sm:top-3 right-2 sm:right-3 rounded-full border px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-semibold ${getStatusBadge(incident.status)}`}>
               {incident.status.replace("_", " ").toUpperCase()}
             </div>
 
             {/* Severity icon */}
-            <div className="mb-3 flex items-center gap-3">
-              {getSeverityIcon(incident.severity)}
-              <div>
-                <div className="text-xs text-white/60">{incident.errorCode}</div>
-                <div className="text-sm font-semibold text-white/90">{incident.category.toUpperCase()}</div>
+            <div className="mb-2 sm:mb-3 flex items-center gap-2 sm:gap-3">
+              <div className="flex-shrink-0">{getSeverityIcon(incident.severity)}</div>
+              <div className="min-w-0">
+                <div className="text-[10px] sm:text-xs text-white/60 truncate">{incident.errorCode}</div>
+                <div className="text-xs sm:text-sm font-semibold text-white/90">{incident.category.toUpperCase()}</div>
               </div>
             </div>
 
             {/* Title */}
-            <h3 className="mb-2 text-base font-bold text-white line-clamp-1">
+            <h3 className="mb-2 text-sm sm:text-base font-bold text-white line-clamp-2 sm:line-clamp-1 pr-8 sm:pr-0">
               {incident.title}
             </h3>
 
             {/* Robot info */}
-            <div className="mb-3 flex items-center gap-2 text-xs text-white/60">
-              <MapPin className="h-3 w-3" />
-              <span>{incident.robotName} · {incident.facility}</span>
+            <div className="mb-2 sm:mb-3 flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-white/60">
+              <MapPin className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{incident.robotName} · {incident.facility}</span>
             </div>
 
             {/* Time */}
-            <div className="flex items-center gap-2 text-xs text-white/50">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-white/50">
               <Clock className="h-3 w-3" />
               <span>{dayjs(incident.detectedAt).fromNow()}</span>
             </div>
 
             {/* Quick metrics */}
-            <div className="mt-3 grid grid-cols-2 gap-2 border-t border-white/10 pt-3">
+            <div className="mt-2 sm:mt-3 grid grid-cols-2 gap-2 border-t border-white/10 pt-2 sm:pt-3">
               <div>
-                <div className="text-xs text-white/50">Downtime</div>
-                <div className="text-sm font-semibold text-white">{incident.downtime}m</div>
+                <div className="text-[10px] sm:text-xs text-white/50">Downtime</div>
+                <div className="text-xs sm:text-sm font-semibold text-white">{incident.downtime}m</div>
               </div>
               <div>
-                <div className="text-xs text-white/50">Orders Lost</div>
-                <div className="text-sm font-semibold text-white">{incident.ordersAffected}</div>
+                <div className="text-[10px] sm:text-xs text-white/50">Orders Lost</div>
+                <div className="text-xs sm:text-sm font-semibold text-white">{incident.ordersAffected}</div>
               </div>
             </div>
 
-            {/* Hover indicator */}
-            <div className="absolute bottom-3 right-3 opacity-0 transition-opacity group-hover:opacity-100">
+            {/* Hover indicator - hidden on mobile */}
+            <div className="absolute bottom-3 right-3 opacity-0 transition-opacity group-hover:opacity-100 hidden sm:block">
               <ChevronRight className="h-5 w-5 text-white/60" />
             </div>
           </button>
@@ -237,48 +238,48 @@ Please provide:
       {/* Detailed Modal */}
       {selectedIncident && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm"
           onClick={() => setSelectedIncident(null)}
         >
           <div 
-            className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/20 bg-gradient-to-br from-[#020511]/98 via-[#0a1628]/98 to-[#020511]/98 backdrop-blur-xl shadow-2xl m-4"
+            className="relative max-h-[95vh] sm:max-h-[90vh] w-full sm:max-w-4xl overflow-y-auto rounded-t-2xl sm:rounded-2xl border-t sm:border border-white/20 bg-gradient-to-br from-[#0a0f1c] via-[#0a1628] to-[#0a0f1c] backdrop-blur-xl shadow-2xl sm:m-4"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close button */}
             <button
               onClick={() => setSelectedIncident(null)}
-              className="absolute top-4 right-4 rounded-full bg-white/10 p-2 text-white/60 transition-colors hover:bg-white/20 hover:text-white z-10"
+              className="absolute top-3 sm:top-4 right-3 sm:right-4 rounded-full bg-white/10 p-2 text-white/60 transition-colors hover:bg-white/20 hover:text-white z-10"
             >
               <X className="h-5 w-5" />
             </button>
 
             {/* Header */}
-            <div className={`border-b border-white/10 p-6 bg-gradient-to-r ${getSeverityColor(selectedIncident.severity).replace("from-", "from-").replace("to-", "to-")}`}>
-              <div className="flex items-start gap-4">
-                <div className="rounded-xl bg-white/10 p-3">
+            <div className={`border-b border-white/10 p-4 sm:p-6 bg-gradient-to-r ${getSeverityColor(selectedIncident.severity).replace("from-", "from-").replace("to-", "to-")}`}>
+              <div className="flex items-start gap-3 sm:gap-4 pr-8">
+                <div className="rounded-xl bg-white/10 p-2 sm:p-3 flex-shrink-0">
                   {getSeverityIcon(selectedIncident.severity)}
                 </div>
-                <div className="flex-1">
-                  <div className="mb-2 flex items-center gap-3">
-                    <span className={`rounded-full border px-3 py-1 text-xs font-medium ${getStatusBadge(selectedIncident.status)}`}>
+                <div className="flex-1 min-w-0">
+                  <div className="mb-2 flex flex-wrap items-center gap-2 sm:gap-3">
+                    <span className={`rounded-full border px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold ${getStatusBadge(selectedIncident.status)}`}>
                       {selectedIncident.status.replace("_", " ").toUpperCase()}
                     </span>
-                    <span className="text-xs text-white/60">{selectedIncident.errorCode}</span>
+                    <span className="text-[10px] sm:text-xs text-white/60">{selectedIncident.errorCode}</span>
                   </div>
-                  <h2 className="mb-2 text-2xl font-bold text-white">
+                  <h2 className="mb-2 text-lg sm:text-xl lg:text-2xl font-bold text-white">
                     {selectedIncident.title}
                   </h2>
-                  <div className="flex flex-wrap gap-4 text-sm text-white/70">
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap gap-1.5 sm:gap-4 text-xs sm:text-sm text-white/70">
                     <span className="flex items-center gap-1.5">
-                      <MapPin className="h-4 w-4" />
+                      <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       {selectedIncident.robotName} ({selectedIncident.robotId})
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <Activity className="h-4 w-4" />
+                      <Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       {selectedIncident.facility}, {selectedIncident.city}
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <Clock className="h-4 w-4" />
+                      <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       Detected {dayjs(selectedIncident.detectedAt).fromNow()}
                     </span>
                   </div>
@@ -287,22 +288,22 @@ Please provide:
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Quick Actions */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 <button
                   onClick={() => setIsSSHOpen(!isSSHOpen)}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-emerald-400 transition-all hover:bg-emerald-500/20 hover:scale-[1.02]"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-emerald-400 transition-all hover:bg-emerald-500/20 active:scale-[0.98] sm:hover:scale-[1.02] font-semibold text-sm sm:text-base"
                 >
-                  <Terminal className="h-5 w-5" />
-                  <span className="font-medium">SSH to Robot</span>
+                  <Terminal className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span>SSH to Robot</span>
                 </button>
                 <button
                   onClick={() => handleSendToAI(selectedIncident)}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 px-4 py-3 text-indigo-400 transition-all hover:bg-indigo-500/20 hover:scale-[1.02]"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-bear-blue/10 border border-bear-blue/30 px-4 py-3 text-bear-blue transition-all hover:bg-bear-blue/20 active:scale-[0.98] sm:hover:scale-[1.02] font-semibold text-sm sm:text-base"
                 >
-                  <MessageSquare className="h-5 w-5" />
-                  <span className="font-medium">Investigate with AI</span>
+                  <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span>Investigate with AI</span>
                 </button>
               </div>
 

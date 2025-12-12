@@ -84,7 +84,7 @@ export function Sidebar() {
     <>
       {/* Header */}
       <div className="p-6 border-b border-white/5">
-        <div className="flex items-center gap-3 mb-6">
+        <Link href="/" className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity">
           <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-bear-blue/30">
             <img 
               src="/download.png" 
@@ -96,7 +96,7 @@ export function Sidebar() {
             <span className="block font-bold text-xl tracking-tight text-white leading-none">BearOS</span>
             <span className="text-xs text-bear-blue font-semibold tracking-wide">PLATFORM</span>
           </div>
-        </div>
+        </Link>
         
         <RoleSwitcher />
       </div>

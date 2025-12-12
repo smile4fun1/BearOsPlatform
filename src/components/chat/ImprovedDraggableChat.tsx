@@ -1127,13 +1127,6 @@ export function ImprovedDraggableChat() {
               </>
             )}
             <button
-              onClick={handleToggleMinimize}
-              className="rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
-              aria-label={isMinimized ? "Maximize" : "Minimize"}
-            >
-              {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
-            </button>
-            <button
               onClick={() => {
                 // Add shrink animation before minimizing
                 if (chatRef.current) {

@@ -21,7 +21,7 @@ import {
   Lightbulb as LightBulbIcon,
   ArrowRight as ArrowRightIcon,
   AlertTriangle as ExclamationTriangleIcon,
-  ChevronLeft as ChevronLeftIcon
+  RotateCcw as RestartIcon
 } from 'lucide-react';
 
 export default function TrainingPage() {
@@ -114,6 +114,15 @@ export default function TrainingPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const restartTraining = () => {
+    if (confirm("Are you sure you want to restart training? This will reset your progress.")) {
+        setCompletedModules([]);
+        setTrainingStarted(false);
+        setCurrentModule(0);
+        localStorage.removeItem('bear-training-progress');
+    }
+  };
+
   const handleNext = () => {
     const moduleId = currentModule;
     if (!completedModules.includes(moduleId)) {
@@ -166,6 +175,16 @@ export default function TrainingPage() {
                 </div>
 
                 <div className="flex items-center gap-4">
+                    {/* Restart Button */}
+                    <button 
+                        onClick={restartTraining}
+                        className="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors flex items-center gap-2 group"
+                        title="Restart Training"
+                    >
+                        <RestartIcon className="w-4 h-4 group-hover:-rotate-180 transition-transform duration-500" />
+                        <span className="hidden lg:inline text-xs font-medium">Restart</span>
+                    </button>
+
                     <div className="hidden sm:block text-right">
                         <div className="text-xs text-gray-400 mb-1">Progress</div>
                         <div className="text-sm font-bold text-white">{progress}%</div>
@@ -389,7 +408,7 @@ function ModuleWelcome({ onComplete }: { onComplete: () => void }) {
                 { icon: PlayCircleIcon, label: "Interactive", desc: "Learn by doing" },
                 { icon: ShieldCheckIcon, label: "Certified", desc: "Get ready" },
             ].map((item, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors">
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors h-full flex flex-col items-center justify-center text-center">
                     <item.icon className="w-6 h-6 text-bear-blue mx-auto mb-2" />
                     <div className="font-semibold text-white">{item.label}</div>
                     <div className="text-xs text-gray-500">{item.desc}</div>
@@ -443,13 +462,13 @@ function ModuleMeetServi() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="bg-[#0f1423] border border-white/5 p-5 rounded-2xl hover:border-white/10 transition-colors"
+                        className="bg-[#0f1423] border border-white/5 p-5 rounded-2xl hover:border-white/10 transition-colors h-full flex flex-col"
                     >
                         <div className={`w-10 h-10 ${item.bg} rounded-lg flex items-center justify-center mb-4`}>
                             <item.icon className={`w-6 h-6 ${item.color}`} />
                         </div>
                         <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                        <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
+                        <p className="text-sm text-gray-400 leading-relaxed flex-1">{item.desc}</p>
                     </motion.div>
                 ))}
             </div>
@@ -601,12 +620,12 @@ function ModuleBestPractices() {
                         { icon: MapIcon, title: "Clear Paths", desc: "Watch for obstacles like chairs and bags. A clear path means faster and smoother service.", color: "text-purple-400" },
                         { icon: ClipboardDocumentCheckIcon, title: "End of Shift", desc: "Quick wipe down, check for debris, and park on charger. Takes 2 minutes and keeps Servi ready.", color: "text-orange-400" },
                     ].map((item, i) => (
-                        <div key={i} className="bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
-                            <div className="flex items-start gap-4">
-                                <item.icon className={`w-6 h-6 ${item.color} mt-1`} />
-                                <div>
+                        <div key={i} className="bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors h-full">
+                            <div className="flex items-start gap-4 h-full">
+                                <item.icon className={`w-6 h-6 ${item.color} mt-1 flex-shrink-0`} />
+                                <div className="flex flex-col h-full">
                                     <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                                    <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
+                                    <p className="text-sm text-gray-400 leading-relaxed flex-1">{item.desc}</p>
                                 </div>
                             </div>
                         </div>

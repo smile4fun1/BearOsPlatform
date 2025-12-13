@@ -29,7 +29,12 @@ import {
   Pin,
   VolumeX,
   LogOut,
-  Download
+  Download,
+  Plus,
+  Globe,
+  UserPlus,
+  Check,
+  AlertCircle
 } from 'lucide-react';
 import { robotFleet, searchRobots, Robot } from '@/lib/robotData';
 
@@ -318,17 +323,26 @@ export default function ConnectPage() {
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
-  
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const channels: Channel[] = [
+  const [showCreateChannel, setShowCreateChannel] = useState(false);
+  const [showChannelSettings, setShowChannelSettings] = useState(false);
+  const [showMembersModal, setShowMembersModal] = useState(false);
+  const [showPinnedMessages, setShowPinnedMessages] = useState(false);
+  const [mutedChannels, setMutedChannels] = useState<string[]>([]);
+  const [pinnedMessages, setPinnedMessages] = useState<Record<string, Message[]>>({});
+  const [channelList, setChannelList] = useState<Channel[]>([
     { id: 'general', name: 'general', type: 'public', allowedRoles: ['internal_admin', 'internal_rfe', 'partner_qcom'] },
     { id: 'announcements', name: 'announcements', type: 'public', allowedRoles: ['internal_admin', 'internal_rfe', 'partner_qcom', 'customer_manager'], unread: 2 },
     { id: 'field-ops', name: 'field-ops', type: 'public', allowedRoles: ['internal_admin', 'internal_rfe'] },
     { id: 'qcom-support', name: 'qcom-support', type: 'private', allowedRoles: ['internal_admin', 'partner_qcom'] },
     { id: 'robot-alerts', name: 'robot-alerts', type: 'bot', allowedRoles: ['internal_admin', 'internal_rfe'], unread: 5 },
-  ];
+  ]);
+  
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+  const filesPanelRef = useRef<HTMLDivElement>(null);
+  const channelMenuRef = useRef<HTMLDivElement>(null);
+
 
   const initialMessages: Record<string, Message[]> = {
     'general': [
@@ -374,8 +388,39 @@ export default function ConnectPage() {
     }
   }, [channelMessages]);
 
-  const visibleChannels = channels.filter(c => c.allowedRoles.includes(role));
+  const visibleChannels = channelList.filter(c => c.allowedRoles.includes(role));
   const currentMessages = channelMessages[activeChannel] || [];
+
+  // Click outside to close panels
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      
+      if (notificationsRef.current && !notificationsRef.current.contains(target) && showNotifications) {
+        const notifButton = document.querySelector('[title="Notifications"]');
+        if (notifButton && !notifButton.contains(target)) {
+          setShowNotifications(false);
+        }
+      }
+      
+      if (filesPanelRef.current && !filesPanelRef.current.contains(target) && showFilesPanel) {
+        const filesButton = document.querySelector('[title="Channel files"]');
+        if (filesButton && !filesButton.contains(target)) {
+          setShowFilesPanel(false);
+        }
+      }
+      
+      if (channelMenuRef.current && !channelMenuRef.current.contains(target) && showChannelMenu) {
+        const menuButton = document.querySelector('[title="Channel settings"]');
+        if (menuButton && !menuButton.contains(target)) {
+          setShowChannelMenu(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showNotifications, showFilesPanel, showChannelMenu]);
 
   // Handle input change and detect @ mentions
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -518,6 +563,51 @@ export default function ConnectPage() {
     }
   };
 
+  // Channel management functions
+  const handleMuteChannel = () => {
+    if (mutedChannels.includes(activeChannel)) {
+      setMutedChannels(prev => prev.filter(c => c !== activeChannel));
+    } else {
+      setMutedChannels(prev => [...prev, activeChannel]);
+    }
+    setShowChannelMenu(false);
+  };
+
+  const handlePinMessage = (message: Message) => {
+    setPinnedMessages(prev => {
+      const channelPins = prev[activeChannel] || [];
+      const isPinned = channelPins.some(m => m.id === message.id);
+      
+      if (isPinned) {
+        return {
+          ...prev,
+          [activeChannel]: channelPins.filter(m => m.id !== message.id)
+        };
+      } else {
+        return {
+          ...prev,
+          [activeChannel]: [...channelPins, message]
+        };
+      }
+    });
+  };
+
+  const handleArchiveChannel = () => {
+    if (confirm(`Are you sure you want to archive #${activeChannel}? You can unarchive it later.`)) {
+      setChannelList(prev => prev.filter(c => c.id !== activeChannel));
+      setActiveChannel('general');
+      setShowChannelMenu(false);
+    }
+  };
+
+  const handleLeaveChannel = () => {
+    if (confirm(`Are you sure you want to leave #${activeChannel}? You can always rejoin later.`)) {
+      setChannelList(prev => prev.filter(c => c.id !== activeChannel));
+      setActiveChannel('general');
+      setShowChannelMenu(false);
+    }
+  };
+
   // Handle emoji reactions
   const handleReactionClick = (messageId: string, emoji: string) => {
     setChannelMessages(prev => {
@@ -637,7 +727,16 @@ export default function ConnectPage() {
         </div>
         
         <div className="flex-1 overflow-y-auto py-3 sm:py-4">
-          <div className="px-3 sm:px-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Channels</div>
+          <div className="px-3 sm:px-4 mb-2 flex items-center justify-between">
+            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Channels</div>
+            <button
+              onClick={() => setShowCreateChannel(true)}
+              className="p-1 hover:bg-white/10 rounded transition-colors"
+              title="Create channel"
+            >
+              <Plus className="w-4 h-4 text-gray-500 hover:text-white" />
+            </button>
+          </div>
           <div className="space-y-0.5 px-2">
             {visibleChannels.map(channel => (
               <button
@@ -657,6 +756,9 @@ export default function ConnectPage() {
                    channel.type === 'private' ? <Lock className="w-3 h-3" /> : 
                    <Hash className="w-4 h-4" />}
                   <span className="truncate">{channel.name}</span>
+                  {mutedChannels.includes(channel.id) && (
+                    <VolumeX className="w-3 h-3 text-gray-500" />
+                  )}
                 </div>
                 {channel.unread && (
                   <span className="bg-bear-blue text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
@@ -760,6 +862,7 @@ export default function ConnectPage() {
         <AnimatePresence>
           {showNotifications && (
             <motion.div
+              ref={notificationsRef}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
@@ -793,34 +896,69 @@ export default function ConnectPage() {
         <AnimatePresence>
           {showChannelMenu && (
             <motion.div
+              ref={channelMenuRef}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               className="absolute top-16 right-4 w-64 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
             >
               <div className="p-2">
-                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                <button 
+                  onClick={() => {
+                    setShowChannelSettings(true);
+                    setShowChannelMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                >
                   <Settings className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-white">Channel Settings</span>
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                <button 
+                  onClick={() => {
+                    setShowMembersModal(true);
+                    setShowChannelMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                >
                   <Users className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-white">View Members</span>
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                <button 
+                  onClick={() => {
+                    setShowPinnedMessages(true);
+                    setShowChannelMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                >
                   <Pin className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-white">Pinned Messages</span>
+                  {pinnedMessages[activeChannel]?.length > 0 && (
+                    <span className="ml-auto text-xs bg-white/10 px-2 py-0.5 rounded-full">
+                      {pinnedMessages[activeChannel].length}
+                    </span>
+                  )}
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                <button 
+                  onClick={handleMuteChannel}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                >
                   <VolumeX className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-white">Mute Channel</span>
+                  <span className="text-sm text-white">
+                    {mutedChannels.includes(activeChannel) ? 'Unmute Channel' : 'Mute Channel'}
+                  </span>
                 </button>
                 <div className="my-2 border-t border-white/10" />
-                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                <button 
+                  onClick={handleArchiveChannel}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                >
                   <Archive className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-white">Archive Channel</span>
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left text-red-400">
+                <button 
+                  onClick={handleLeaveChannel}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left text-red-400"
+                >
                   <LogOut className="w-4 h-4" />
                   <span className="text-sm">Leave Channel</span>
                 </button>
@@ -833,6 +971,7 @@ export default function ConnectPage() {
         <AnimatePresence>
           {showFilesPanel && (
             <motion.div
+              ref={filesPanelRef}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
@@ -1022,6 +1161,20 @@ export default function ConnectPage() {
                     >
                       <Smile className="w-3.5 h-3.5" />
                     </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePinMessage(msg);
+                      }}
+                      className={`w-7 h-7 flex items-center justify-center hover:bg-white/10 transition-all rounded ${
+                        pinnedMessages[activeChannel]?.some(m => m.id === msg.id)
+                          ? 'text-bear-blue'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                      title={pinnedMessages[activeChannel]?.some(m => m.id === msg.id) ? "Unpin message" : "Pin message"}
+                    >
+                      <Pin className="w-3.5 h-3.5" />
+                    </button>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -1176,6 +1329,532 @@ export default function ConnectPage() {
           />
         )}
       </AnimatePresence>
+
+      {/* Create Channel Modal */}
+      <AnimatePresence>
+        {showCreateChannel && (
+          <CreateChannelModal
+            onClose={() => setShowCreateChannel(false)}
+            onCreateChannel={(newChannel) => {
+              setChannelList(prev => [...prev, newChannel]);
+              setActiveChannel(newChannel.id);
+              setShowCreateChannel(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Channel Settings Modal */}
+      <AnimatePresence>
+        {showChannelSettings && (
+          <ChannelSettingsModal
+            channel={channelList.find(c => c.id === activeChannel)!}
+            onClose={() => setShowChannelSettings(false)}
+            onUpdate={(updated) => {
+              setChannelList(prev => prev.map(c => c.id === activeChannel ? { ...c, ...updated } : c));
+              setShowChannelSettings(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Members Modal */}
+      <AnimatePresence>
+        {showMembersModal && (
+          <MembersModal
+            channelName={activeChannel}
+            onClose={() => setShowMembersModal(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Pinned Messages Modal */}
+      <AnimatePresence>
+        {showPinnedMessages && (
+          <PinnedMessagesModal
+            messages={pinnedMessages[activeChannel] || []}
+            onClose={() => setShowPinnedMessages(false)}
+            onUnpin={(msgId) => {
+              setPinnedMessages(prev => ({
+                ...prev,
+                [activeChannel]: (prev[activeChannel] || []).filter(m => m.id !== msgId)
+              }));
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+// Create Channel Modal Component
+function CreateChannelModal({ 
+  onClose, 
+  onCreateChannel 
+}: { 
+  onClose: () => void;
+  onCreateChannel: (channel: Channel) => void;
+}) {
+  const [channelName, setChannelName] = useState('');
+  const [channelDescription, setChannelDescription] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const mockUsers = [
+    { id: '1', name: 'Sarah Connor', email: 'sarah@bearos.com', avatar: 'S' },
+    { id: '2', name: 'John Smith', email: 'john@bearos.com', avatar: 'J' },
+    { id: '3', name: 'Field Engineer', email: 'engineer@bearos.com', avatar: 'F' },
+    { id: '4', name: 'Alex Johnson', email: 'alex@bearos.com', avatar: 'A' },
+    { id: '5', name: 'Maria Garcia', email: 'maria@bearos.com', avatar: 'M' },
+    { id: '6', name: 'David Lee', email: 'david@bearos.com', avatar: 'D' },
+    { id: '7', name: 'Emma Wilson', email: 'emma@bearos.com', avatar: 'E' },
+    { id: '8', name: 'Chris Brown', email: 'chris@bearos.com', avatar: 'C' },
+  ];
+
+  const filteredUsers = mockUsers.filter(user => 
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleCreate = () => {
+    if (!channelName.trim()) return;
+    
+    const newChannel: Channel = {
+      id: channelName.toLowerCase().replace(/\s+/g, '-'),
+      name: channelName.toLowerCase().replace(/\s+/g, '-'),
+      type: isPrivate ? 'private' : 'public',
+      allowedRoles: ['internal_admin', 'internal_rfe', 'partner_qcom']
+    };
+    
+    onCreateChannel(newChannel);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b border-white/10 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-white">Create a channel</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          {/* Channel Name */}
+          <div>
+            <label className="block text-sm font-semibold text-white mb-2">Channel name</label>
+            <div className="relative">
+              <Hash className="absolute left-3 top-3 w-4 h-4 text-gray-500" />
+              <input
+                type="text"
+                value={channelName}
+                onChange={(e) => setChannelName(e.target.value)}
+                placeholder="e.g. project-launch"
+                className="w-full bg-[#0a0f1c] border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-white focus:outline-none focus:border-bear-blue/50 transition-colors"
+                autoFocus
+              />
+            </div>
+            <p className="mt-1.5 text-xs text-gray-400">Channels are where conversations happen around a topic. Use a name that is easy to find and understand.</p>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-semibold text-white mb-2">Description <span className="text-gray-500 font-normal">(optional)</span></label>
+            <textarea
+              value={channelDescription}
+              onChange={(e) => setChannelDescription(e.target.value)}
+              placeholder="What's this channel about?"
+              className="w-full bg-[#0a0f1c] border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-bear-blue/50 transition-colors resize-none"
+              rows={3}
+            />
+          </div>
+
+          {/* Privacy */}
+          <div>
+            <label className="block text-sm font-semibold text-white mb-3">Privacy</label>
+            <div className="space-y-2">
+              <button
+                onClick={() => setIsPrivate(false)}
+                className={`w-full flex items-start gap-3 p-4 rounded-lg border transition-all ${
+                  !isPrivate 
+                    ? 'bg-bear-blue/10 border-bear-blue/30' 
+                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                }`}
+              >
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${
+                  !isPrivate ? 'border-bear-blue' : 'border-gray-500'
+                }`}>
+                  {!isPrivate && <div className="w-2.5 h-2.5 rounded-full bg-bear-blue" />}
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Globe className="w-4 h-4 text-white" />
+                    <span className="font-semibold text-white">Public</span>
+                  </div>
+                  <p className="text-xs text-gray-400">Anyone in your workspace can find and join</p>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => setIsPrivate(true)}
+                className={`w-full flex items-start gap-3 p-4 rounded-lg border transition-all ${
+                  isPrivate 
+                    ? 'bg-bear-blue/10 border-bear-blue/30' 
+                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                }`}
+              >
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 ${
+                  isPrivate ? 'border-bear-blue' : 'border-gray-500'
+                }`}>
+                  {isPrivate && <div className="w-2.5 h-2.5 rounded-full bg-bear-blue" />}
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Lock className="w-4 h-4 text-white" />
+                    <span className="font-semibold text-white">Private</span>
+                  </div>
+                  <p className="text-xs text-gray-400">Only specific people can access</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Add People */}
+          <div>
+            <label className="block text-sm font-semibold text-white mb-2">Add people <span className="text-gray-500 font-normal">(optional)</span></label>
+            <div className="relative mb-2">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by name or email"
+                className="w-full bg-[#0a0f1c] border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-bear-blue/50 transition-colors"
+              />
+            </div>
+            
+            {selectedUsers.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {selectedUsers.map(userId => {
+                  const user = mockUsers.find(u => u.id === userId);
+                  return user ? (
+                    <div key={userId} className="flex items-center gap-1.5 bg-bear-blue/20 border border-bear-blue/30 text-white px-2.5 py-1 rounded-full text-xs">
+                      <span>{user.name}</span>
+                      <button onClick={() => setSelectedUsers(prev => prev.filter(id => id !== userId))}>
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            )}
+
+            <div className="max-h-48 overflow-y-auto space-y-1">
+              {filteredUsers.map(user => (
+                <button
+                  key={user.id}
+                  onClick={() => {
+                    if (selectedUsers.includes(user.id)) {
+                      setSelectedUsers(prev => prev.filter(id => id !== user.id));
+                    } else {
+                      setSelectedUsers(prev => [...prev, user.id]);
+                    }
+                  }}
+                  className="w-full flex items-center gap-3 p-2.5 hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  <div className={`w-6 h-6 rounded flex items-center justify-center ${
+                    selectedUsers.includes(user.id) ? 'bg-bear-blue text-white' : 'bg-gradient-to-br from-gray-700 to-gray-600 text-white'
+                  } text-xs flex-shrink-0`}>
+                    {selectedUsers.includes(user.id) ? <Check className="w-3 h-3" /> : user.avatar}
+                  </div>
+                  <div className="flex-1 text-left">
+                    <p className="text-sm text-white">{user.name}</p>
+                    <p className="text-xs text-gray-400">{user.email}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-white/10 flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleCreate}
+            disabled={!channelName.trim()}
+            className="px-6 py-2 bg-bear-blue text-white rounded-lg hover:bg-bear-blue/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Create Channel
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Channel Settings Modal
+function ChannelSettingsModal({ 
+  channel, 
+  onClose, 
+  onUpdate 
+}: { 
+  channel: Channel;
+  onClose: () => void;
+  onUpdate: (updates: Partial<Channel>) => void;
+}) {
+  const [name, setName] = useState(channel.name);
+  const [description, setDescription] = useState('');
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-lg p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-white">Channel Settings</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-white mb-2">Channel name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full bg-[#0a0f1c] border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-bear-blue/50"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-white mb-2">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full bg-[#0a0f1c] border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-bear-blue/50 resize-none"
+              rows={3}
+              placeholder="What's this channel about?"
+            />
+          </div>
+
+          <div className="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
+            {channel.type === 'private' ? <Lock className="w-5 h-5 text-gray-400" /> : <Globe className="w-5 h-5 text-gray-400" />}
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-white">{channel.type === 'private' ? 'Private' : 'Public'} channel</p>
+              <p className="text-xs text-gray-400">{channel.type === 'private' ? 'Only invited members can see this channel' : 'Anyone in your workspace can find and join'}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-3">
+          <button onClick={onClose} className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors">
+            Cancel
+          </button>
+          <button
+            onClick={() => onUpdate({ name })}
+            disabled={!name.trim()}
+            className="px-6 py-2 bg-bear-blue text-white rounded-lg hover:bg-bear-blue/90 transition-colors disabled:opacity-50"
+          >
+            Save Changes
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Members Modal
+function MembersModal({ 
+  channelName, 
+  onClose 
+}: { 
+  channelName: string;
+  onClose: () => void;
+}) {
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const mockMembers = [
+    { id: '1', name: 'Sarah Connor', role: 'Admin', status: 'active', avatar: 'S' },
+    { id: '2', name: 'John Smith', role: 'Member', status: 'active', avatar: 'J' },
+    { id: '3', name: 'Field Engineer', role: 'Member', status: 'active', avatar: 'F' },
+    { id: '4', name: 'Alex Johnson', role: 'Member', status: 'away', avatar: 'A' },
+    { id: '5', name: 'Maria Garcia', role: 'Member', status: 'active', avatar: 'M' },
+  ];
+
+  const filteredMembers = mockMembers.filter(m => 
+    m.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-lg max-h-[600px] flex flex-col shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b border-white/10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-white">#{channelName} members</h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-white">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search members"
+              className="w-full bg-[#0a0f1c] border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-bear-blue/50"
+            />
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex items-center justify-between mb-4 px-2">
+            <span className="text-sm text-gray-400">{filteredMembers.length} members</span>
+            <button className="flex items-center gap-2 px-3 py-1.5 bg-bear-blue/10 border border-bear-blue/30 text-bear-blue rounded-lg hover:bg-bear-blue/20 transition-colors text-sm font-medium">
+              <UserPlus className="w-4 h-4" />
+              Add people
+            </button>
+          </div>
+
+          <div className="space-y-1">
+            {filteredMembers.map(member => (
+              <div key={member.id} className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-600 text-white flex items-center justify-center font-semibold">
+                  {member.avatar}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-white">{member.name}</p>
+                    <div className={`w-2 h-2 rounded-full ${member.status === 'active' ? 'bg-emerald-400' : 'bg-gray-500'}`} />
+                  </div>
+                  <p className="text-xs text-gray-400">{member.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Pinned Messages Modal
+function PinnedMessagesModal({ 
+  messages, 
+  onClose, 
+  onUnpin 
+}: { 
+  messages: Message[];
+  onClose: () => void;
+  onUnpin: (msgId: string) => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[600px] flex flex-col shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b border-white/10 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Pin className="w-5 h-5 text-bear-blue" />
+            <h2 className="text-xl font-bold text-white">Pinned Messages</h2>
+            <span className="text-sm text-gray-400">({messages.length})</span>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6">
+          {messages.length === 0 ? (
+            <div className="text-center py-12">
+              <Pin className="w-16 h-16 mx-auto mb-4 text-gray-600" />
+              <p className="text-gray-400 mb-2">No pinned messages yet</p>
+              <p className="text-sm text-gray-500">Pin important messages to find them easily later</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {messages.map(msg => (
+                <div key={msg.id} className="bg-white/5 border border-white/10 rounded-lg p-4 hover:bg-white/10 transition-colors">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-600 text-white flex items-center justify-center font-semibold flex-shrink-0">
+                      {msg.sender[0]}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2 mb-1">
+                        <span className="font-semibold text-white text-sm">{msg.sender}</span>
+                        <span className="text-xs text-gray-500">{msg.timestamp}</span>
+                      </div>
+                      <p className="text-sm text-gray-300" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif' }}>
+                        {msg.content}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => onUnpin(msg.id)}
+                      className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+                      title="Unpin"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }

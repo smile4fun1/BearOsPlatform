@@ -24,11 +24,11 @@ interface SettingsListProps {
 
 export function SettingsList({ sections }: SettingsListProps) {
   return (
-    <div className="lg:hidden w-full">
+    <div className="lg:hidden w-full h-full flex flex-col justify-center">
       {sections.map((section, sectionIndex) => (
-        <div key={section.id} className="mb-4">
+        <div key={section.id} className="mb-3">
           {section.title && (
-            <h3 className="px-6 mb-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               {section.title}
             </h3>
           )}
@@ -43,10 +43,10 @@ export function SettingsList({ sections }: SettingsListProps) {
                   key={item.id}
                   onClick={item.onClick}
                   whileTap={{ scale: 0.98 }}
-                  className={`w-full flex items-center gap-4 px-6 py-4 active:bg-white/10 transition-colors ${
+                  className={`w-full flex items-center gap-4 px-6 py-5 active:bg-white/10 transition-colors ${
                     !isLast ? 'border-b border-white/5' : ''
                   }`}
-                  style={{ minHeight: '64px' }} // Larger touch target for better UX
+                  style={{ minHeight: '72px' }} // Larger touch target for better UX
                 >
                   {/* Icon */}
                   <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-bear-blue/20 flex items-center justify-center">

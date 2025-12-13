@@ -81,10 +81,10 @@ export function MobileSettings({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className="flex-1 overflow-y-auto mobile-scroll"
+            className="h-full overflow-hidden"
           >
             {/* Settings List */}
-            <div className="py-6">
+            <div className="h-full flex flex-col">
               <SettingsList sections={sections} />
             </div>
           </motion.div>

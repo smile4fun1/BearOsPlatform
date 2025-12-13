@@ -212,7 +212,7 @@ function RobotSearchModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/90 z-[100] flex items-start justify-center p-4 pt-12 overflow-y-auto"
       onClick={onClose}
     >
       <motion.div
@@ -220,7 +220,7 @@ function RobotSearchModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl h-[600px] max-h-[80vh] flex flex-col overflow-hidden shadow-2xl"
+        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl h-[550px] max-h-[75vh] flex flex-col overflow-hidden shadow-2xl my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-4 border-b border-white/10 flex-shrink-0">

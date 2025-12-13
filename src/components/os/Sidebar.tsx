@@ -180,25 +180,21 @@ export function Sidebar() {
       </div>
 
       {/* Footer Status */}
-      <div className="border-t border-white/5 bg-black/30">
-        <div className="px-6 py-4">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-            <span className="text-xs text-gray-400 font-medium">All Systems Operational</span>
-          </div>
+      <div className="border-t border-white/5 bg-black/30 px-6 py-4">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+          <span className="text-sm text-gray-400 font-medium">All Systems Operational</span>
         </div>
         
         {/* Quick Scan Button */}
         {isPartnerOrCustomer && (
-          <div className="px-6 pb-4">
-            <Link
-              href="/robots"
-              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-bear-blue/10 border border-bear-blue/30 text-bear-blue text-sm font-medium hover:bg-bear-blue/20 transition-all"
-            >
-              <QrCode className="w-4 h-4" />
-              Scan Robot QR
-            </Link>
-          </div>
+          <Link
+            href="/robots"
+            className="mt-4 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-bear-blue/10 border border-bear-blue/30 text-bear-blue text-sm font-medium hover:bg-bear-blue/20 transition-all"
+          >
+            <QrCode className="w-4 h-4" />
+            Scan Robot QR
+          </Link>
         )}
       </div>
     </>

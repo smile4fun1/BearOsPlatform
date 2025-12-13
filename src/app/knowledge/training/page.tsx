@@ -522,7 +522,7 @@ function ModuleMeetServi() {
                     { icon: BoltIcon, title: "All-Day Battery", desc: "Runs for 8-12 hours on a full charge. Perfect for busy shifts.", bg: "bg-bear-blue/10", border: "border-bear-blue/20" },
                 ].map((item, i) => (
                     <div 
-                        key={i
+                        key={i}
                         className={`${item.bg} border ${item.border} p-5 rounded-xl hover:bg-bear-blue/15 transition-all flex flex-col`}
                     >
                         <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-3 flex-shrink-0">
@@ -574,7 +574,7 @@ function ModuleGettingStarted() {
                     },
                 ].map((step, i) => (
                     <div 
-                        key={i
+                        key={i}
                         className="flex gap-4 bg-white/5 p-5 rounded-xl border border-white/10 hover:bg-white/10 transition-all"
                     >
                         <div className="flex-shrink-0 w-10 h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-lg shadow-lg shadow-bear-blue/20">
@@ -688,7 +688,7 @@ function ModuleSafetyCommunication() {
                     { icon: BoltIcon, title: "Emergency Stop", desc: "Red button on base. Press in emergency. Twist clockwise to resume." },
                 ].map((item, i) => (
                     <div 
-                        key={i
+                        key={i}
                         className="bg-bear-blue/5 p-4 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
                         <div className="flex items-start gap-3">
@@ -735,7 +735,7 @@ function ModuleBestPractices() {
                     { icon: SparklesIcon, title: "Keep Clean", desc: "Daily tray wipes are essential. Clean robot means happy customers." },
                     ].map((item, i) => (
                     <div 
-                        key={i
+                        key={i}
                         className="bg-bear-blue/5 p-5 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
                         <div className="flex items-start gap-3">

@@ -176,24 +176,24 @@ export default function TrainingPage() {
   return (
     <div className="min-h-screen bg-[#020511] text-white" ref={topRef}>
       {/* Compact Header */}
-      <header className="sticky top-0 z-40 bg-[#020511]/80 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                    <Link href="/knowledge" className="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+      <header className="sticky top-0 z-40 bg-[#020511]/95 backdrop-blur-md border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
+            <div className="flex items-center justify-between gap-2 sm:gap-4">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                    <Link href="/knowledge" className="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors flex-shrink-0">
                         <ChevronLeftIcon className="w-5 h-5" />
                     </Link>
-                    <div>
-                        <h1 className="text-xl font-bold text-white flex items-center gap-2">
-                            Servi Training
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-bear-blue/20 text-bear-blue border border-bear-blue/20">
+                    <div className="min-w-0">
+                        <h1 className="text-base sm:text-xl font-bold text-white flex items-center gap-2 truncate">
+                            <span className="truncate">Servi Training</span>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-bear-blue/20 text-bear-blue border border-bear-blue/20 flex-shrink-0">
                                 NEW STAFF
                             </span>
                         </h1>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                     {/* Restart Button */}
                     <button 
                         onClick={handleRestartClick}
@@ -208,7 +208,7 @@ export default function TrainingPage() {
                         <div className="text-xs text-gray-400 mb-1">Progress</div>
                         <div className="text-sm font-bold text-white">{progress}%</div>
                     </div>
-                    <div className="w-32 h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div className="w-20 sm:w-32 h-2 bg-white/5 rounded-full overflow-hidden">
                         <div 
                             className="h-full bg-gradient-to-r from-bear-blue to-cyan-400"
                             style={{ width: `${progress}%` }}
@@ -271,10 +271,10 @@ export default function TrainingPage() {
                     ) : (
                         <div
                             key="content-card"
-                            className="bg-[#0f1423] border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden relative h-[calc(100vh-200px)] max-h-[700px]"
+                            className="bg-[#0f1423] border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative h-[calc(100vh-140px)] sm:h-[calc(100vh-200px)] max-h-[700px]"
                         >
-                            {/* Content - FIXED HEIGHT NO SCROLL */}
-                            <div className="flex-1 p-6 lg:p-8 overflow-hidden">
+                            {/* Content - SCROLLABLE ON MOBILE */}
+                            <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto overflow-x-hidden">
                                 <AnimatePresence mode="wait">
                                     <div
                                         key={currentModule}
@@ -290,13 +290,13 @@ export default function TrainingPage() {
                                 </AnimatePresence>
                             </div>
 
-                            {/* Fixed Footer Action Bar - ALWAYS SAME POSITION */}
+                            {/* Fixed Footer Action Bar - MOBILE OPTIMIZED */}
                             {currentModule > 0 && (
-                            <div className="p-6 border-t border-white/5 bg-[#0a0f1c]/50 backdrop-blur-md flex items-center justify-between flex-shrink-0">
+                            <div className="p-3 sm:p-6 border-t border-white/5 bg-[#0a0f1c]/50 backdrop-blur-md flex items-center justify-between flex-shrink-0">
                                 <button 
                                     onClick={handleBack}
                                     disabled={currentModule <= 0}
-                                    className={`text-sm font-medium px-6 py-3 rounded-xl transition-colors ${
+                                    className={`text-sm font-medium px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl transition-colors ${
                                         currentModule <= 0
                                             ? 'text-gray-600 cursor-not-allowed' 
                                             : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -305,16 +305,17 @@ export default function TrainingPage() {
                                     Back
                                 </button>
 
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2 sm:gap-4">
                                     <span className="text-xs text-gray-500 font-medium uppercase tracking-wider hidden sm:block">
                                         Step {currentModule} of {modules.length - 1}
                                     </span>
                                     <button 
                                         onClick={handleNext} 
-                                        className="btn-primary"
+                                        className="btn-primary text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3"
                                     >
-                                        {currentModule === modules.length - 1 ? 'Complete Training' : 'Continue'} 
-                                        {currentModule === modules.length - 1 ? <CheckCircleIcon className="w-5 h-5" /> : <ChevronRightIcon className="w-5 h-5" />}
+                                        <span className="hidden sm:inline">{currentModule === modules.length - 1 ? 'Complete Training' : 'Continue'}</span>
+                                        <span className="sm:hidden">{currentModule === modules.length - 1 ? 'Complete' : 'Next'}</span>
+                                        {currentModule === modules.length - 1 ? <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5" /> : <ChevronRightIcon className="w-4 h-4 sm:w-5 sm:h-5" />}
                                     </button>
                                 </div>
                             </div>
@@ -494,27 +495,27 @@ function ModuleWelcome({ onComplete }: { onComplete: () => void }) {
 
 function ModuleMeetServi() {
     return (
-        <div className="space-y-6 h-full flex flex-col">
-            <div className="bear-glass-card p-6 relative overflow-hidden flex items-center">
+        <div className="space-y-4 sm:space-y-6">
+            <div className="bear-glass-card p-4 sm:p-6 relative overflow-hidden flex items-center">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-bear-blue/5 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/2" />
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 w-full">
-                    <div className="flex-1">
-                        <div className="flex items-center gap-2 text-bear-blue mb-2">
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-4 sm:gap-6 w-full">
+                    <div className="flex-1 text-center md:text-left">
+                        <div className="flex items-center gap-2 text-bear-blue mb-2 justify-center md:justify-start">
                             <CubeIcon className="w-5 h-5" />
                             <span className="text-sm font-bold uppercase tracking-wider">Overview</span>
                         </div>
-                        <h2 className="text-2xl font-bold text-white mb-3">Meet Servi Plus</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Meet Servi Plus</h2>
                         <p className="text-gray-300 text-sm leading-relaxed">
                             Autonomous service robot for food delivery and table clearing. Works alongside you for faster service.
                         </p>
                     </div>
-                    <div className="w-24 h-24 bg-gradient-to-br from-bear-blue to-cyan-400 rounded-full flex items-center justify-center shadow-2xl shadow-bear-blue/20 flex-shrink-0">
-                        <CubeIcon className="w-12 h-12 text-white" />
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-bear-blue to-cyan-400 rounded-full flex items-center justify-center shadow-2xl shadow-bear-blue/20 flex-shrink-0">
+                        <CubeIcon className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {[
                     { icon: WrenchScrewdriverIcon, title: "Three Trays", desc: "Can carry multiple dishes at once. Maximum 40kg total capacity.", bg: "bg-bear-blue/10", border: "border-bear-blue/20" },
                     { icon: ShieldCheckIcon, title: "Smart & Safe", desc: "Automatically stops if someone is in the way. Built-in safety features.", bg: "bg-bear-blue/10", border: "border-bear-blue/20" },
@@ -523,13 +524,13 @@ function ModuleMeetServi() {
                 ].map((item, i) => (
                     <div 
                         key={i}
-                        className={`${item.bg} border ${item.border} p-5 rounded-xl hover:bg-bear-blue/15 transition-all flex flex-col`}
+                        className={`${item.bg} border ${item.border} p-4 sm:p-5 rounded-xl hover:bg-bear-blue/15 transition-all flex flex-col`}
                     >
                         <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-3 flex-shrink-0">
                             <item.icon className="w-6 h-6 text-bear-blue" />
                         </div>
-                        <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                        <p className="text-sm text-gray-300 leading-relaxed">{item.desc}</p>
+                        <h3 className="font-bold text-white mb-2 text-sm sm:text-base">{item.title}</h3>
+                        <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">{item.desc}</p>
                     </div>
                 ))}
             </div>
@@ -539,13 +540,13 @@ function ModuleMeetServi() {
 
 function ModuleGettingStarted() {
     return (
-        <div className="space-y-6 h-full flex flex-col">
-            <div className="bear-glass-card p-6 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Getting Started</h2>
+        <div className="space-y-4 sm:space-y-6">
+            <div className="bear-glass-card p-4 sm:p-6 flex flex-col justify-center">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Getting Started</h2>
                 <p className="text-gray-300 text-sm">Morning checklist - takes 2 minutes</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {[
                     { 
                         title: "Battery Check", 
@@ -575,26 +576,26 @@ function ModuleGettingStarted() {
                 ].map((step, i) => (
                     <div 
                         key={i}
-                        className="flex gap-4 bg-white/5 p-5 rounded-xl border border-white/10 hover:bg-white/10 transition-all"
+                        className="flex gap-3 sm:gap-4 bg-white/5 p-4 sm:p-5 rounded-xl border border-white/10 hover:bg-white/10 transition-all"
                     >
-                        <div className="flex-shrink-0 w-10 h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-lg shadow-lg shadow-bear-blue/20">
+                        <div className="flex-shrink-0 w-10 h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-base sm:text-lg shadow-lg shadow-bear-blue/20">
                             {step.icon}
                         </div>
-                        <div>
-                            <h3 className="font-bold text-white mb-2 text-sm">{step.title}</h3>
+                        <div className="min-w-0">
+                            <h3 className="font-bold text-white mb-1.5 sm:mb-2 text-sm">{step.title}</h3>
                             <p className="text-gray-300 leading-relaxed text-xs">{step.desc}</p>
                         </div>
                     </div>
                 ))}
 
                 <div
-                    className="flex gap-4 bg-green-500/10 p-5 rounded-xl border border-green-500/20"
+                    className="flex gap-3 sm:gap-4 bg-green-500/10 p-4 sm:p-5 rounded-xl border border-green-500/20"
                 >
                     <div className="flex-shrink-0 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/20">
                         <CheckCircleIcon className="w-6 h-6" />
                     </div>
-                    <div>
-                        <h3 className="font-bold text-green-400 mb-2 text-sm">Ready!</h3>
+                    <div className="min-w-0">
+                        <h3 className="font-bold text-green-400 mb-1.5 sm:mb-2 text-sm">Ready!</h3>
                         <p className="text-green-200/70 leading-relaxed text-xs">That's it! Servi is ready to help you have a productive shift.</p>
                     </div>
                 </div>
@@ -605,14 +606,14 @@ function ModuleGettingStarted() {
 
 function ModuleUsingServi() {
     return (
-        <div className="space-y-5 h-full flex flex-col">
-            <div className="grid grid-cols-2 gap-4">
-                <div className="bear-glass-card p-5 flex flex-col border-l-4 border-green-500">
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <CheckCircleIcon className="w-5 h-5 text-green-500" />
+        <div className="space-y-4 sm:space-y-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+                <div className="bear-glass-card p-4 sm:p-5 flex flex-col border-l-4 border-green-500">
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 flex items-center gap-2">
+                        <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
                         Correct Loading
                     </h3>
-                    <div className="space-y-3 flex-1">
+                    <div className="space-y-2 sm:space-y-3 flex-1">
                         {[
                             "Place items in the center of trays",
                             "Distribute weight evenly",
@@ -627,12 +628,12 @@ function ModuleUsingServi() {
                     </div>
                 </div>
 
-                <div className="bear-glass-card p-5 flex flex-col border-l-4 border-red-500">
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <XMarkIcon className="w-5 h-5 text-red-500" />
+                <div className="bear-glass-card p-4 sm:p-5 flex flex-col border-l-4 border-red-500">
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 flex items-center gap-2">
+                        <XMarkIcon className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
                         Avoid This
                     </h3>
-                    <div className="space-y-3 flex-1">
+                    <div className="space-y-2 sm:space-y-3 flex-1">
                         {[
                             "Overload (max 40kg total)",
                             "Stack items too high",
@@ -648,20 +649,20 @@ function ModuleUsingServi() {
                 </div>
             </div>
 
-            <div className="bear-glass-card p-6 flex-1 flex flex-col justify-center">
-                <h3 className="text-xl font-bold text-white mb-6">Sending Servi</h3>
-                <div className="grid grid-cols-3 gap-6">
+            <div className="bear-glass-card p-4 sm:p-6 flex flex-col justify-center">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">Sending Servi</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                     {[
                         { title: "Tap Screen", desc: "Select where you want Servi to go from the map" },
                         { title: "Confirm", desc: "Tap 'Yes' and Servi will start moving to destination" },
                         { title: "Walk Ahead", desc: "Clear the path and inform customers if needed" },
                     ].map((step, i) => (
                         <div key={i} className="text-center">
-                            <div className="w-14 h-14 bg-bear-blue rounded-xl flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-lg shadow-bear-blue/20">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-bear-blue rounded-xl flex items-center justify-center text-lg sm:text-xl font-bold mx-auto mb-3 sm:mb-4 shadow-lg shadow-bear-blue/20">
                                 {i + 1}
                             </div>
-                            <h4 className="font-bold text-white mb-2">{step.title}</h4>
-                            <p className="text-sm text-gray-300 leading-relaxed">{step.desc}</p>
+                            <h4 className="font-bold text-white mb-2 text-sm sm:text-base">{step.title}</h4>
+                            <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">{step.desc}</p>
                         </div>
                     ))}
                 </div>
@@ -672,13 +673,13 @@ function ModuleUsingServi() {
 
 function ModuleSafetyCommunication() {
     return (
-        <div className="space-y-5 h-full flex flex-col">
-            <div className="bear-glass-card p-5 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Safety & Communication</h2>
+        <div className="space-y-4 sm:space-y-5">
+            <div className="bear-glass-card p-4 sm:p-5 flex flex-col justify-center">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Safety & Communication</h2>
                 <p className="text-gray-300 text-sm">Working safely with customers around</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {[
                     { icon: UserGroupIcon, title: "Alert Customers", desc: "Say 'Robot coming through' or 'Excuse me' before Servi approaches tables." },
                     { icon: ShieldCheckIcon, title: "Safe Distance", desc: "Keep 1 meter clearance around Servi when moving. Never reach under." },
@@ -689,14 +690,14 @@ function ModuleSafetyCommunication() {
                 ].map((item, i) => (
                     <div 
                         key={i}
-                        className="bg-bear-blue/5 p-4 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
+                        className="bg-bear-blue/5 p-3 sm:p-4 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
-                        <div className="flex items-start gap-3">
-                            <div className="w-9 h-9 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <item.icon className="w-5 h-5 text-bear-blue" />
+                        <div className="flex items-start gap-2 sm:gap-3">
+                            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-bear-blue" />
                             </div>
-                            <div>
-                                <h3 className="font-bold text-white mb-1.5 text-sm">{item.title}</h3>
+                            <div className="min-w-0">
+                                <h3 className="font-bold text-white mb-1 sm:mb-1.5 text-sm">{item.title}</h3>
                                 <p className="text-xs text-gray-300 leading-relaxed">{item.desc}</p>
                             </div>
                         </div>
@@ -704,11 +705,11 @@ function ModuleSafetyCommunication() {
                 ))}
             </div>
 
-            <div className="bg-gradient-to-r from-red-500/10 to-orange-500/10 p-4 rounded-xl border border-red-500/30 flex items-center gap-3">
-                <div className="bg-red-500/20 p-2.5 rounded-lg flex-shrink-0">
-                    <ShieldCheckIcon className="w-5 h-5 text-red-500" />
+            <div className="bg-gradient-to-r from-red-500/10 to-orange-500/10 p-3 sm:p-4 rounded-xl border border-red-500/30 flex items-start gap-2 sm:gap-3">
+                <div className="bg-red-500/20 p-2 sm:p-2.5 rounded-lg flex-shrink-0">
+                    <ShieldCheckIcon className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
                 </div>
-                <div>
+                <div className="min-w-0">
                     <h3 className="font-bold text-white text-sm mb-1">Safety First</h3>
                     <p className="text-gray-300 text-xs leading-relaxed">Stop Servi immediately if you see any hazard. Customer safety is always priority.</p>
                 </div>
@@ -719,13 +720,13 @@ function ModuleSafetyCommunication() {
 
 function ModuleBestPractices() {
     return (
-        <div className="space-y-6 h-full flex flex-col">
-            <div className="bear-glass-card p-6 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Best Practices</h2>
+        <div className="space-y-4 sm:space-y-6">
+            <div className="bear-glass-card p-4 sm:p-6 flex flex-col justify-center">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Best Practices</h2>
                 <p className="text-gray-300 text-sm">Pro tips from experienced team</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {[
                     { icon: UserGroupIcon, title: "Customer Alert", desc: "Always announce when Servi is approaching. A simple heads-up keeps everyone aware and comfortable." },
                     { icon: WrenchScrewdriverIcon, title: "Smart Loading", desc: "Use all three trays to maximize each trip. Heavy items on bottom, lighter items on top." },
@@ -736,28 +737,28 @@ function ModuleBestPractices() {
                     ].map((item, i) => (
                     <div 
                         key={i}
-                        className="bg-bear-blue/5 p-5 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
+                        className="bg-bear-blue/5 p-4 sm:p-5 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
-                        <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <item.icon className="w-5 h-5 text-bear-blue" />
+                        <div className="flex items-start gap-2 sm:gap-3">
+                            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-bear-blue" />
                             </div>
-                            <div>
-                                    <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                                <p className="text-sm text-gray-300 leading-relaxed">{item.desc}</p>
+                            <div className="min-w-0">
+                                    <h3 className="font-bold text-white mb-1.5 sm:mb-2 text-sm sm:text-base">{item.title}</h3>
+                                <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">{item.desc}</p>
                                 </div>
                             </div>
                     </div>
                     ))}
             </div>
 
-            <div className="bg-gradient-to-r from-yellow-500/10 to-amber-500/10 p-5 rounded-xl border border-yellow-500/30 flex items-start gap-4">
-                <div className="bg-yellow-500/20 p-3 rounded-lg flex-shrink-0">
-                    <LightBulbIcon className="w-6 h-6 text-yellow-500" />
+            <div className="bg-gradient-to-r from-yellow-500/10 to-amber-500/10 p-4 sm:p-5 rounded-xl border border-yellow-500/30 flex items-start gap-3 sm:gap-4">
+                <div className="bg-yellow-500/20 p-2.5 sm:p-3 rounded-lg flex-shrink-0">
+                    <LightBulbIcon className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
                 </div>
-                <div>
-                    <h3 className="font-bold text-white mb-2">Always Ask</h3>
-                    <p className="text-gray-300 text-sm leading-relaxed">If something doesn't feel right, tell your manager. It's always better to ask than to guess.</p>
+                <div className="min-w-0">
+                    <h3 className="font-bold text-white mb-1.5 sm:mb-2 text-sm sm:text-base">Always Ask</h3>
+                    <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">If something doesn't feel right, tell your manager. It's always better to ask than to guess.</p>
                 </div>
             </div>
         </div>
@@ -766,13 +767,13 @@ function ModuleBestPractices() {
 
 function ModuleQuickTips() {
     return (
-        <div className="space-y-4 h-full flex flex-col">
+        <div className="space-y-3 sm:space-y-4">
             <div className="bear-glass-card p-4 flex flex-col justify-center">
-                <h2 className="text-xl font-bold text-white mb-1">Quick Tips</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Quick Tips</h2>
                 <p className="text-gray-300 text-sm">Common situations and simple solutions</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 p-3 rounded-xl border-2 border-yellow-500/30 flex flex-col">
                     <div className="w-9 h-9 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-2">
                         <BoltIcon className="w-5 h-5 text-yellow-500" />
@@ -806,11 +807,11 @@ function ModuleQuickTips() {
                         </div>
                     </div>
 
-            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-3 rounded-xl border border-green-500/30 flex items-center gap-3">
+            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-3 rounded-xl border border-green-500/30 flex items-start gap-2 sm:gap-3">
                 <div className="bg-green-500/20 p-2 rounded-lg flex-shrink-0">
-                    <SparklesIcon className="w-5 h-5 text-green-400" />
+                    <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
                 </div>
-                        <div>
+                        <div className="min-w-0">
                     <h3 className="font-bold text-white text-sm">You're Ready!</h3>
                     <p className="text-gray-200 text-xs leading-relaxed">Working with Servi will feel natural within a few shifts. Welcome to the team!</p>
                 </div>

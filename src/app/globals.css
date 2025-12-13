@@ -177,6 +177,19 @@
 html {
   /* Prevent scroll chaining */
   overscroll-behavior: none;
+  /* Safari theme color */
+  background-color: #020511;
+}
+
+/* Safari iOS status bar and bottom bar styling */
+@supports (-webkit-touch-callout: none) {
+  html {
+    background: #020511;
+  }
+  
+  body {
+    background: #020511;
+  }
 }
 
 /* Smooth scrolling - only for direct user scroll, not route transitions */

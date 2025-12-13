@@ -33,6 +33,10 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "BearOS",
   },
+  other: {
+    "theme-color": "#020511",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
+  },
 };
 
 export const viewport = {
@@ -50,6 +54,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#020511" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="format-detection" content="telephone=no" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#020511] text-white`}
       >

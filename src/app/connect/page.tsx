@@ -1042,6 +1042,22 @@ export default function ConnectPage() {
                     {msg.sender}
                   </span>
                   <span className="text-[10px] sm:text-xs text-gray-500">{msg.timestamp}</span>
+                  {hoveredMessageId === msg.id && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePinMessage(msg);
+                      }}
+                      className={`ml-1 p-1 hover:bg-white/10 rounded transition-all ${
+                        pinnedMessages[activeChannel]?.some(m => m.id === msg.id)
+                          ? 'text-bear-blue'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                      title={pinnedMessages[activeChannel]?.some(m => m.id === msg.id) ? "Unpin message" : "Pin message"}
+                    >
+                      <Pin className="w-3 h-3" />
+                    </button>
+                  )}
                 </div>
                 <p className="text-sm sm:text-base text-gray-300 leading-relaxed" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
                   <MessageContent content={msg.content} />
@@ -1125,59 +1141,6 @@ export default function ConnectPage() {
                   </motion.div>
                 )}
               </div>
-              {/* Reaction Picker on Hover - Slack Style */}
-              <AnimatePresence>
-                {hoveredMessageId === msg.id && !showReactionPicker && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: -5 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                    transition={{ duration: 0.12 }}
-                    className="absolute -top-3 right-2 flex items-center gap-0.5 bg-[#1a1f36] border border-white/20 rounded-lg px-1 py-1 shadow-2xl z-20"
-                    style={{ backdropFilter: 'blur(8px)' }}
-                  >
-                    {['👍', '❤️', '😂', '🎉', '🚀', '👀'].map((emoji) => (
-                      <button
-                        key={emoji}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleReactionClick(msg.id, emoji);
-                        }}
-                        className="w-7 h-7 flex items-center justify-center text-base hover:scale-110 transition-all rounded hover:bg-white/10"
-                        style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif' }}
-                        title={`React with ${emoji}`}
-                      >
-                        {emoji}
-                      </button>
-                    ))}
-                    <div className="w-px h-4 bg-white/20 mx-0.5" />
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowReactionPicker(msg.id);
-                      }}
-                      className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all rounded"
-                      title="More reactions"
-                    >
-                      <Smile className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePinMessage(msg);
-                      }}
-                      className={`w-7 h-7 flex items-center justify-center hover:bg-white/10 transition-all rounded ${
-                        pinnedMessages[activeChannel]?.some(m => m.id === msg.id)
-                          ? 'text-bear-blue'
-                          : 'text-gray-400 hover:text-white'
-                      }`}
-                      title={pinnedMessages[activeChannel]?.some(m => m.id === msg.id) ? "Unpin message" : "Pin message"}
-                    >
-                      <Pin className="w-3.5 h-3.5" />
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
               {/* Full Emoji Picker for Reactions */}
               <AnimatePresence>
                 {showReactionPicker === msg.id && (

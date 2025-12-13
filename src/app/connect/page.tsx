@@ -1071,7 +1071,7 @@ export default function ConnectPage() {
         </AnimatePresence>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 lg:mb-0" style={{ marginBottom: 'calc(240px + env(safe-area-inset-bottom, 0px))' }}>
           {currentMessages.map((msg) => (
             <motion.div 
               key={msg.id} 

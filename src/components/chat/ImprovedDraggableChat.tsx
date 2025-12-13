@@ -80,11 +80,11 @@ export function ImprovedDraggableChat() {
     // Default positions: desktop = closer to logo, mobile = bottom left above nav
     const isMobileDevice = window.innerWidth < 1024;
     if (isMobileDevice) {
-      // Position above the home icon (bottom left) with breathing space
-      // Bottom nav is ~80px (64px height + padding), icon is 56px, add 16px spacing
+      // Position above the home icon (bottom left) with more breathing space
+      // Bottom nav is ~60px (smaller now), icon is 56px, add 32px spacing for more height
       return {
-        x: 16, // 16px from left edge
-        y: window.innerHeight - 80 - 56 - 16, // Above bottom nav with breathing space
+        x: 16, // 16px from left edge (above home icon)
+        y: window.innerHeight - 60 - 56 - 32, // Higher above nav bar with extra spacing
       };
     }
     return {

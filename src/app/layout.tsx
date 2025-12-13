@@ -65,7 +65,7 @@ export default function RootLayout({
             
             {/* Mobile Layout - Only visible on < 1024px */}
             <div className="lg:hidden flex flex-col h-screen overflow-hidden w-full max-w-full">
-              <main className="flex-1 overflow-y-auto relative bg-[#020511] pb-20 w-full">
+              <main className="flex-1 overflow-y-auto relative bg-[#020511] w-full" style={{ paddingBottom: 'calc(60px + env(safe-area-inset-bottom, 0px))' }}>
                 {children}
               </main>
               <MobileNav />

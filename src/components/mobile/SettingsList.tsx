@@ -104,7 +104,7 @@ export function SettingsDetail({ title, onBack, children }: SettingsDetailProps)
       </div>
       
       {/* Content */}
-      <div className="flex-1 overflow-y-auto mobile-scroll pb-20">
+      <div className="flex-1 overflow-y-auto mobile-scroll" style={{ paddingBottom: 'calc(60px + env(safe-area-inset-bottom, 0px))' }}>
         {children}
       </div>
     </div>

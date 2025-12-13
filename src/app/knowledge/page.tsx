@@ -624,7 +624,7 @@ function KnowledgeContent() {
             {filteredFaqs.length > 0 ? (
                 filteredFaqs.map((faq, index) => (
                 <div
-                    key={faq.id
+                    key={faq.id}
                     className={`group rounded-2xl border transition-all duration-300 overflow-hidden ${
                     expandedFaq === faq.id 
                         ? 'bg-white/10 border-bear-blue/50 shadow-xl shadow-bear-blue/10' 

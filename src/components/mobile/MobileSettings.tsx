@@ -75,28 +75,20 @@ export function MobileSettings({
     <div className="lg:hidden h-full flex flex-col overflow-hidden">
       <AnimatePresence mode="wait">
         {currentView === 'main' && (
-          <motion.div
+          <div
             key="main"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
             className="h-full overflow-hidden"
           >
             {/* Settings List */}
             <div className="h-full flex flex-col">
               <SettingsList sections={sections} />
             </div>
-          </motion.div>
+          </div>
         )}
         
         {currentView === 'profile' && (
-          <motion.div
+          <div
             key="profile"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.2 }}
           >
             <SettingsDetail title="Profile" onBack={() => setCurrentView('main')}>
               <div className="p-6 space-y-6">
@@ -175,16 +167,12 @@ export function MobileSettings({
                 </div>
               </div>
             </SettingsDetail>
-          </motion.div>
+          </div>
         )}
         
         {currentView === 'locations' && isPartnerOrCustomer && (
-          <motion.div
+          <div
             key="locations"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.2 }}
           >
             <SettingsDetail title="Locations" onBack={() => setCurrentView('main')}>
               <div className="p-6 space-y-4">
@@ -250,16 +238,12 @@ export function MobileSettings({
                 })}
               </div>
             </SettingsDetail>
-          </motion.div>
+          </div>
         )}
         
         {currentView === 'notifications' && (
-          <motion.div
+          <div
             key="notifications"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.2 }}
           >
             <SettingsDetail title="Notifications" onBack={() => setCurrentView('main')}>
               <div className="p-6">
@@ -291,16 +275,12 @@ export function MobileSettings({
                 </div>
               </div>
             </SettingsDetail>
-          </motion.div>
+          </div>
         )}
         
         {currentView === 'security' && (
-          <motion.div
+          <div
             key="security"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.2 }}
           >
             <SettingsDetail title="Security" onBack={() => setCurrentView('main')}>
               <div className="p-6 space-y-6">
@@ -360,7 +340,7 @@ export function MobileSettings({
                 </div>
               </div>
             </SettingsDetail>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

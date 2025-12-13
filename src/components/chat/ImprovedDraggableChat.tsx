@@ -81,10 +81,10 @@ export function ImprovedDraggableChat() {
     const isMobileDevice = window.innerWidth < 1024;
     if (isMobileDevice) {
       // Position as shown in screenshot: bottom left, above home icon
-      // Bottom nav is ~60px, icon is 48px (smaller), add spacing
+      // Bottom nav is ~52px, icon is 48px (smaller), add spacing
       return {
         x: 12, // Close to left edge
-        y: window.innerHeight - 60 - 48 - 24, // Above nav bar
+        y: window.innerHeight - 52 - 48 - 20, // Above nav bar
       };
     }
     return {

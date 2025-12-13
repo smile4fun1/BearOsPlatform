@@ -1071,7 +1071,7 @@ export default function ConnectPage() {
         </AnimatePresence>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 lg:mb-0" style={{ marginBottom: 'calc(252px + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 lg:mb-0" style={{ marginBottom: 'calc(232px + env(safe-area-inset-bottom, 0px))' }}>
           {currentMessages.map((msg) => (
             <motion.div 
               key={msg.id} 
@@ -1228,7 +1228,7 @@ export default function ConnectPage() {
         </div>
 
         {/* Input Area - Fixed on mobile, relative on desktop */}
-        <div className="p-4 border-t border-white/5 bg-[#0F1117]/95 backdrop-blur-sm lg:relative fixed lg:bottom-auto lg:left-auto lg:right-auto z-30" style={{ bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))', left: 0, right: 0 }}>
+        <div className="p-4 border-t border-white/5 bg-[#020511] lg:relative fixed lg:bottom-auto lg:left-auto lg:right-auto z-30" style={{ bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', left: 0, right: 0 }}>
           <div className="relative">
             <AnimatePresence>
               {mentionQuery !== null && (

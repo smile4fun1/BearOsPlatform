@@ -59,9 +59,14 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="format-detection" content="telephone=no" />
+        <style>{`
+          body { background-color: #020511; }
+          html { background-color: #020511; }
+        `}</style>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#020511] text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ backgroundColor: '#020511', color: 'white' }}
       >
         <RoleProvider>
           <ChatProvider>
@@ -75,7 +80,7 @@ export default function RootLayout({
             
             {/* Mobile Layout - Only visible on < 1024px */}
             <div className="lg:hidden flex flex-col h-screen overflow-hidden w-full max-w-full">
-              <main className="flex-1 overflow-y-auto relative bg-[#020511] w-full" style={{ paddingBottom: 'calc(60px + env(safe-area-inset-bottom, 0px))' }}>
+              <main className="flex-1 overflow-y-auto relative bg-[#020511] w-full" style={{ paddingBottom: 'calc(52px + env(safe-area-inset-bottom, 0px))' }}>
                 {children}
               </main>
               <MobileNav />

@@ -190,6 +190,26 @@ html {
   body {
     background: #020511;
   }
+  
+  /* Fix Safari bottom bar color */
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -100px;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: #020511;
+    z-index: -1;
+  }
+}
+
+/* Smooth scrolling for mobile */
+@media (max-width: 1023px) {
+  * {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* Smooth scrolling - only for direct user scroll, not route transitions */

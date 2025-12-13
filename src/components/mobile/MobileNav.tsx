@@ -31,8 +31,8 @@ export function MobileNav() {
   };
   
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0F1117]/95 backdrop-blur-sm border-t border-white/10 safe-area-bottom">
-      <div className="flex items-center justify-around px-1 py-1.5">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#020511] border-t border-white/10" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <div className="flex items-center justify-around px-1 py-1">
         {navItems.map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;
@@ -41,7 +41,8 @@ export function MobileNav() {
             <Link
               key={item.id}
               href={item.href}
-              className="relative flex flex-col items-center justify-center min-w-[50px] py-1.5 px-1 rounded-lg transition-colors"
+              className="relative flex flex-col items-center justify-center min-w-[50px] py-1 px-1 rounded-lg active:bg-white/10 transition-colors"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               {active && (
                 <motion.div

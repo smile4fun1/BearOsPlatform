@@ -35,7 +35,7 @@ export default function AIModelsPage() {
   const avgHallucination = universe.trainingPlans.reduce((sum, plan) => sum + plan.telemetry.hallucinationRate, 0) / totalModels;
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-32">
+    <div className="p-8 max-w-7xl mx-auto">
       {/* Page Header */}
       <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>

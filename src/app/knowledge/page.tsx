@@ -158,7 +158,7 @@ function KnowledgeContent() {
   };
 
   return (
-    <div className="min-h-screen pb-32 relative">
+    <div className="min-h-screen relative">
       {/* Decorative Background */}
       <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-bear-blue/5 rounded-full blur-3xl pointer-events-none" />
       <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/3 rounded-full blur-3xl pointer-events-none" />

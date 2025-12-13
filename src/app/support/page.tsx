@@ -83,7 +83,7 @@ export default function SupportPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#020511] pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-[#020511] relative overflow-hidden">
       {/* Decorative Background */}
       <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-bear-blue/5 rounded-full blur-3xl pointer-events-none" />
       <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-purple-500/3 rounded-full blur-3xl pointer-events-none" />

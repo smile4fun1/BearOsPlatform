@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useRole } from '@/lib/roleContext';
 import { 
   User, Building2, Bell, Shield, Key, Palette, 
@@ -38,38 +37,29 @@ export default function SettingsPage() {
   ].filter(s => !s.showFor || s.showFor.includes(role));
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white flex flex-col">
       {/* Decorative Background */}
       <div className="fixed top-20 right-0 w-[300px] sm:w-[400px] lg:w-[500px] h-[300px] sm:h-[400px] lg:h-[500px] bg-bear-blue/5 rounded-full blur-3xl pointer-events-none" />
       
-      <main className="relative mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+      <main className="relative mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12 flex-1 w-full">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 sm:mb-8 lg:mb-10"
-        >
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-1 sm:mb-2">Settings</h1>
+        <div className="mb-8 sm:mb-10 lg:mb-12">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-2">Settings</h1>
           <p className="text-sm sm:text-base lg:text-lg text-white/60">Manage your account and preferences</p>
-        </motion.div>
+        </div>
 
-        <div className="grid lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10 pb-12">
           {/* Sidebar Navigation - Horizontal scroll on mobile */}
-          <motion.div 
-            className="lg:col-span-1"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-          >
+          <div className="lg:col-span-1">
             <div className="bear-glass-card p-1.5 sm:p-2 flex lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
               {sections.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id as any)}
-                  className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-left transition-all whitespace-nowrap lg:whitespace-normal flex-shrink-0 lg:w-full ${
+                  className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-4 rounded-lg sm:rounded-xl text-left transition-colors whitespace-nowrap lg:whitespace-normal flex-shrink-0 lg:w-full ${
                     activeSection === section.id
                       ? 'bg-bear-blue/20 text-bear-blue border border-bear-blue/30'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                      : 'text-gray-400 border border-transparent'
                   }`}
                 >
                   <section.icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
@@ -80,19 +70,14 @@ export default function SettingsPage() {
                 </button>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Content Area */}
-          <motion.div 
-            className="lg:col-span-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
+          <div className="lg:col-span-3">
             {/* Profile Section */}
             {activeSection === 'profile' && (
-              <div className="space-y-6">
-                <div className="bear-glass-card p-8">
+              <div className="space-y-8">
+                <div className="bear-glass-card p-6 sm:p-8 lg:p-10">
                   <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <User className="w-5 h-5 text-bear-blue" />
                     Profile Information
@@ -175,7 +160,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Role Badge */}
-                <div className="bear-glass-card p-6 flex items-center justify-between">
+                <div className="bear-glass-card p-6 sm:p-8 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="p-3 rounded-xl bg-purple-500/20">
                       <Key className="w-6 h-6 text-purple-400" />
@@ -194,7 +179,7 @@ export default function SettingsPage() {
 
             {/* Locations Section */}
             {activeSection === 'locations' && isPartnerOrCustomer && (
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold flex items-center gap-2">
                     <Building2 className="w-5 h-5 text-bear-blue" />
@@ -206,18 +191,15 @@ export default function SettingsPage() {
                   </button>
                 </div>
 
-                <div className="grid gap-4">
+                <div className="grid gap-6">
                   {userLocations.map((location, index) => {
                     const locationRobots = getRobotsForLocation(location.id);
                     const onlineRobots = locationRobots.filter(r => r.status === 'active' || r.status === 'idle');
                     
                     return (
-                      <motion.div
+                      <div
                         key={location.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="bear-glass-card p-6"
+                        className="bear-glass-card p-6 sm:p-8"
                       >
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                           <div className="flex items-start gap-4">
@@ -255,11 +237,11 @@ export default function SettingsPage() {
                             
                             {/* Actions */}
                             <div className="flex items-center gap-2">
-                              <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                              <button className="p-2 rounded-lg bg-white/5 transition-colors">
                                 <Edit2 className="w-4 h-4 text-gray-400" />
                               </button>
-                              <button className="p-2 rounded-lg bg-white/5 hover:bg-rose-500/10 transition-colors group">
-                                <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-rose-400" />
+                              <button className="p-2 rounded-lg bg-white/5 transition-colors">
+                                <Trash2 className="w-4 h-4 text-gray-400" />
                               </button>
                             </div>
                           </div>
@@ -280,7 +262,7 @@ export default function SettingsPage() {
                             )}
                           </div>
                         )}
-                      </motion.div>
+                      </div>
                     );
                   })}
                 </div>
@@ -289,7 +271,7 @@ export default function SettingsPage() {
 
             {/* Notifications Section */}
             {activeSection === 'notifications' && (
-              <div className="bear-glass-card p-8">
+              <div className="bear-glass-card p-6 sm:p-8 lg:p-10">
                 <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                   <Bell className="w-5 h-5 text-bear-blue" />
                   Notification Preferences
@@ -325,14 +307,14 @@ export default function SettingsPage() {
 
             {/* Security Section */}
             {activeSection === 'security' && (
-              <div className="space-y-6">
-                <div className="bear-glass-card p-8">
+              <div className="space-y-8">
+                <div className="bear-glass-card p-6 sm:p-8 lg:p-10">
                   <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <Key className="w-5 h-5 text-bear-blue" />
                     Change Password
                   </h2>
                   
-                  <div className="space-y-4 max-w-md">
+                  <div className="space-y-5 max-w-md">
                     <div>
                       <label className="block text-sm font-medium text-gray-400 mb-2">Current Password</label>
                       <input type="password" className="bear-input" placeholder="••••••••" />
@@ -345,14 +327,14 @@ export default function SettingsPage() {
                       <label className="block text-sm font-medium text-gray-400 mb-2">Confirm New Password</label>
                       <input type="password" className="bear-input" placeholder="••••••••" />
                     </div>
-                    <button className="btn-primary mt-4">
+                    <button className="btn-primary mt-2">
                       <Save className="w-4 h-4" />
                       Update Password
                     </button>
                   </div>
                 </div>
 
-                <div className="bear-glass-card p-8">
+                <div className="bear-glass-card p-6 sm:p-8 lg:p-10">
                   <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <Shield className="w-5 h-5 text-bear-blue" />
                     Two-Factor Authentication
@@ -370,7 +352,7 @@ export default function SettingsPage() {
                 </div>
               </div>
             )}
-          </motion.div>
+          </div>
         </div>
       </main>
       <Footer />

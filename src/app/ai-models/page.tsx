@@ -5,6 +5,7 @@ import { TrainingPanel } from "@/components/universe/TrainingPanel";
 import { DepartmentalModels } from "@/components/ai-models/DepartmentalModels";
 import { composeCurationResponse } from "@/lib/dataCurator";
 import { useRole } from "@/lib/roleContext";
+import { Footer } from "@/components/Footer";
 
 export const dynamic = 'force-dynamic';
 
@@ -228,6 +229,7 @@ export default function AIModelsPage() {
       <div className="mb-10">
         <DepartmentalModels />
       </div>
+      <Footer />
     </div>
   );
 }

@@ -53,10 +53,10 @@ export default function SettingsPage() {
         </div>
 
         {/* Main Content Grid - No Scrolling */}
-        <div className="flex-1 grid grid-cols-5 gap-6 min-h-0">
+        <div className="flex-1 grid grid-cols-5 gap-8 min-h-0">
           {/* Left Sidebar - Compact */}
           <div className={`col-span-1 transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-            <div className="bear-glass-card-static p-2 h-fit">
+            <div className="bear-glass-card-static p-3 h-fit">
               {sections.map((section, index) => (
                 <button
                   key={section.id}
@@ -78,45 +78,45 @@ export default function SettingsPage() {
           <div className="col-span-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent pr-2">
             {/* Profile Section */}
             {activeSection === 'profile' && (
-              <div className={`space-y-4 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <div className="bear-glass-card-static p-6">
-                  <h2 className="text-lg font-bold mb-5 flex items-center gap-2">
+              <div className={`space-y-5 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className="bear-glass-card-static p-8">
+                  <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <User className="w-5 h-5 text-bear-blue" />
                     Profile Information
                   </h2>
                   
-                  <div className="flex gap-6">
+                  <div className="flex gap-8">
                     {/* Avatar */}
                     <div className="flex flex-col items-center">
-                      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-bear-blue to-purple-500 flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-bear-blue/30 mb-3">
+                      <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-bear-blue to-purple-500 flex items-center justify-center text-4xl font-bold text-white shadow-lg shadow-bear-blue/30 mb-4">
                         {userData.avatar}
                       </div>
-                      <button className="text-xs text-bear-blue hover:text-bear-blue/80 transition-colors">
+                      <button className="text-sm text-bear-blue hover:text-bear-blue/80 transition-colors">
                         Change Photo
                       </button>
                     </div>
                     
                     {/* Form Fields - Compact Grid */}
-                    <div className="flex-1 grid grid-cols-2 gap-3">
+                    <div className="flex-1 grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-1.5">Full Name</label>
-                        <input type="text" defaultValue={userData.name} className="bear-input text-sm py-2" />
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
+                        <input type="text" defaultValue={userData.name} className="bear-input text-sm py-2.5" />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-1.5">Email</label>
-                        <input type="email" defaultValue={userData.email} className="bear-input text-sm py-2" />
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                        <input type="email" defaultValue={userData.email} className="bear-input text-sm py-2.5" />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-1.5">Phone</label>
-                        <input type="tel" defaultValue={userData.phone} className="bear-input text-sm py-2" />
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Phone</label>
+                        <input type="tel" defaultValue={userData.phone} className="bear-input text-sm py-2.5" />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-1.5">Company</label>
-                        <input type="text" defaultValue={userData.company} className="bear-input text-sm py-2" />
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Company</label>
+                        <input type="text" defaultValue={userData.company} className="bear-input text-sm py-2.5" />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-1.5">Timezone</label>
-                        <select className="w-full rounded-xl bg-white/10 px-3 py-2 text-sm text-white outline-none focus:bg-white/15 focus:ring-2 focus:ring-bear-blue/50 [&>option]:bg-gray-800">
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Timezone</label>
+                        <select className="w-full rounded-xl bg-white/10 px-4 py-2.5 text-sm text-white outline-none focus:bg-white/15 focus:ring-2 focus:ring-bear-blue/50 [&>option]:bg-gray-800">
                           <option>Europe/London</option>
                           <option>Europe/Paris</option>
                           <option>America/New_York</option>
@@ -124,8 +124,8 @@ export default function SettingsPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-1.5">Language</label>
-                        <select className="w-full rounded-xl bg-white/10 px-3 py-2 text-sm text-white outline-none focus:bg-white/15 focus:ring-2 focus:ring-bear-blue/50 [&>option]:bg-gray-800">
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Language</label>
+                        <select className="w-full rounded-xl bg-white/10 px-4 py-2.5 text-sm text-white outline-none focus:bg-white/15 focus:ring-2 focus:ring-bear-blue/50 [&>option]:bg-gray-800">
                           <option>English (UK)</option>
                           <option>English (US)</option>
                           <option>Français</option>
@@ -147,17 +147,17 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Role Badge - Compact */}
-                <div className="bear-glass-card-static p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-purple-500/20">
-                      <Key className="w-5 h-5 text-purple-400" />
+                <div className="bear-glass-card-static p-6 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-purple-500/20">
+                      <Key className="w-6 h-6 text-purple-400" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-white">Account Role</div>
-                      <div className="text-xs text-gray-400">{userData.role}</div>
+                      <div className="font-semibold text-white">Account Role</div>
+                      <div className="text-sm text-gray-400">{userData.role}</div>
                     </div>
                   </div>
-                  <span className="px-3 py-1.5 rounded-full bg-bear-blue/20 text-bear-blue text-xs font-medium border border-bear-blue/30">
+                  <span className="px-4 py-2 rounded-full bg-bear-blue/20 text-bear-blue text-sm font-medium border border-bear-blue/30">
                     {userData.role}
                   </span>
                 </div>
@@ -166,9 +166,9 @@ export default function SettingsPage() {
 
             {/* Locations Section */}
             {activeSection === 'locations' && isPartnerOrCustomer && (
-              <div className={`space-y-4 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold flex items-center gap-2">
+              <div className={`space-y-5 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold flex items-center gap-2">
                     <Building2 className="w-5 h-5 text-bear-blue" />
                     My Locations
                   </h2>
@@ -178,7 +178,7 @@ export default function SettingsPage() {
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {userLocations.slice(0, 3).map((location) => {
                     const locationRobots = getRobotsForLocation(location.id);
                     const onlineRobots = locationRobots.filter(r => r.status === 'active' || r.status === 'idle');

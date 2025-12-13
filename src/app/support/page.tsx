@@ -22,6 +22,7 @@ import {
   Bot
 } from 'lucide-react';
 import { SystemStatus } from '@/components/SystemStatus';
+import { Footer } from '@/components/Footer';
 
 export default function SupportPage() {
   const router = useRouter();
@@ -323,6 +324,7 @@ export default function SupportPage() {
         isOpen={isSystemStatusOpen}
         onClose={() => setIsSystemStatusOpen(false)}
       />
+      <Footer />
     </div>
   );
 }

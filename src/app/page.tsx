@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { getUserRobots, getUserStats } from '@/lib/locationData';
+import { Footer } from '@/components/Footer';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -435,6 +436,7 @@ export default function Dashboard() {
         </section>
 
       </motion.div>
+      <Footer />
     </div>
   );
 }

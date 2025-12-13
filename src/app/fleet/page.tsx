@@ -8,6 +8,7 @@ import { composeCurationResponse } from "@/lib/dataCurator";
 import { operationsDataset } from "@/lib/mockData";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useRole } from "@/lib/roleContext";
+import { Footer } from "@/components/Footer";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
@@ -219,6 +220,7 @@ export default function FleetPage() {
           <LazyInteractiveOpsTable operations={operationsDataset.slice(-50)} />
         </Suspense>
       </section>
+      <Footer />
     </div>
   );
 }

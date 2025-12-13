@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { faqData, categories } from '@/lib/bearKnowledge';
 import { aiClient, Message } from '@/lib/aiClient';
+import { Footer } from '@/components/Footer';
 
 // Category icons
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -762,6 +763,7 @@ function KnowledgeContent() {
             </motion.div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

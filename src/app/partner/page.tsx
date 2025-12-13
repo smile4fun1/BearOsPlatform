@@ -4,6 +4,7 @@ import { useRole } from "@/lib/roleContext";
 import { AdminPartnerView } from "@/components/partner/AdminPartnerView";
 import { PartnerDashboard } from "@/components/partner/PartnerDashboard";
 import { partners } from "@/lib/partnerData";
+import { Footer } from "@/components/Footer";
 
 export default function PartnerPage() {
   const { role } = useRole();
@@ -53,6 +54,7 @@ export default function PartnerPage() {
           Current Role: {role}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

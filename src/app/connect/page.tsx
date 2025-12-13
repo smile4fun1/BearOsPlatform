@@ -37,6 +37,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { robotFleet, searchRobots, Robot } from '@/lib/robotData';
+import { MobileSheet } from '@/components/mobile/MobileSheet';
 
 // Dynamic import for emoji picker to avoid SSR issues
 const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false });
@@ -700,22 +701,9 @@ export default function ConnectPage() {
         className="hidden"
       />
       
-      {/* Mobile Sidebar Overlay */}
-      <AnimatePresence>
-        {showSidebar && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            onClick={() => setShowSidebar(false)}
-          />
-        )}
-      </AnimatePresence>
-      
-      {/* Channel Sidebar */}
-      <div className={`fixed lg:relative inset-y-0 left-0 w-64 sm:w-72 bg-[#0F1117] border-r border-white/5 flex flex-col z-50 transform transition-transform duration-300 lg:translate-x-0 ${showSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-        <div className="p-3 sm:p-4 border-b border-white/5">
+      {/* Desktop Channel Sidebar - Only visible on >= 1024px */}
+      <div className="hidden lg:flex lg:w-64 bg-[#0F1117] border-r border-white/5 flex-col">
+        <div className="p-4 border-b border-white/5">
           <div className="relative">
             <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
             <input 
@@ -726,8 +714,8 @@ export default function ConnectPage() {
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto py-3 sm:py-4">
-          <div className="px-3 sm:px-4 mb-2 flex items-center justify-between">
+        <div className="flex-1 overflow-y-auto py-4">
+          <div className="px-4 mb-2 flex items-center justify-between">
             <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Channels</div>
             <button
               onClick={() => setShowCreateChannel(true)}
@@ -741,10 +729,7 @@ export default function ConnectPage() {
             {visibleChannels.map(channel => (
               <button
                 key={channel.id}
-                onClick={() => {
-                  setActiveChannel(channel.id);
-                  setShowSidebar(false);
-                }}
+                onClick={() => setActiveChannel(channel.id)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
                   activeChannel === channel.id 
                     ? 'bg-bear-blue/10 text-bear-blue border border-bear-blue/20' 
@@ -769,7 +754,7 @@ export default function ConnectPage() {
             ))}
           </div>
           
-          <div className="hidden sm:block mx-4 mt-6 p-3 rounded-xl bg-white/5 border border-white/10">
+          <div className="mx-4 mt-6 p-3 rounded-xl bg-white/5 border border-white/10">
             <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
               <Bot className="w-3 h-3 text-bear-blue" />
               <span className="font-medium text-bear-blue">Pro Tip</span>
@@ -783,6 +768,69 @@ export default function ConnectPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Channel Sheet - Only visible on < 1024px */}
+      <MobileSheet
+        isOpen={showSidebar}
+        onClose={() => setShowSidebar(false)}
+        title="Channels"
+      >
+        <div className="px-4 pb-4">
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-3 w-4 h-4 text-gray-500" />
+            <input 
+              type="text" 
+              placeholder="Find channels..." 
+              className="w-full bg-[#020511] border border-white/10 rounded-lg pl-9 pr-4 py-3 text-base text-gray-300 focus:outline-none focus:border-bear-blue/50 transition-colors"
+            />
+          </div>
+          
+          <div className="space-y-1">
+            {visibleChannels.map(channel => (
+              <button
+                key={channel.id}
+                onClick={() => {
+                  setActiveChannel(channel.id);
+                  setShowSidebar(false);
+                }}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${
+                  activeChannel === channel.id 
+                    ? 'bg-bear-blue/10 text-bear-blue border border-bear-blue/20' 
+                    : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'
+                }`}
+                style={{ minHeight: '52px' }}
+              >
+                <div className="flex items-center gap-3">
+                  {channel.type === 'bot' ? <Bot className="w-5 h-5" /> : 
+                   channel.type === 'private' ? <Lock className="w-4 h-4" /> : 
+                   <Hash className="w-5 h-5" />}
+                  <span className="text-base truncate">{channel.name}</span>
+                  {mutedChannels.includes(channel.id) && (
+                    <VolumeX className="w-4 h-4 text-gray-500" />
+                  )}
+                </div>
+                {channel.unread && (
+                  <span className="bg-bear-blue text-white text-xs font-bold px-2 py-1 rounded-full">
+                    {channel.unread}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          
+          <button
+            onClick={() => {
+              setShowCreateChannel(true);
+              setShowSidebar(false);
+            }}
+            className="w-full mt-4 py-3 px-4 bg-bear-blue/10 border border-bear-blue/30 text-bear-blue rounded-xl font-medium hover:bg-bear-blue/20 transition-colors flex items-center justify-center gap-2"
+            style={{ minHeight: '48px' }}
+          >
+            <Plus className="w-5 h-5" />
+            Create Channel
+          </button>
+        </div>
+      </MobileSheet>
 
       {/* Main Chat Area */}
       <div 
@@ -806,8 +854,9 @@ export default function ConnectPage() {
           <button 
             onClick={() => setShowSidebar(!showSidebar)}
             className="p-2 -ml-2 rounded-lg hover:bg-white/5 lg:hidden"
+            style={{ minWidth: '44px', minHeight: '44px' }}
           >
-            <Hash className="w-5 h-5 text-gray-400" />
+            <Hash className="w-6 h-6 text-gray-400" />
           </button>
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <Hash className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 hidden lg:block" />
@@ -1207,15 +1256,15 @@ export default function ConnectPage() {
               )}
             </AnimatePresence>
             
-            <div className="bg-[#0F1117] border border-white/10 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 focus-within:border-bear-blue/50 transition-all duration-300 focus-within:shadow-lg focus-within:shadow-bear-blue/5">
+            <div className="bg-[#0F1117] border border-white/10 rounded-xl sm:rounded-2xl p-2 sm:p-2 focus-within:border-bear-blue/50 transition-all duration-300 focus-within:shadow-lg focus-within:shadow-bear-blue/5">
               {attachedFiles.length > 0 && (
                 <div className="px-2 py-2 flex flex-wrap gap-2 border-b border-white/5 mb-2">
                   {attachedFiles.map((file, i) => (
                     <div key={i} className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
-                      {file.type.startsWith('image/') ? <ImageIcon className="w-3 h-3 text-bear-blue" /> : <FileText className="w-3 h-3 text-bear-blue" />}
-                      <span className="text-xs text-gray-300 truncate max-w-[150px]">{file.name}</span>
+                      {file.type.startsWith('image/') ? <ImageIcon className="w-4 h-4 text-bear-blue" /> : <FileText className="w-4 h-4 text-bear-blue" />}
+                      <span className="text-sm text-gray-300 truncate max-w-[150px]">{file.name}</span>
                       <button onClick={() => handleRemoveFile(i)} className="text-gray-500 hover:text-white">
-                        <X className="w-3 h-3" />
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
@@ -1227,7 +1276,7 @@ export default function ConnectPage() {
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder={`Message #${activeChannel} — Type @ to mention a robot`}
-                className="w-full bg-transparent text-sm sm:text-base text-white px-2 sm:px-3 py-1.5 sm:py-2 focus:outline-none resize-none min-h-[36px] sm:min-h-[40px] max-h-32 placeholder-gray-500"
+                className="w-full bg-transparent text-base text-white px-3 py-2 focus:outline-none resize-none min-h-[44px] max-h-32 placeholder-gray-500"
                 rows={1}
                 style={{ 
                   height: 'auto',
@@ -1239,36 +1288,40 @@ export default function ConnectPage() {
                   target.style.height = Math.min(target.scrollHeight, 128) + 'px';
                 }}
               />
-              <div className="flex items-center justify-between px-1.5 sm:px-2 pt-1.5 sm:pt-2 border-t border-white/5 mt-1.5 sm:mt-2">
-                <div className="flex items-center gap-0.5 sm:gap-1 text-gray-500">
+              <div className="flex items-center justify-between px-2 pt-2 border-t border-white/5 mt-2">
+                <div className="flex items-center gap-1 text-gray-500">
                   <button 
                     onClick={() => fileInputRef.current?.click()}
-                    className="p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"
+                    className="p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"
                     title="Attach file"
+                    style={{ minWidth: '40px', minHeight: '40px' }}
                   >
-                    <Paperclip className="w-4 h-4" />
+                    <Paperclip className="w-5 h-5" />
                   </button>
                   <button 
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                    className="p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"
+                    className="p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"
                     title="Add emoji"
+                    style={{ minWidth: '40px', minHeight: '40px' }}
                   >
-                    <Smile className="w-4 h-4" />
+                    <Smile className="w-5 h-5" />
                   </button>
                   <button 
                     onClick={handleRobotButtonClick}
-                    className="p-1.5 sm:p-2 hover:bg-bear-blue/10 rounded-lg transition-colors hover:text-bear-blue flex items-center gap-1"
+                    className="p-2 hover:bg-bear-blue/10 rounded-lg transition-colors hover:text-bear-blue flex items-center gap-1"
                     title="Search and mention a robot"
+                    style={{ minWidth: '40px', minHeight: '40px' }}
                   >
-                    <Bot className="w-4 h-4" />
+                    <Bot className="w-5 h-5" />
                   </button>
                 </div>
                 <button 
                   onClick={handleSendMessage}
                   disabled={!inputText.trim() && attachedFiles.length === 0}
-                  className="p-2 sm:p-2.5 bg-bear-blue text-white rounded-lg sm:rounded-xl hover:bg-bear-blue/90 transition-all active:scale-95 sm:hover:scale-105 shadow-lg shadow-bear-blue/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-3 bg-bear-blue text-white rounded-xl hover:bg-bear-blue/90 transition-all active:scale-95 shadow-lg shadow-bear-blue/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ minWidth: '44px', minHeight: '44px' }}
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-5 h-5" />
                 </button>
               </div>
             </div>

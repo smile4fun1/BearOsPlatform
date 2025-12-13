@@ -390,3 +390,36 @@ textarea:focus-visible {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* ========================================
+   Mobile-Specific Optimizations (< 1024px)
+   ======================================== */
+
+@media (max-width: 1023px) {
+  /* Prevent zoom on iOS when focusing inputs */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Safe area insets for iPhone notch and bottom bar */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Smooth scrolling for mobile sheet animations */
+.mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile container with safe areas */
+.mobile-container {
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top);
+}

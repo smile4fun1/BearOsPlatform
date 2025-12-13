@@ -81,7 +81,8 @@ function LazyRobotGrid({ robots, getStatusColor, getStatusIcon }: {
             >
               <Link
                 href={`/robots/${robot.id}`}
-                className="group block bear-glass-card p-5 relative overflow-hidden h-full flex flex-col"
+                className="group block bear-glass-card p-5 lg:p-5 relative overflow-hidden h-full flex flex-col"
+                style={{ minHeight: '44px' }}
               >
                 {/* Robot Image Background */}
                 <div className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
@@ -119,7 +120,7 @@ function LazyRobotGrid({ robots, getStatusColor, getStatusIcon }: {
                 </div>
 
                 {/* Status Badge */}
-                <div className={`mb-4 inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold ${getStatusColor(robot.status)}`}>
+                <div className={`mb-4 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs lg:text-xs font-semibold ${getStatusColor(robot.status)}`}>
                   {getStatusIcon(robot.status)}
                   <span className="capitalize">{robot.status}</span>
                 </div>

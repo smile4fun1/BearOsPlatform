@@ -182,7 +182,7 @@ export function Sidebar() {
       {/* Footer Status */}
       <div className="border-t border-white/5 bg-black/30 px-6 py-7 flex flex-col justify-center">
         <div className="flex items-center justify-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
           <span className="text-sm text-gray-400 font-medium">All Systems Operational</span>
         </div>
         

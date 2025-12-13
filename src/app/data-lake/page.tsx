@@ -310,9 +310,9 @@ export default async function DataLakePage() {
                   for field engineers and operations teams.
                 </p>
               </div>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </main>
       <Footer />

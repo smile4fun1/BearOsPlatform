@@ -9,6 +9,7 @@ import { Sidebar } from "@/components/os/Sidebar";
 import { RoleProvider } from "@/lib/roleContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import { MobileNav } from "@/components/mobile/MobileNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,17 +51,25 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#020511] text-white flex h-screen overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#020511] text-white`}
       >
         <RoleProvider>
           <ChatProvider>
-            {/* Sidebar Navigation */}
-            <Sidebar />
+            {/* Desktop Layout - Only visible on >= 1024px */}
+            <div className="hidden lg:flex h-screen overflow-hidden">
+              <Sidebar />
+              <main className="flex-1 overflow-y-auto relative bg-[#020511]">
+                {children}
+              </main>
+            </div>
             
-            {/* Main Content Area */}
-            <main className="flex-1 overflow-y-auto relative bg-[#020511]">
-              {children}
-            </main>
+            {/* Mobile Layout - Only visible on < 1024px */}
+            <div className="lg:hidden flex flex-col h-screen overflow-hidden">
+              <main className="flex-1 overflow-y-auto relative bg-[#020511] pb-20">
+                {children}
+              </main>
+              <MobileNav />
+            </div>
 
             <ImprovedDraggableChat />
             <BearFunPopup />

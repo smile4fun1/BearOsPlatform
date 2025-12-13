@@ -144,8 +144,8 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Link href="/robots" className="btn-primary text-center justify-center">
-                <Bot className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Link href="/robots" className="btn-primary text-center justify-center" style={{ minHeight: '48px' }}>
+                <Bot className="w-5 h-5" />
                 {isPartnerOrCustomer ? 'My Robots' : 'Fleet Overview'}
               </Link>
               <Link href="/knowledge" className="btn-secondary text-center justify-center">

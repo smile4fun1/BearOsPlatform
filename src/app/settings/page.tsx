@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { userLocations, locationTypeLabels, getRobotsForLocation } from '@/lib/locationData';
 import { Footer } from '@/components/Footer';
+import { MobileSettings } from '@/components/mobile/MobileSettings';
 
 export default function SettingsPage() {
   const { role, getRoleLabel } = useRole();
@@ -41,7 +42,20 @@ export default function SettingsPage() {
   ].filter(s => !s.showFor || s.showFor.includes(role));
 
   return (
-    <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white flex flex-col overflow-hidden">
+    <>
+      {/* Mobile Version - Only visible on < 1024px */}
+      <div className="lg:hidden h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white flex flex-col overflow-hidden">
+        <MobileSettings 
+          userData={userData}
+          userLocations={userLocations}
+          isPartnerOrCustomer={isPartnerOrCustomer}
+          getRobotsForLocation={getRobotsForLocation}
+          locationTypeLabels={locationTypeLabels}
+        />
+      </div>
+      
+      {/* Desktop Version - Only visible on >= 1024px */}
+      <div className="hidden lg:flex lg:h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white flex-col overflow-hidden">
       {/* Decorative Background */}
       <div className="fixed top-20 right-0 w-[500px] h-[500px] bg-bear-blue/5 rounded-full blur-3xl pointer-events-none" />
       
@@ -339,7 +353,8 @@ export default function SettingsPage() {
         </div>
       </main>
       
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }

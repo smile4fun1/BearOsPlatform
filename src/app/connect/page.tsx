@@ -212,15 +212,16 @@ function RobotSearchModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/90 z-[100] flex items-start justify-center p-4 pt-12 overflow-y-auto"
+      className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl h-[550px] max-h-[75vh] flex flex-col overflow-hidden shadow-2xl my-auto"
+        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl h-[550px] max-h-[75vh] flex flex-col overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-4 border-b border-white/10 flex-shrink-0">
@@ -1056,20 +1057,6 @@ export default function ConnectPage() {
               )}
             </AnimatePresence>
 
-            <AnimatePresence>
-              {showRobotSearch && (
-                <RobotSearchModal
-                  searchQuery={robotSearchQuery}
-                  onSearchChange={setRobotSearchQuery}
-                  onSelect={handleRobotSearchSelect}
-                  onClose={() => {
-                    setShowRobotSearch(false);
-                    setRobotSearchQuery('');
-                  }}
-                />
-              )}
-            </AnimatePresence>
-            
             <div className="bg-[#0F1117] border border-white/10 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 focus-within:border-bear-blue/50 transition-all duration-300 focus-within:shadow-lg focus-within:shadow-bear-blue/5">
               {attachedFiles.length > 0 && (
                 <div className="px-2 py-2 flex flex-wrap gap-2 border-b border-white/5 mb-2">
@@ -1138,6 +1125,21 @@ export default function ConnectPage() {
           </div>
         </div>
       </div>
+
+      {/* Robot Search Modal - Rendered at top level for proper viewport positioning */}
+      <AnimatePresence>
+        {showRobotSearch && (
+          <RobotSearchModal
+            searchQuery={robotSearchQuery}
+            onSearchChange={setRobotSearchQuery}
+            onSelect={handleRobotSearchSelect}
+            onClose={() => {
+              setShowRobotSearch(false);
+              setRobotSearchQuery('');
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -253,7 +253,7 @@ export default function TrainingPage() {
                                     </div>
                                 </div>
                                 {isActive && (
-                                    <div layoutId="active-indicator" className="w-1.5 h-1.5 rounded-full bg-white" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-white" />
                                 )}
                             </button>
                         );
@@ -271,8 +271,8 @@ export default function TrainingPage() {
                             key="content-card"
                             className="bg-[#0f1423] border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative h-[calc(100vh-140px)] sm:h-[calc(100vh-200px)] max-h-[700px]"
                         >
-                            {/* Content - SCROLLABLE ON MOBILE */}
-                            <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto overflow-x-hidden">
+                            {/* Content - FIXED ON MOBILE, SCROLLABLE ON DESKTOP */}
+                            <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-hidden lg:overflow-y-auto overflow-x-hidden">
                                 <AnimatePresence mode="wait">
                                     <div
                                         key={currentModule}
@@ -444,29 +444,29 @@ export default function TrainingPage() {
 
 function WelcomeContent({ onComplete }: { onComplete: () => void }) {
     return (
-        <div className="flex flex-col justify-center items-center text-center py-12 relative overflow-hidden">
+        <div className="flex flex-col justify-center items-center text-center py-6 sm:py-12 relative overflow-hidden h-full">
             <div className="absolute inset-0 bg-gradient-to-b from-bear-blue/5 to-transparent pointer-events-none" />
             
             <div
-                className="w-20 h-20 bg-bear-blue rounded-2xl flex items-center justify-center mb-8 shadow-xl shadow-bear-blue/20 rotate-3"
+                className="w-16 h-16 sm:w-20 sm:h-20 bg-bear-blue rounded-2xl flex items-center justify-center mb-4 sm:mb-8 shadow-xl shadow-bear-blue/20 rotate-3"
             >
-                <AcademicCapIcon className="w-10 h-10 text-white" />
+                <AcademicCapIcon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
     
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">Welcome to Carti Training</h2>
-            <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed px-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-3 sm:mb-6">Welcome to Carti Training</h2>
+            <p className="text-sm sm:text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto mb-6 sm:mb-12 leading-relaxed px-4">
                 This interactive training will guide you through everything you need to know about working with Carti 100, your autonomous logistics robot.
             </p>
     
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl mb-12 px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full max-w-3xl mb-6 sm:mb-12 px-4">
                 {[
                     { icon: ClockIcon, label: "30 Minutes", desc: "Comprehensive" },
                     { icon: PlayCircleIcon, label: "Interactive", desc: "Learn by doing" },
                     { icon: ShieldCheckIcon, label: "Certified", desc: "Get ready" },
                 ].map((item, i) => (
-                    <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/10 transition-colors flex flex-col items-center justify-center text-center">
-                        <item.icon className="w-6 h-6 text-bear-blue mx-auto mb-3" />
-                        <div className="font-semibold text-white mb-1">{item.label}</div>
+                    <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-5 hover:bg-white/10 transition-colors flex flex-col items-center justify-center text-center">
+                        <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-bear-blue mx-auto mb-2 sm:mb-3" />
+                        <div className="font-semibold text-white mb-1 text-sm sm:text-base">{item.label}</div>
                         <div className="text-xs text-gray-500">{item.desc}</div>
                     </div>
                 ))}
@@ -474,10 +474,10 @@ function WelcomeContent({ onComplete }: { onComplete: () => void }) {
     
             <button
                 onClick={onComplete}
-                className="group px-8 py-4 bg-white text-bear-dark font-bold rounded-full hover:scale-105 transition-all shadow-xl hover:shadow-white/20 flex items-center gap-2"
+                className="group px-6 py-3 sm:px-8 sm:py-4 bg-white text-bear-dark font-bold rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl hover:shadow-white/20 flex items-center gap-2 text-sm sm:text-base"
             >
                 Start Training
-                <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
             </button>
         </div>
     );
@@ -493,8 +493,8 @@ function ModuleWelcome({ onComplete }: { onComplete: () => void }) {
 
 function ModuleMeetCarti() {
     return (
-        <div className="space-y-4 sm:space-y-6">
-            <div className="bear-glass-card p-4 sm:p-6 relative overflow-hidden flex items-center">
+        <div className="space-y-3 sm:space-y-6 h-full flex flex-col">
+            <div className="bear-glass-card p-3 sm:p-6 relative overflow-hidden flex items-center flex-shrink-0">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-bear-blue/5 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/2" />
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-4 sm:gap-6 w-full">
                     <div className="flex-1 text-center md:text-left">
@@ -513,7 +513,7 @@ function ModuleMeetCarti() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4 flex-1 overflow-y-auto lg:overflow-visible">
                 {[
                     { icon: WrenchScrewdriverIcon, title: "100kg Payload", desc: "Capable of transporting heavy goods and materials across the facility.", bg: "bg-bear-blue/10", border: "border-bear-blue/20" },
                     { icon: ShieldCheckIcon, title: "LiDAR Navigation", desc: "Advanced sensors for precise mapping and obstacle avoidance in dynamic environments.", bg: "bg-bear-blue/10", border: "border-bear-blue/20" },
@@ -522,13 +522,13 @@ function ModuleMeetCarti() {
                 ].map((item, i) => (
                     <div 
                         key={i}
-                        className={`${item.bg} border ${item.border} p-4 sm:p-5 rounded-xl hover:bg-bear-blue/15 transition-all flex flex-col`}
+                        className={`${item.bg} border ${item.border} p-2 sm:p-5 rounded-lg sm:rounded-xl hover:bg-bear-blue/15 transition-all flex flex-col`}
                     >
-                        <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-3 flex-shrink-0">
-                            <item.icon className="w-6 h-6 text-bear-blue" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-1.5 sm:mb-3 flex-shrink-0">
+                            <item.icon className="w-4 h-4 sm:w-6 sm:h-6 text-bear-blue" />
                         </div>
-                        <h3 className="font-bold text-white mb-2 text-sm sm:text-base">{item.title}</h3>
-                        <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">{item.desc}</p>
+                        <h3 className="font-bold text-white mb-1 sm:mb-2 text-xs sm:text-base leading-tight">{item.title}</h3>
+                        <p className="text-[10px] sm:text-sm text-gray-300 leading-snug sm:leading-relaxed">{item.desc}</p>
                     </div>
                 ))}
             </div>
@@ -538,13 +538,13 @@ function ModuleMeetCarti() {
 
 function ModuleGettingStarted() {
     return (
-        <div className="space-y-4 sm:space-y-6">
-            <div className="bear-glass-card p-4 sm:p-6 flex flex-col justify-center">
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Getting Started</h2>
-                <p className="text-gray-300 text-sm">Pre-operation safety checks</p>
+        <div className="space-y-3 sm:space-y-6 h-full flex flex-col">
+            <div className="bear-glass-card p-3 sm:p-6 flex flex-col justify-center flex-shrink-0">
+                <h2 className="text-lg sm:text-2xl font-bold text-white mb-1 sm:mb-2">Getting Started</h2>
+                <p className="text-gray-300 text-xs sm:text-sm">Pre-operation safety checks</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 gap-2 sm:gap-4 flex-1 overflow-y-auto lg:overflow-visible">
                 {[
                     { 
                         title: "E-Stop Check", 
@@ -574,14 +574,14 @@ function ModuleGettingStarted() {
                 ].map((step, i) => (
                     <div 
                         key={i}
-                        className="flex gap-3 sm:gap-4 bg-white/5 p-4 sm:p-5 rounded-xl border border-white/10 hover:bg-white/10 transition-all"
+                        className="flex gap-2 sm:gap-4 bg-white/5 p-2.5 sm:p-5 rounded-lg sm:rounded-xl border border-white/10 hover:bg-white/10 transition-all"
                     >
-                        <div className="flex-shrink-0 w-10 h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-base sm:text-lg shadow-lg shadow-bear-blue/20">
+                        <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-sm sm:text-lg shadow-lg shadow-bear-blue/20">
                             {step.icon}
                         </div>
                         <div className="min-w-0">
-                            <h3 className="font-bold text-white mb-1.5 sm:mb-2 text-sm">{step.title}</h3>
-                            <p className="text-gray-300 leading-relaxed text-xs">{step.desc}</p>
+                            <h3 className="font-bold text-white mb-0.5 sm:mb-2 text-xs sm:text-sm leading-tight">{step.title}</h3>
+                            <p className="text-gray-300 leading-snug text-[10px] sm:text-xs">{step.desc}</p>
                         </div>
                     </div>
                 ))}

@@ -36,7 +36,8 @@ export default function AIModelsPage() {
 
   return (
     <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] flex flex-col overflow-hidden">
-      <main className="flex-1 overflow-y-auto p-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 overflow-y-auto w-full">
+        <div className="p-8 max-w-7xl mx-auto">
       {/* Page Header */}
       <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
@@ -229,6 +230,7 @@ export default function AIModelsPage() {
       {/* Departmental Models */}
       <div className="mb-10">
         <DepartmentalModels />
+      </div>
       </div>
       </main>
       <Footer />

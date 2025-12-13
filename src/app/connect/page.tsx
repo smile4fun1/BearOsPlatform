@@ -253,7 +253,7 @@ function RobotSearchModal({
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <span className="font-mono">{robot.serialNumber}</span>
                       <span>•</span>
-                      <span className="truncate">{robot.location}</span>
+                      <span className="truncate">{robot.facility}</span>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1">
@@ -720,7 +720,6 @@ export default function ConnectPage() {
                   <EmojiPicker 
                     onEmojiClick={handleEmojiSelect} 
                     theme="dark"
-                    emojiStyle="native"
                   />
                 </motion.div>
               )}

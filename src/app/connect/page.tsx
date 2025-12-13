@@ -21,7 +21,15 @@ import {
   MapPin,
   X,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  FolderOpen,
+  Settings,
+  Users,
+  Archive,
+  Pin,
+  VolumeX,
+  LogOut,
+  Download
 } from 'lucide-react';
 import { robotFleet, searchRobots, Robot } from '@/lib/robotData';
 
@@ -194,8 +202,8 @@ function RobotSearchModal({
   onClose: () => void;
 }) {
   const results = useMemo(() => {
-    if (!searchQuery || searchQuery.length < 1) return robotFleet;
-    return searchRobots(searchQuery);
+    if (!searchQuery || searchQuery.length < 1) return robotFleet.slice(0, 20);
+    return searchRobots(searchQuery).slice(0, 20);
   }, [searchQuery]);
 
   return (
@@ -210,13 +218,21 @@ function RobotSearchModal({
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[600px] flex flex-col overflow-hidden shadow-2xl"
+        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[70vh] flex flex-col overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-4 border-b border-white/10">
-          <div className="flex items-center gap-3 mb-3">
-            <Bot className="w-5 h-5 text-bear-blue" />
-            <h3 className="text-lg font-bold text-white">Select Robot</h3>
+        <div className="p-4 border-b border-white/10 flex-shrink-0">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <Bot className="w-5 h-5 text-bear-blue" />
+              <h3 className="text-lg font-bold text-white">Select Robot</h3>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-400" />
+            </button>
           </div>
           <div className="relative">
             <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
@@ -245,18 +261,18 @@ function RobotSearchModal({
                   onClick={() => onSelect(robot)}
                   className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors text-left"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-bear-blue/20 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-bear-blue/20 flex items-center justify-center flex-shrink-0">
                     <Bot className="w-5 h-5 text-bear-blue" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-white truncate">{robot.name}</div>
                     <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <span className="font-mono">{robot.serialNumber}</span>
+                      <span className="font-mono truncate">{robot.serialNumber}</span>
                       <span>•</span>
                       <span className="truncate">{robot.facility}</span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-1">
+                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
                     <div className="flex items-center gap-1 text-xs text-gray-500">
                       <Battery className="w-3 h-3" />
                       {robot.battery}%
@@ -274,15 +290,6 @@ function RobotSearchModal({
               ))}
             </div>
           )}
-        </div>
-
-        <div className="p-4 border-t border-white/10">
-          <button
-            onClick={onClose}
-            className="w-full py-2 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
         </div>
       </motion.div>
     </motion.div>
@@ -302,6 +309,9 @@ export default function ConnectPage() {
   const [channelMessages, setChannelMessages] = useState<Record<string, Message[]>>({});
   const [showRobotSearch, setShowRobotSearch] = useState(false);
   const [robotSearchQuery, setRobotSearchQuery] = useState('');
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showChannelMenu, setShowChannelMenu] = useState(false);
+  const [showFilesPanel, setShowFilesPanel] = useState(false);
   
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -508,6 +518,34 @@ export default function ConnectPage() {
   };
 
   const [showSidebar, setShowSidebar] = useState(false);
+
+  // Mock channel files data
+  const channelFiles: Record<string, { name: string; type: string; size: string; uploadedBy: string; date: string }[]> = {
+    'general': [
+      { name: 'Deployment_Guide.pdf', type: 'pdf', size: '2.4 MB', uploadedBy: 'John Smith', date: 'Dec 10, 2024' },
+      { name: 'Robot_Specs.xlsx', type: 'excel', size: '156 KB', uploadedBy: 'Sarah Connor', date: 'Dec 9, 2024' },
+      { name: 'Floor_Map.png', type: 'image', size: '890 KB', uploadedBy: 'Field Engineer', date: 'Dec 8, 2024' },
+    ],
+    'qcom-support': [
+      { name: 'Service_Report_Dec.pdf', type: 'pdf', size: '3.1 MB', uploadedBy: 'Qcom Tech', date: 'Dec 12, 2024' },
+      { name: 'Error_Logs.txt', type: 'text', size: '45 KB', uploadedBy: 'Bear Support', date: 'Dec 11, 2024' },
+    ],
+    'robot-alerts': [
+      { name: 'Incident_Summary.pdf', type: 'pdf', size: '1.8 MB', uploadedBy: 'Fleet Monitor', date: 'Dec 13, 2024' },
+    ],
+    'field-ops': [
+      { name: 'Installation_Checklist.pdf', type: 'pdf', size: '890 KB', uploadedBy: 'RFE Team Lead', date: 'Dec 7, 2024' },
+      { name: 'Calibration_Data.csv', type: 'csv', size: '234 KB', uploadedBy: 'Field Engineer', date: 'Dec 6, 2024' },
+    ],
+    'announcements': []
+  };
+
+  // Mock notifications
+  const notifications = [
+    { id: '1', title: 'New message in #general', message: 'John Smith mentioned you', time: '5 mins ago', unread: true },
+    { id: '2', title: '@Servi-Plus-C44E79 alert', message: 'Robot back online after maintenance', time: '15 mins ago', unread: true },
+    { id: '3', title: 'Channel update', message: '#field-ops settings changed', time: '1 hour ago', unread: false },
+  ];
   
   return (
     <div className="flex h-screen bg-[#020511] overflow-hidden">
@@ -631,10 +669,164 @@ export default function ConnectPage() {
             )}
           </div>
           <div className="flex items-center gap-2 sm:gap-4 text-gray-400">
-            <Bell className="w-4 h-4 sm:w-5 sm:h-5 hover:text-white cursor-pointer transition-colors" />
-            <MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5 hover:text-white cursor-pointer transition-colors" />
+            <button
+              onClick={() => setShowFilesPanel(!showFilesPanel)}
+              className="p-2 hover:bg-white/5 rounded-lg transition-colors relative"
+              title="Channel files"
+            >
+              <FolderOpen className="w-4 h-4 sm:w-5 sm:h-5 hover:text-white transition-colors" />
+              {channelFiles[activeChannel]?.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-bear-blue text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                  {channelFiles[activeChannel].length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="p-2 hover:bg-white/5 rounded-lg transition-colors relative"
+              title="Notifications"
+            >
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5 hover:text-white transition-colors" />
+              {notifications.filter(n => n.unread).length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                  {notifications.filter(n => n.unread).length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setShowChannelMenu(!showChannelMenu)}
+              className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+              title="Channel settings"
+            >
+              <MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5 hover:text-white transition-colors" />
+            </button>
           </div>
         </header>
+
+        {/* Notifications Panel */}
+        <AnimatePresence>
+          {showNotifications && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="absolute top-16 right-4 w-80 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
+            >
+              <div className="p-4 border-b border-white/10 flex items-center justify-between">
+                <h3 className="font-bold text-white">Notifications</h3>
+                <button onClick={() => setShowNotifications(false)} className="text-gray-400 hover:text-white">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="max-h-96 overflow-y-auto">
+                {notifications.map((notif) => (
+                  <div key={notif.id} className={`p-4 border-b border-white/5 hover:bg-white/5 cursor-pointer ${notif.unread ? 'bg-bear-blue/5' : ''}`}>
+                    <div className="flex items-start gap-3">
+                      <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${notif.unread ? 'bg-bear-blue' : 'bg-transparent'}`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-white mb-1">{notif.title}</p>
+                        <p className="text-xs text-gray-400 mb-1">{notif.message}</p>
+                        <p className="text-xs text-gray-500">{notif.time}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Channel Menu */}
+        <AnimatePresence>
+          {showChannelMenu && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="absolute top-16 right-4 w-64 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
+            >
+              <div className="p-2">
+                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                  <Settings className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-white">Channel Settings</span>
+                </button>
+                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                  <Users className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-white">View Members</span>
+                </button>
+                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                  <Pin className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-white">Pinned Messages</span>
+                </button>
+                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                  <VolumeX className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-white">Mute Channel</span>
+                </button>
+                <div className="my-2 border-t border-white/10" />
+                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left">
+                  <Archive className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-white">Archive Channel</span>
+                </button>
+                <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left text-red-400">
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm">Leave Channel</span>
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Files Panel */}
+        <AnimatePresence>
+          {showFilesPanel && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="absolute top-16 right-4 w-96 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40 max-h-[500px] flex flex-col"
+            >
+              <div className="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
+                <div className="flex items-center gap-2">
+                  <FolderOpen className="w-5 h-5 text-bear-blue" />
+                  <h3 className="font-bold text-white">Channel Files</h3>
+                </div>
+                <button onClick={() => setShowFilesPanel(false)} className="text-gray-400 hover:text-white">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-4">
+                {channelFiles[activeChannel]?.length === 0 || !channelFiles[activeChannel] ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <FolderOpen className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                    <p className="text-sm">No files shared yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {channelFiles[activeChannel]?.map((file, index) => (
+                      <div key={index} className="p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-colors group">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-bear-blue/20 flex items-center justify-center flex-shrink-0">
+                            {file.type.includes('pdf') ? <FileText className="w-5 h-5 text-bear-blue" /> :
+                             file.type.includes('image') ? <ImageIcon className="w-5 h-5 text-bear-blue" /> :
+                             <FileText className="w-5 h-5 text-bear-blue" />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{file.name}</p>
+                            <p className="text-xs text-gray-400">{file.size} • {file.uploadedBy}</p>
+                            <p className="text-xs text-gray-500">{file.date}</p>
+                          </div>
+                          <button className="opacity-0 group-hover:opacity-100 p-2 hover:bg-white/10 rounded-lg transition-all">
+                            <Download className="w-4 h-4 text-gray-400" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">

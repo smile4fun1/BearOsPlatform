@@ -315,8 +315,8 @@ export function RobotsManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white overflow-x-hidden">
-      <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12 overflow-x-hidden">
+    <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white flex flex-col overflow-hidden">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12 w-full">
         {/* Header */}
         <div className="mb-6 sm:mb-8 lg:mb-12">
           <div className="flex flex-col gap-4 sm:gap-6">
@@ -542,6 +542,8 @@ export function RobotsManagement() {
           </motion.div>
         )}
       </AnimatePresence>
+      </main>
+      <Footer />
     </div>
   );
 }

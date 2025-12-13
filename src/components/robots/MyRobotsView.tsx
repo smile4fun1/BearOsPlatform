@@ -19,10 +19,10 @@ import {
 } from '@/lib/locationData';
 import { Robot, getRobotImage } from '@/lib/robotData';
 import Image from 'next/image';
-import { Footer } from '@/components/Footer';
 import { RobotQRBadge } from './RobotQRCode';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Footer } from '@/components/Footer';
 
 dayjs.extend(relativeTime);
 

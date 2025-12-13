@@ -56,7 +56,7 @@ export default function SettingsPage() {
         <div className="flex-1 grid grid-cols-5 gap-6 min-h-0">
           {/* Left Sidebar - Compact */}
           <div className={`col-span-1 transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-            <div className="bear-glass-card p-2 h-fit">
+            <div className="bear-glass-card-static p-2 h-fit">
               {sections.map((section, index) => (
                 <button
                   key={section.id}
@@ -79,7 +79,7 @@ export default function SettingsPage() {
             {/* Profile Section */}
             {activeSection === 'profile' && (
               <div className={`space-y-4 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <div className="bear-glass-card p-6">
+                <div className="bear-glass-card-static p-6">
                   <h2 className="text-lg font-bold mb-5 flex items-center gap-2">
                     <User className="w-5 h-5 text-bear-blue" />
                     Profile Information
@@ -147,7 +147,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Role Badge - Compact */}
-                <div className="bear-glass-card p-4 flex items-center justify-between">
+                <div className="bear-glass-card-static p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2.5 rounded-xl bg-purple-500/20">
                       <Key className="w-5 h-5 text-purple-400" />
@@ -184,7 +184,7 @@ export default function SettingsPage() {
                     const onlineRobots = locationRobots.filter(r => r.status === 'active' || r.status === 'idle');
                     
                     return (
-                      <div key={location.id} className="bear-glass-card p-5">
+                      <div key={location.id} className="bear-glass-card-static p-5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="p-2.5 rounded-xl bg-bear-blue/20">
@@ -254,7 +254,7 @@ export default function SettingsPage() {
 
             {/* Notifications Section */}
             {activeSection === 'notifications' && (
-              <div className={`bear-glass-card p-6 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <div className={`bear-glass-card-static p-6 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <h2 className="text-lg font-bold mb-5 flex items-center gap-2">
                   <Bell className="w-5 h-5 text-bear-blue" />
                   Notification Preferences
@@ -291,7 +291,7 @@ export default function SettingsPage() {
             {/* Security Section */}
             {activeSection === 'security' && (
               <div className={`space-y-4 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <div className="bear-glass-card p-6">
+                <div className="bear-glass-card-static p-6">
                   <h2 className="text-lg font-bold mb-5 flex items-center gap-2">
                     <Key className="w-5 h-5 text-bear-blue" />
                     Change Password
@@ -317,7 +317,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="bear-glass-card p-6">
+                <div className="bear-glass-card-static p-6">
                   <h2 className="text-lg font-bold mb-5 flex items-center gap-2">
                     <Shield className="w-5 h-5 text-bear-blue" />
                     Two-Factor Authentication

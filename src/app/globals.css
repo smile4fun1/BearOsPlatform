@@ -105,6 +105,12 @@
   @apply hover:-translate-y-1 hover:bg-white/8;
 }
 
+/* Glass Card - Static (No Hover Effects) for Settings */
+@utility bear-glass-card-static {
+  @apply bg-white/5 backdrop-blur-xl rounded-2xl;
+  @apply border border-white/10 shadow-xl;
+}
+
 /* Feature Card - Prominent card for key actions */
 @utility bear-feature-card {
   @apply bg-gradient-to-br from-white/8 to-white/3 backdrop-blur-xl rounded-3xl;

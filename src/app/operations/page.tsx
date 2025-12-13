@@ -27,7 +27,8 @@ export default async function OperationsPage() {
 
   return (
     <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white flex flex-col overflow-hidden">
-      <main className="flex-1 overflow-y-auto mx-auto max-w-7xl px-6 py-12 lg:px-10 w-full">
+      <main className="flex-1 overflow-y-auto w-full">
+        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
         {/* Page Header */}
         <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -137,6 +138,7 @@ export default async function OperationsPage() {
         <div className="mb-10">
           <h2 className="mb-6 text-2xl font-bold">Live Operations Data</h2>
           <InteractiveOpsTable operations={operationsDataset.slice(-50)} />
+        </div>
         </div>
       </main>
       <Footer />

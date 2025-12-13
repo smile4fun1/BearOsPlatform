@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, Bot, MapPin, Battery, Clock, AlertTriangle, 
   Filter, ChevronDown, ExternalLink, Activity, Zap,
   WifiOff, Wrench, BatteryCharging, CircleAlert,
-  QrCode, ScanLine, X, Camera
+  QrCode, ScanLine, X, Camera, Loader2
 } from "lucide-react";
 import { robotFleet, Robot, searchRobots, getRobotImage } from "@/lib/robotData";
 import Image from "next/image";
@@ -18,6 +18,185 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
+
+// Lazy-loaded robot grid component
+function LazyRobotGrid({ robots, getStatusColor, getStatusIcon }: { 
+  robots: Robot[], 
+  getStatusColor: (status: Robot["status"]) => string,
+  getStatusIcon: (status: Robot["status"]) => JSX.Element 
+}) {
+  const ROBOTS_PER_LOAD = 20; // 5 rows * 4 columns
+  const [displayedCount, setDisplayedCount] = useState(ROBOTS_PER_LOAD);
+  const [isLoading, setIsLoading] = useState(false);
+  const observerRef = useRef<HTMLDivElement>(null);
+
+  // Reset displayed count when robots change
+  useEffect(() => {
+    setDisplayedCount(ROBOTS_PER_LOAD);
+  }, [robots]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (!observerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && displayedCount < robots.length && !isLoading) {
+          setIsLoading(true);
+          setTimeout(() => {
+            setDisplayedCount(prev => Math.min(prev + ROBOTS_PER_LOAD, robots.length));
+            setIsLoading(false);
+          }, 200);
+        }
+      },
+      { threshold: 0.1, rootMargin: '150px' }
+    );
+
+    observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [displayedCount, robots.length, isLoading]);
+
+  const displayedRobots = robots.slice(0, displayedCount);
+  const hasMore = displayedCount < robots.length;
+
+  return (
+    <>
+      <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {displayedRobots.map((robot, index) => (
+          <motion.div
+            key={robot.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: Math.min((index % ROBOTS_PER_LOAD) * 0.02, 0.4) }}
+          >
+            <Link
+              href={`/robots/${robot.id}`}
+              className="group block rounded-xl sm:rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-4 sm:p-5 transition-all duration-300 hover:border-bear-blue/30 hover:shadow-lg hover:shadow-bear-blue/10 sm:hover:-translate-y-1 active:scale-[0.98] relative overflow-hidden h-full"
+            >
+              {/* Robot Image Background */}
+              <div className="absolute -right-4 -bottom-4 w-20 sm:w-28 h-20 sm:h-28 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
+                <Image
+                  src={getRobotImage(robot.model)}
+                  alt={robot.model}
+                  width={112}
+                  height={112}
+                  className="object-contain"
+                />
+              </div>
+              
+              {/* Robot Header with QR */}
+              <div className="relative mb-3 sm:mb-4 flex items-start justify-between">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-br from-bear-blue/20 to-purple-500/10 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-bear-blue/30 transition-colors flex-shrink-0">
+                    <Image
+                      src={getRobotImage(robot.model)}
+                      alt={robot.model}
+                      width={36}
+                      height={36}
+                      className="object-contain group-hover:scale-110 transition-transform w-7 h-7 sm:w-9 sm:h-9"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold text-sm sm:text-base text-white group-hover:text-bear-blue transition-colors truncate">
+                      {robot.name}
+                    </div>
+                    <div className="text-[10px] sm:text-xs text-white/50 font-mono truncate">{robot.serialNumber}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="p-1 sm:p-1.5 rounded-md sm:rounded-lg bg-white/5 group-hover:bg-bear-blue/10 transition-colors">
+                    <QrCode className="h-3 w-3 sm:h-4 sm:w-4 text-white/40 group-hover:text-bear-blue transition-colors" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Badge */}
+              <div className={`mb-3 sm:mb-4 inline-flex items-center gap-1.5 sm:gap-2 rounded-md sm:rounded-lg border px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold ${getStatusColor(robot.status)}`}>
+                {getStatusIcon(robot.status)}
+                <span className="capitalize">{robot.status}</span>
+              </div>
+
+              {/* Metrics */}
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex items-center justify-between text-xs sm:text-sm">
+                  <span className="text-white/60">Model</span>
+                  <span className="font-medium text-bear-blue">{robot.model}</span>
+                </div>
+
+                <div className="flex items-center justify-between text-xs sm:text-sm">
+                  <span className="flex items-center gap-1 sm:gap-1.5 text-white/60">
+                    <MapPin className="h-3 w-3" />
+                    <span className="hidden sm:inline">Facility</span>
+                    <span className="sm:hidden">Loc</span>
+                  </span>
+                  <span className="truncate font-medium text-right max-w-[100px] sm:max-w-[150px]" title={robot.facility}>
+                    {robot.facility.split(' ').slice(0, 2).join(' ')}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-xs sm:text-sm">
+                  <span className="flex items-center gap-1 sm:gap-1.5 text-white/60">
+                    <Battery className="h-3 w-3" />
+                    Battery
+                  </span>
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <div className="w-12 sm:w-16 h-1 sm:h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all ${
+                          robot.battery > 60 ? "bg-emerald-400" : 
+                          robot.battery > 30 ? "bg-amber-400" : "bg-rose-400"
+                        }`}
+                        style={{ width: `${robot.battery}%` }}
+                      />
+                    </div>
+                    <span className={`font-semibold text-[10px] sm:text-xs ${
+                      robot.battery > 60 ? "text-emerald-400" : 
+                      robot.battery > 30 ? "text-amber-400" : "text-rose-400"
+                    }`}>
+                      {robot.battery}%
+                    </span>
+                  </div>
+                </div>
+
+                {robot.errors.length > 0 && (
+                  <div className="flex items-start gap-1.5 sm:gap-2 rounded-md sm:rounded-lg bg-rose-500/10 border border-rose-500/20 p-1.5 sm:p-2 text-[10px] sm:text-xs text-rose-400">
+                    <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
+                    <span className="line-clamp-1">{robot.errors[0].errorCode}</span>
+                  </div>
+                )}
+
+                <div className="pt-2 border-t border-white/5 text-[10px] sm:text-xs text-white/40 flex items-center gap-1 sm:gap-1.5">
+                  <Clock className="h-3 w-3 flex-shrink-0" />
+                  <span className="truncate">{dayjs(robot.lastSeen).fromNow()}</span>
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Loading indicator and intersection observer target */}
+      {hasMore && (
+        <div ref={observerRef} className="py-8 flex justify-center">
+          {isLoading && (
+            <div className="flex items-center gap-2 text-bear-blue">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span className="text-sm font-medium">Loading more robots...</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Count indicator */}
+      {robots.length > ROBOTS_PER_LOAD && (
+        <div className="py-4 text-center text-xs text-gray-500">
+          Showing {displayedCount} of {robots.length} robots
+        </div>
+      )}
+    </>
+  );
+}
 
 export function RobotsManagement() {
   const { role } = useRole();
@@ -136,8 +315,8 @@ export function RobotsManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white">
-      <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white overflow-x-hidden">
+      <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12 overflow-x-hidden">
         {/* Header */}
         <div className="mb-6 sm:mb-8 lg:mb-12">
           <div className="flex flex-col gap-4 sm:gap-6">
@@ -249,120 +428,12 @@ export function RobotsManagement() {
           </select>
         </div>
 
-        {/* Robots Grid - Single column on mobile */}
-        <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredRobots.map((robot, index) => (
-            <motion.div
-              key={robot.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.5) }}
-            >
-              <Link
-                href={`/robots/${robot.id}`}
-                className="group block rounded-xl sm:rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-4 sm:p-5 transition-all duration-300 hover:border-bear-blue/30 hover:shadow-lg hover:shadow-bear-blue/10 sm:hover:-translate-y-1 active:scale-[0.98] relative overflow-hidden h-full"
-              >
-                {/* Robot Image Background */}
-                <div className="absolute -right-4 -bottom-4 w-20 sm:w-28 h-20 sm:h-28 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
-                  <Image
-                    src={getRobotImage(robot.model)}
-                    alt={robot.model}
-                    width={112}
-                    height={112}
-                    className="object-contain"
-                  />
-                </div>
-                
-                {/* Robot Header with QR */}
-                <div className="relative mb-3 sm:mb-4 flex items-start justify-between">
-                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-br from-bear-blue/20 to-purple-500/10 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-bear-blue/30 transition-colors flex-shrink-0">
-                      <Image
-                        src={getRobotImage(robot.model)}
-                        alt={robot.model}
-                        width={36}
-                        height={36}
-                        className="object-contain group-hover:scale-110 transition-transform w-7 h-7 sm:w-9 sm:h-9"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="font-semibold text-sm sm:text-base text-white group-hover:text-bear-blue transition-colors truncate">
-                        {robot.name}
-                      </div>
-                      <div className="text-[10px] sm:text-xs text-white/50 font-mono truncate">{robot.serialNumber}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <div className="p-1 sm:p-1.5 rounded-md sm:rounded-lg bg-white/5 group-hover:bg-bear-blue/10 transition-colors">
-                      <QrCode className="h-3 w-3 sm:h-4 sm:w-4 text-white/40 group-hover:text-bear-blue transition-colors" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Status Badge */}
-                <div className={`mb-3 sm:mb-4 inline-flex items-center gap-1.5 sm:gap-2 rounded-md sm:rounded-lg border px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold ${getStatusColor(robot.status)}`}>
-                  {getStatusIcon(robot.status)}
-                  <span className="capitalize">{robot.status}</span>
-                </div>
-
-                {/* Metrics */}
-                <div className="space-y-2 sm:space-y-3">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-white/60">Model</span>
-                    <span className="font-medium text-bear-blue">{robot.model}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1 sm:gap-1.5 text-white/60">
-                      <MapPin className="h-3 w-3" />
-                      <span className="hidden sm:inline">Facility</span>
-                      <span className="sm:hidden">Loc</span>
-                    </span>
-                    <span className="truncate font-medium text-right max-w-[100px] sm:max-w-[150px]" title={robot.facility}>
-                      {robot.facility.split(' ').slice(0, 2).join(' ')}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1 sm:gap-1.5 text-white/60">
-                      <Battery className="h-3 w-3" />
-                      Battery
-                    </span>
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <div className="w-12 sm:w-16 h-1 sm:h-1.5 bg-white/10 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all ${
-                            robot.battery > 60 ? "bg-emerald-400" : 
-                            robot.battery > 30 ? "bg-amber-400" : "bg-rose-400"
-                          }`}
-                          style={{ width: `${robot.battery}%` }}
-                        />
-                      </div>
-                      <span className={`font-semibold text-[10px] sm:text-xs ${
-                        robot.battery > 60 ? "text-emerald-400" : 
-                        robot.battery > 30 ? "text-amber-400" : "text-rose-400"
-                      }`}>
-                        {robot.battery}%
-                      </span>
-                    </div>
-                  </div>
-
-                  {robot.errors.length > 0 && (
-                    <div className="flex items-start gap-1.5 sm:gap-2 rounded-md sm:rounded-lg bg-rose-500/10 border border-rose-500/20 p-1.5 sm:p-2 text-[10px] sm:text-xs text-rose-400">
-                      <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
-                      <span className="line-clamp-1">{robot.errors[0].errorCode}</span>
-                    </div>
-                  )}
-
-                  <div className="pt-2 border-t border-white/5 text-[10px] sm:text-xs text-white/40 flex items-center gap-1 sm:gap-1.5">
-                    <Clock className="h-3 w-3 flex-shrink-0" />
-                    <span className="truncate">{dayjs(robot.lastSeen).fromNow()}</span>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+        {/* Robots Grid - Lazy Loaded */}
+        <LazyRobotGrid 
+          robots={filteredRobots} 
+          getStatusColor={getStatusColor}
+          getStatusIcon={getStatusIcon}
+        />
 
         {filteredRobots.length === 0 && (
           <div className="py-20 text-center">

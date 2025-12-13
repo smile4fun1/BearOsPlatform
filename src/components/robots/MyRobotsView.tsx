@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bot, MapPin, Battery, Clock, AlertTriangle, ChevronRight,
   Building2, Plus, Search, QrCode, ScanLine, Activity,
-  CheckCircle, WifiOff, BatteryCharging, Wrench, Filter, X
+  CheckCircle, WifiOff, BatteryCharging, Wrench, Filter, X, Loader2
 } from 'lucide-react';
 import { useRole } from '@/lib/roleContext';
 import { 
@@ -25,6 +25,189 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
+
+// Lazy-loaded robot grid component
+function LazyRobotGrid({ robots, getStatusColor, getStatusIcon }: { 
+  robots: Robot[], 
+  getStatusColor: (status: Robot["status"]) => string,
+  getStatusIcon: (status: Robot["status"]) => JSX.Element 
+}) {
+  const ROBOTS_PER_LOAD = 20; // 5 rows * 4 columns
+  const [displayedCount, setDisplayedCount] = useState(ROBOTS_PER_LOAD);
+  const [isLoading, setIsLoading] = useState(false);
+  const observerRef = useRef<HTMLDivElement>(null);
+
+  // Reset displayed count when robots change
+  useEffect(() => {
+    setDisplayedCount(ROBOTS_PER_LOAD);
+  }, [robots]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (!observerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && displayedCount < robots.length && !isLoading) {
+          setIsLoading(true);
+          setTimeout(() => {
+            setDisplayedCount(prev => Math.min(prev + ROBOTS_PER_LOAD, robots.length));
+            setIsLoading(false);
+          }, 200);
+        }
+      },
+      { threshold: 0.1, rootMargin: '150px' }
+    );
+
+    observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [displayedCount, robots.length, isLoading]);
+
+  const displayedRobots = robots.slice(0, displayedCount);
+  const hasMore = displayedCount < robots.length;
+
+  return (
+    <>
+      <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {displayedRobots.map((robot, index) => {
+          const location = getLocationForRobot(robot.id);
+          return (
+            <motion.div
+              key={robot.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: Math.min((index % ROBOTS_PER_LOAD) * 0.02, 0.4) }}
+            >
+              <Link
+                href={`/robots/${robot.id}`}
+                className="group block bear-glass-card p-5 relative overflow-hidden h-full flex flex-col"
+              >
+                {/* Robot Image Background */}
+                <div className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
+                  <Image
+                    src={getRobotImage(robot.model)}
+                    alt={robot.model}
+                    width={128}
+                    height={128}
+                    className="object-contain"
+                  />
+                </div>
+                
+                {/* Robot Header */}
+                <div className="relative flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-bear-blue/20 to-purple-500/10 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-bear-blue/30 transition-colors">
+                      <Image
+                        src={getRobotImage(robot.model)}
+                        alt={robot.model}
+                        width={40}
+                        height={40}
+                        className="object-contain group-hover:scale-110 transition-transform"
+                      />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white group-hover:text-bear-blue transition-colors">
+                        {robot.name}
+                      </div>
+                      <div className="text-xs text-white/50 font-mono">{robot.serialNumber}</div>
+                    </div>
+                  </div>
+                  <div className="p-2 rounded-lg bg-white/5 group-hover:bg-bear-blue/20 transition-colors">
+                    <QrCode className="h-4 w-4 text-white/40 group-hover:text-bear-blue transition-colors" />
+                  </div>
+                </div>
+
+                {/* Status Badge */}
+                <div className={`mb-4 inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold ${getStatusColor(robot.status)}`}>
+                  {getStatusIcon(robot.status)}
+                  <span className="capitalize">{robot.status}</span>
+                </div>
+
+                {/* Quick Stats */}
+                <div className="space-y-3 flex-1 flex flex-col">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">Model</span>
+                    <span className="font-medium text-bear-blue">{robot.model}</span>
+                  </div>
+
+                  {location && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-1.5 text-white/60">
+                        <MapPin className="h-3 w-3" />
+                        Location
+                      </span>
+                      <span className="truncate font-medium text-right max-w-[140px]" title={location.name}>
+                        {location.city}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-1.5 text-white/60">
+                      <Battery className="h-3 w-3" />
+                      Battery
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full rounded-full transition-all ${
+                            robot.battery > 60 ? "bg-emerald-400" : 
+                            robot.battery > 30 ? "bg-amber-400" : "bg-rose-400"
+                          }`}
+                          style={{ width: `${robot.battery}%` }}
+                        />
+                      </div>
+                      <span className={`font-semibold text-xs ${
+                        robot.battery > 60 ? "text-emerald-400" : 
+                        robot.battery > 30 ? "text-amber-400" : "text-rose-400"
+                      }`}>
+                        {robot.battery}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="h-12 flex items-center">
+                    {robot.errors.length > 0 && (
+                      <div className="flex items-start gap-2 rounded-lg bg-rose-500/10 border border-rose-500/20 p-2 text-xs text-rose-400 w-full">
+                        <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
+                        <span className="line-clamp-2 flex-1">{robot.errors[0].message}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-2 mt-auto border-t border-white/5 text-xs text-white/40 flex items-center gap-1.5">
+                    <Clock className="h-3 w-3" />
+                    Last seen: {dayjs(robot.lastSeen).fromNow()}
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Loading indicator and intersection observer target */}
+      {hasMore && (
+        <div ref={observerRef} className="py-8 flex justify-center">
+          {isLoading && (
+            <div className="flex items-center gap-2 text-bear-blue">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span className="text-sm font-medium">Loading more robots...</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Count indicator */}
+      {robots.length > ROBOTS_PER_LOAD && (
+        <div className="py-4 text-center text-xs text-gray-500">
+          Showing {displayedCount} of {robots.length} robots
+        </div>
+      )}
+    </>
+  );
+}
 
 export function MyRobotsView() {
   const { role, getRoleLabel } = useRole();
@@ -77,8 +260,8 @@ export function MyRobotsView() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white">
-      <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white overflow-x-hidden">
+      <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12 overflow-x-hidden">
         {/* Header with decorative elements */}
         <div className="relative mb-6 sm:mb-8 lg:mb-12">
           {/* Decorative blur circles - BearEmeaSupport style */}
@@ -181,9 +364,9 @@ export function MyRobotsView() {
         </div>
 
         {/* Location Filter & Search */}
-        <div className="flex flex-col gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="flex flex-col gap-3 sm:gap-4 mb-6 sm:mb-8 overflow-x-hidden">
           {/* Location Pills - Wrapped */}
-          <div className="flex gap-2 flex-wrap pb-2">
+          <div className="flex gap-2 flex-wrap pb-2 overflow-x-hidden">
             <button
               onClick={() => setSelectedLocation(null)}
               className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
@@ -225,135 +408,25 @@ export function MyRobotsView() {
           </div>
         </div>
 
-        {/* Robots Grid - Single column on mobile */}
-        <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {displayRobots.map((robot, index) => {
-            const location = getLocationForRobot(robot.id);
-            return (
-              <motion.div
-                key={robot.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.5) }}
-              >
-                <Link
-                  href={`/robots/${robot.id}`}
-                  className="group block bear-glass-card p-5 relative overflow-hidden h-full flex flex-col"
-                >
-                  {/* Robot Image Background */}
-                  <div className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
-                    <Image
-                      src={getRobotImage(robot.model)}
-                      alt={robot.model}
-                      width={128}
-                      height={128}
-                      className="object-contain"
-                    />
-                  </div>
-                  
-                  {/* Robot Header */}
-                  <div className="relative flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-bear-blue/20 to-purple-500/10 flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-bear-blue/30 transition-colors">
-                        <Image
-                          src={getRobotImage(robot.model)}
-                          alt={robot.model}
-                          width={40}
-                          height={40}
-                          className="object-contain group-hover:scale-110 transition-transform"
-                        />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-white group-hover:text-bear-blue transition-colors">
-                          {robot.name}
-                        </div>
-                        <div className="text-xs text-white/50 font-mono">{robot.serialNumber}</div>
-                      </div>
-                    </div>
-                    <div className="p-2 rounded-lg bg-white/5 group-hover:bg-bear-blue/20 transition-colors">
-                      <QrCode className="h-4 w-4 text-white/40 group-hover:text-bear-blue transition-colors" />
-                    </div>
-                  </div>
+        {/* Robots Grid - Lazy Loaded */}
+        <div className="overflow-x-hidden">
+          <LazyRobotGrid 
+            robots={displayRobots}
+            getStatusColor={getStatusColor}
+            getStatusIcon={getStatusIcon}
+          />
 
-                  {/* Status Badge */}
-                  <div className={`mb-4 inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold ${getStatusColor(robot.status)}`}>
-                    {getStatusIcon(robot.status)}
-                    <span className="capitalize">{robot.status}</span>
-                  </div>
-
-                  {/* Quick Stats */}
-                  <div className="space-y-3 flex-1 flex flex-col">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-white/60">Model</span>
-                      <span className="font-medium text-bear-blue">{robot.model}</span>
-                    </div>
-
-                    {location && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="flex items-center gap-1.5 text-white/60">
-                          <MapPin className="h-3 w-3" />
-                          Location
-                        </span>
-                        <span className="truncate font-medium text-right max-w-[140px]" title={location.name}>
-                          {location.city}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-1.5 text-white/60">
-                        <Battery className="h-3 w-3" />
-                        Battery
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full rounded-full transition-all ${
-                              robot.battery > 60 ? "bg-emerald-400" : 
-                              robot.battery > 30 ? "bg-amber-400" : "bg-rose-400"
-                            }`}
-                            style={{ width: `${robot.battery}%` }}
-                          />
-                        </div>
-                        <span className={`font-semibold text-xs ${
-                          robot.battery > 60 ? "text-emerald-400" : 
-                          robot.battery > 30 ? "text-amber-400" : "text-rose-400"
-                        }`}>
-                          {robot.battery}%
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="h-12 flex items-center">
-                      {robot.errors.length > 0 && (
-                        <div className="flex items-start gap-2 rounded-lg bg-rose-500/10 border border-rose-500/20 p-2 text-xs text-rose-400 w-full">
-                          <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
-                          <span className="line-clamp-2 flex-1">{robot.errors[0].message}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="pt-2 mt-auto border-t border-white/5 text-xs text-white/40 flex items-center gap-1.5">
-                      <Clock className="h-3 w-3" />
-                      Last seen: {dayjs(robot.lastSeen).fromNow()}
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            );
-          })}
+          {displayRobots.length === 0 && (
+            <div className="py-20 text-center">
+              <Bot className="mx-auto h-16 w-16 text-white/20 mb-4" />
+              <h3 className="text-xl font-semibold mb-2">No robots found</h3>
+              <p className="text-white/50">Try adjusting your search or location filter</p>
+            </div>
+          )}
         </div>
 
-        {displayRobots.length === 0 && (
-          <div className="py-20 text-center">
-            <Bot className="mx-auto h-16 w-16 text-white/20 mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No robots found</h3>
-            <p className="text-white/50">Try adjusting your search or location filter</p>
-          </div>
-        )}
-
         {/* Locations Grid - Below robots */}
-        <section className="mt-16">
+        <section className="mt-16 overflow-x-hidden">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Your Locations</h2>
             <button className="btn-tertiary">

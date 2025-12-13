@@ -1,10 +1,10 @@
 export function Footer() {
   return (
-    <footer className="border-t border-white/10 py-6">
+    <footer className="border-t border-white/10 py-4">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg overflow-hidden">
+            <div className="h-7 w-7 rounded-lg overflow-hidden">
               <img 
                 src="/download.png" 
                 alt="Bear Robotics" 
@@ -18,7 +18,7 @@ export function Footer() {
           </div>
           <div className="text-sm text-white/50 text-center sm:text-right">
             <div>© 2025 Bear Robotics Operations Platform.</div>
-            <div className="mt-1">Developed by George Oprea</div>
+            <div className="mt-0.5">Developed by George Oprea</div>
           </div>
         </div>
       </div>

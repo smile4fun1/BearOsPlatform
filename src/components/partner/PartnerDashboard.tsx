@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
@@ -12,11 +12,126 @@ import {
   Battery, 
   ArrowRight,
   Wrench,
-  Activity
+  Activity,
+  Loader2
 } from 'lucide-react';
 import { Partner, PartnerSite } from '@/lib/partnerData';
 import { getRobotById } from '@/lib/robotData';
 import { AnimatedCounter } from '@/components/AnimatedCounter';
+
+// Lazy-loaded robot grid component for each site
+function LazyRobotGrid({ robotIds }: { robotIds: string[] }) {
+  const ROBOTS_PER_LOAD = 20; // 5 rows * 4 columns
+  const [displayedCount, setDisplayedCount] = useState(ROBOTS_PER_LOAD);
+  const [isLoading, setIsLoading] = useState(false);
+  const observerRef = useRef<HTMLDivElement>(null);
+
+  // Intersection Observer to detect when user scrolls near bottom
+  useEffect(() => {
+    if (!observerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && displayedCount < robotIds.length && !isLoading) {
+          setIsLoading(true);
+          // Simulate brief load time for smooth UX
+          setTimeout(() => {
+            setDisplayedCount(prev => Math.min(prev + ROBOTS_PER_LOAD, robotIds.length));
+            setIsLoading(false);
+          }, 300);
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    );
+
+    observer.observe(observerRef.current);
+
+    return () => observer.disconnect();
+  }, [displayedCount, robotIds.length, isLoading]);
+
+  const displayedRobots = robotIds.slice(0, displayedCount);
+  const hasMore = displayedCount < robotIds.length;
+
+  return (
+    <>
+      <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {displayedRobots.map((robotId, index) => {
+          const robot = getRobotById(robotId);
+          if (!robot) return null;
+
+          return (
+            <motion.div
+              key={robotId}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: (index % ROBOTS_PER_LOAD) * 0.02, duration: 0.3 }}
+            >
+              <Link 
+                href={`/robots/${robotId}`}
+                className="group block p-4 rounded-xl bg-black/20 hover:bg-bear-blue/10 border border-white/5 hover:border-bear-blue/30 transition-all duration-300"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div className="p-2 rounded-lg bg-white/5 group-hover:bg-bear-blue/20 text-white group-hover:text-bear-blue transition-colors">
+                    <Bot className="h-5 w-5" />
+                  </div>
+                  <div className={`flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                    robot.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
+                    robot.status === 'error' ? 'bg-rose-500/20 text-rose-400' :
+                    'bg-white/10 text-gray-400'
+                  }`}>
+                    {robot.status}
+                  </div>
+                </div>
+                
+                <div className="font-bold text-white mb-1 group-hover:text-bear-blue transition-colors truncate">
+                  {robot.name}
+                </div>
+                <div className="text-xs text-gray-500 mb-4 font-mono">{robot.model}</div>
+                
+                <div className="flex items-center justify-between text-xs text-gray-400">
+                  <div className="flex items-center gap-1">
+                    <Battery className={`h-3 w-3 ${robot.battery < 20 ? 'text-rose-400' : 'text-emerald-400'}`} />
+                    <span>{robot.battery}%</span>
+                  </div>
+                  <div className="flex items-center gap-1 group-hover:translate-x-1 transition-transform text-white/40 group-hover:text-bear-blue">
+                    <span>Manage</span>
+                    <ArrowRight className="h-3 w-3" />
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          );
+        })}
+        
+        {robotIds.length === 0 && (
+          <div className="col-span-full py-8 text-center text-gray-500 italic">
+            No robots deployed at this location.
+          </div>
+        )}
+      </div>
+
+      {/* Loading indicator and intersection observer target */}
+      {hasMore && (
+        <div ref={observerRef} className="p-6 pt-0 flex justify-center">
+          {isLoading && (
+            <div className="flex items-center gap-2 text-bear-blue">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span className="text-sm font-medium">Loading more robots...</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Show count indicator */}
+      {robotIds.length > ROBOTS_PER_LOAD && (
+        <div className="px-6 pb-4 text-center text-xs text-gray-500">
+          Showing {displayedCount} of {robotIds.length} robots
+        </div>
+      )}
+    </>
+  );
+}
 
 export function PartnerDashboard({ partner }: { partner: Partner }) {
   // Aggregate data for the partner dashboard
@@ -122,56 +237,8 @@ export function PartnerDashboard({ partner }: { partner: Partner }) {
                 </div>
               </div>
 
-              {/* Robot Grid */}
-              <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {site.deployedRobots.map((robotId) => {
-                  const robot = getRobotById(robotId);
-                  if (!robot) return null;
-
-                  return (
-                    <Link 
-                      key={robotId} 
-                      href={`/robots/${robotId}`}
-                      className="group block p-4 rounded-xl bg-black/20 hover:bg-bear-blue/10 border border-white/5 hover:border-bear-blue/30 transition-all duration-300"
-                    >
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="p-2 rounded-lg bg-white/5 group-hover:bg-bear-blue/20 text-white group-hover:text-bear-blue transition-colors">
-                          <Bot className="h-5 w-5" />
-                        </div>
-                        <div className={`flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                          robot.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
-                          robot.status === 'error' ? 'bg-rose-500/20 text-rose-400' :
-                          'bg-white/10 text-gray-400'
-                        }`}>
-                          {robot.status}
-                        </div>
-                      </div>
-                      
-                      <div className="font-bold text-white mb-1 group-hover:text-bear-blue transition-colors truncate">
-                        {robot.name}
-                      </div>
-                      <div className="text-xs text-gray-500 mb-4 font-mono">{robot.model}</div>
-                      
-                      <div className="flex items-center justify-between text-xs text-gray-400">
-                        <div className="flex items-center gap-1">
-                          <Battery className={`h-3 w-3 ${robot.battery < 20 ? 'text-rose-400' : 'text-emerald-400'}`} />
-                          <span>{robot.battery}%</span>
-                        </div>
-                        <div className="flex items-center gap-1 group-hover:translate-x-1 transition-transform text-white/40 group-hover:text-bear-blue">
-                          <span>Manage</span>
-                          <ArrowRight className="h-3 w-3" />
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-                
-                {site.deployedRobots.length === 0 && (
-                  <div className="col-span-full py-8 text-center text-gray-500 italic">
-                    No robots deployed at this location.
-                  </div>
-                )}
-              </div>
+              {/* Robot Grid with Lazy Loading */}
+              <LazyRobotGrid robotIds={site.deployedRobots} />
             </motion.div>
           ))}
         </div>

@@ -217,7 +217,7 @@ export default function FleetPage() {
           Live Operations Data
         </h2>
         <Suspense fallback={<SectionSkeleton height="h-96" />}>
-          <LazyInteractiveOpsTable operations={operationsDataset.slice(-50)} />
+          <LazyInteractiveOpsTable operations={operationsDataset} />
         </Suspense>
       </section>
       <Footer />

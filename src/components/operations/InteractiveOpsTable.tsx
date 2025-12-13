@@ -57,19 +57,26 @@ export function InteractiveOpsTable({ operations }: InteractiveOpsTableProps) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && visibleCount < filteredOps.length) {
-          setVisibleCount(prev => Math.min(prev + 5, filteredOps.length));
+        if (entries[0].isIntersecting) {
+          setVisibleCount(prev => {
+            if (prev < filteredOps.length) {
+              return Math.min(prev + 5, filteredOps.length);
+            }
+            return prev;
+          });
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.5, rootMargin: '100px' }
     );
 
     if (loadMoreRef.current) {
       observer.observe(loadMoreRef.current);
     }
 
-    return () => observer.disconnect();
-  }, [visibleCount, filteredOps.length]);
+    return () => {
+      observer.disconnect();
+    };
+  }, [filteredOps.length]);
 
   // Reset visible count when filter changes
   useEffect(() => {

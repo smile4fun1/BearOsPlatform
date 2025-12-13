@@ -237,6 +237,8 @@ export function AdminPartnerView() {
           );
         })}
       </div>
+
+      <div className="mb-10" />
     </div>
   );
 }

@@ -336,13 +336,13 @@ export default function TrainingPage() {
       {/* Restart Confirmation Modal */}
       <AnimatePresence>
         {showRestartConfirm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={cancelRestart}
-          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4"
+              onClick={cancelRestart}
+            >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -401,7 +401,7 @@ export default function TrainingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4"
             onClick={() => setShowCongrats(false)}
           >
             <motion.div
@@ -808,53 +808,53 @@ function ModuleBestPractices() {
 
 function ModuleQuickTips() {
     return (
-        <div className="space-y-5 h-full flex flex-col">
-            <div className="bear-glass-card p-5 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Troubleshooting</h2>
+        <div className="space-y-4 h-full flex flex-col">
+            <div className="bear-glass-card p-4 flex flex-col justify-center">
+                <h2 className="text-xl font-bold text-white mb-1">Troubleshooting</h2>
                 <p className="text-gray-300 text-sm">Common situations and solutions</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
-                <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 p-4 rounded-xl border-2 border-yellow-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <ExclamationTriangleIcon className="w-6 h-6 text-yellow-500" />
+            <div className="grid grid-cols-2 gap-3 flex-1">
+                <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 p-3 rounded-xl border-2 border-yellow-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <ExclamationTriangleIcon className="w-5 h-5 text-yellow-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Obstacle Detected</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">If Carti stops and flashes yellow, check for objects in its path. Clear the way and it will resume.</p>
+                    <h3 className="font-bold text-white mb-1.5 text-sm">Obstacle Detected</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">If Carti stops and flashes yellow, check path. Clear objects and it will resume.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 p-4 rounded-xl border-2 border-red-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <BoltIcon className="w-6 h-6 text-red-500" />
+                <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 p-3 rounded-xl border-2 border-red-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-red-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <BoltIcon className="w-5 h-5 text-red-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">System Error</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">If the status light turns red, press the E-Stop, wait 5 seconds, then release to reboot.</p>
+                    <h3 className="font-bold text-white mb-1.5 text-sm">System Error</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">Red status light? Press E-Stop, wait 5 seconds, then release to reboot.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-bear-blue/10 to-cyan-600/5 p-4 rounded-xl border-2 border-bear-blue/30 flex flex-col">
-                    <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-3">
-                        <MapIcon className="w-6 h-6 text-bear-blue" />
+                <div className="bg-gradient-to-br from-bear-blue/10 to-cyan-600/5 p-3 rounded-xl border-2 border-bear-blue/30 flex flex-col">
+                    <div className="w-9 h-9 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-2">
+                        <MapIcon className="w-5 h-5 text-bear-blue" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Navigation Issue</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Lost position? Return to home station, restart the system, and allow re-mapping if needed.</p>
+                    <h3 className="font-bold text-white mb-1.5 text-sm">Navigation Issue</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">Lost position? Return to home station, restart system, and allow re-mapping.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 p-4 rounded-xl border-2 border-green-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <CheckCircleIcon className="w-6 h-6 text-green-500" />
+                <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 p-3 rounded-xl border-2 border-green-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-green-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <CheckCircleIcon className="w-5 h-5 text-green-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Need Help?</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Contact your fleet manager for any technical issues or operational questions.</p>
+                    <h3 className="font-bold text-white mb-1.5 text-sm">Need Help?</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">Contact fleet manager for any technical issues or operational questions.</p>
                 </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-4 rounded-xl border border-green-500/30 flex items-center gap-3">
-                <div className="bg-green-500/20 p-2.5 rounded-lg flex-shrink-0">
-                    <SparklesIcon className="w-6 h-6 text-green-400" />
+            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-3 rounded-xl border border-green-500/30 flex items-center gap-3">
+                <div className="bg-green-500/20 p-2 rounded-lg flex-shrink-0">
+                    <SparklesIcon className="w-5 h-5 text-green-400" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-white mb-1">You're Certified!</h3>
-                    <p className="text-gray-200 text-sm leading-relaxed">You're now ready to operate Carti 100. Welcome to the logistics team!</p>
+                    <h3 className="font-bold text-white text-sm">You're Certified!</h3>
+                    <p className="text-gray-200 text-xs leading-relaxed">You're ready to operate Carti 100. Welcome to the logistics team!</p>
                 </div>
             </div>
         </div>

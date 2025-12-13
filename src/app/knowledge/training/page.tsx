@@ -338,13 +338,13 @@ export default function TrainingPage() {
       {/* Restart Confirmation Modal */}
       <AnimatePresence>
         {showRestartConfirm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={cancelRestart}
-          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4"
+              onClick={cancelRestart}
+            >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -403,7 +403,7 @@ export default function TrainingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4"
             onClick={() => setShowCongrats(false)}
           >
             <motion.div
@@ -810,53 +810,53 @@ function ModuleBestPractices() {
 
 function ModuleQuickTips() {
     return (
-        <div className="space-y-5 h-full flex flex-col">
-            <div className="bear-glass-card p-5 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Quick Tips</h2>
+        <div className="space-y-4 h-full flex flex-col">
+            <div className="bear-glass-card p-4 flex flex-col justify-center">
+                <h2 className="text-xl font-bold text-white mb-1">Quick Tips</h2>
                 <p className="text-gray-300 text-sm">Common situations and simple solutions</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
-                <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 p-4 rounded-xl border-2 border-yellow-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <BoltIcon className="w-6 h-6 text-yellow-500" />
+            <div className="grid grid-cols-2 gap-3 flex-1">
+                <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 p-3 rounded-xl border-2 border-yellow-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <BoltIcon className="w-5 h-5 text-yellow-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Low Battery</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Servi will automatically return to the charger. If it seems lost, send it to "Home" on the screen.</p>
+                    <h3 className="font-bold text-white mb-1.5 text-sm">Low Battery</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">Servi auto-returns to charger. If it seems lost, send it to "Home" on screen.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 p-4 rounded-xl border-2 border-red-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <ExclamationTriangleIcon className="w-6 h-6 text-red-500" />
+                <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 p-3 rounded-xl border-2 border-red-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-red-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <ExclamationTriangleIcon className="w-5 h-5 text-red-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Servi Won't Move</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Check if the red emergency button on the base is pressed. Twist it clockwise to release.</p>
+                    <h3 className="font-bold text-white mb-1.5 text-sm">Servi Won't Move</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">Check red emergency button on base. Twist clockwise to release.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-bear-blue/10 to-cyan-600/5 p-4 rounded-xl border-2 border-bear-blue/30 flex flex-col">
-                    <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-3">
-                        <ClockIcon className="w-6 h-6 text-bear-blue" />
+                <div className="bg-gradient-to-br from-bear-blue/10 to-cyan-600/5 p-3 rounded-xl border-2 border-bear-blue/30 flex flex-col">
+                    <div className="w-9 h-9 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-2">
+                        <ClockIcon className="w-5 h-5 text-bear-blue" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Screen Not Working</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Wipe it with a clean cloth first. Still not working? Restart Servi by holding the power button for 10 seconds.</p>
+                    <h3 className="font-bold text-white mb-1.5 text-sm">Screen Not Working</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">Wipe with cloth first. Still not working? Hold power button 10 seconds.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 p-4 rounded-xl border-2 border-green-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <CheckCircleIcon className="w-6 h-6 text-green-500" />
+                <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 p-3 rounded-xl border-2 border-green-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-green-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <CheckCircleIcon className="w-5 h-5 text-green-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Need Help?</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Your manager and team are always there for you. Don't hesitate to ask questions.</p>
+                    <h3 className="font-bold text-white mb-1.5 text-sm">Need Help?</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">Your manager and team are always there for you. Don't hesitate to ask.</p>
                 </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-4 rounded-xl border border-green-500/30 flex items-center gap-3">
-                <div className="bg-green-500/20 p-2.5 rounded-lg flex-shrink-0">
-                    <SparklesIcon className="w-6 h-6 text-green-400" />
+            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-3 rounded-xl border border-green-500/30 flex items-center gap-3">
+                <div className="bg-green-500/20 p-2 rounded-lg flex-shrink-0">
+                    <SparklesIcon className="w-5 h-5 text-green-400" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-white mb-1">You're Ready!</h3>
-                    <p className="text-gray-200 text-sm leading-relaxed">Working with Servi Plus will feel natural within a few shifts. Welcome to the team!</p>
+                    <h3 className="font-bold text-white text-sm">You're Ready!</h3>
+                    <p className="text-gray-200 text-xs leading-relaxed">Working with Servi will feel natural within a few shifts. Welcome to the team!</p>
                 </div>
             </div>
         </div>

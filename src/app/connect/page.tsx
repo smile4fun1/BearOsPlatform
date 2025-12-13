@@ -1036,42 +1036,48 @@ export default function ConnectPage() {
               }`}>
                 {msg.isBot ? <Bot className="w-4 h-4 sm:w-5 sm:h-5" /> : msg.sender[0]}
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                  <span className={`font-semibold text-sm sm:text-base ${msg.isBot ? 'text-bear-blue' : 'text-white'}`}>
+              <div className="flex-1 min-w-0 relative">
+                <div className="flex items-baseline gap-1.5 sm:gap-2 mb-0.5 sm:mb-1 relative">
+                  <span className={`font-semibold text-sm sm:text-base select-text ${msg.isBot ? 'text-bear-blue' : 'text-white'}`}>
                     {msg.sender}
                   </span>
-                  <span className="text-[10px] sm:text-xs text-gray-500">{msg.timestamp}</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500 select-text">{msg.timestamp}</span>
+                  
+                  {/* Hover actions - absolutely positioned to prevent layout shift */}
                   {hoveredMessageId === msg.id && (
-                    <>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowReactionPicker(msg.id);
-                        }}
-                        className="ml-1 p-1 hover:bg-white/10 rounded transition-all text-gray-400 hover:text-white"
-                        title="Add reaction"
-                      >
-                        <Smile className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePinMessage(msg);
-                        }}
-                        className={`p-1 hover:bg-white/10 rounded transition-all ${
-                          pinnedMessages[activeChannel]?.some(m => m.id === msg.id)
-                            ? 'text-bear-blue'
-                            : 'text-gray-400 hover:text-white'
-                        }`}
-                        title={pinnedMessages[activeChannel]?.some(m => m.id === msg.id) ? "Unpin message" : "Pin message"}
-                      >
-                        <Pin className="w-3 h-3" />
-                      </button>
-                    </>
+                    <div className="absolute left-0 top-0 flex items-baseline gap-1.5 sm:gap-2 pointer-events-none">
+                      <span className="font-semibold text-sm sm:text-base invisible">{msg.sender}</span>
+                      <span className="text-[10px] sm:text-xs invisible">{msg.timestamp}</span>
+                      <div className="flex items-center gap-0.5 pointer-events-auto ml-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowReactionPicker(msg.id);
+                          }}
+                          className="p-1 hover:bg-white/10 rounded transition-all text-gray-400 hover:text-white"
+                          title="Add reaction"
+                        >
+                          <Smile className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePinMessage(msg);
+                          }}
+                          className={`p-1 hover:bg-white/10 rounded transition-all ${
+                            pinnedMessages[activeChannel]?.some(m => m.id === msg.id)
+                              ? 'text-bear-blue'
+                              : 'text-gray-400 hover:text-white'
+                          }`}
+                          title={pinnedMessages[activeChannel]?.some(m => m.id === msg.id) ? "Unpin message" : "Pin message"}
+                        >
+                          <Pin className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
-                <p className="text-sm sm:text-base text-gray-300 leading-relaxed" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+                <p className="text-sm sm:text-base text-gray-300 leading-relaxed select-text" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
                   <MessageContent content={msg.content} />
                 </p>
                 {msg.attachments && msg.attachments.length > 0 && (

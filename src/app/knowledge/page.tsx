@@ -568,7 +568,7 @@ function KnowledgeContent() {
               {categories.map((cat, index) => (
                 <button
                   key={cat.id}
-                  onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}}
+                  onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
                   className={`group relative h-[100px] rounded-2xl border transition-all duration-300 focus:outline-none focus:ring-0 overflow-hidden ${
                     activeCategory === cat.id
                       ? 'bg-bear-blue/20 border-bear-blue shadow-xl shadow-bear-blue/20'
@@ -653,7 +653,7 @@ function KnowledgeContent() {
                         {faq.question}
                         </h3>
                     </div>
-                    <div}}
+                    <div
                         className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-300 ${
                         expandedFaq === faq.id 
                             ? 'bg-bear-blue text-white shadow-lg shadow-bear-blue/30' 

@@ -210,7 +210,8 @@ export default function TrainingPage() {
                     </div>
                     <div className="w-32 h-2 bg-white/5 rounded-full overflow-hidden">
                         <div 
-                            className="h-full bg-gradient-to-r from-bear-blue to-cyan-400"}%` 
+                            className="h-full bg-gradient-to-r from-bear-blue to-cyan-400"
+                            style={{ width: `${progress}%` }}
                         />
                     </div>
                 </div>
@@ -447,7 +448,7 @@ function WelcomeContent({ onComplete }: { onComplete: () => void }) {
         <div className="flex flex-col justify-center items-center text-center py-12 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-bear-blue/5 to-transparent pointer-events-none" />
             
-            <div}}
+            <div
                 className="w-20 h-20 bg-bear-blue rounded-2xl flex items-center justify-center mb-8 shadow-xl shadow-bear-blue/20 rotate-3"
             >
                 <AcademicCapIcon className="w-10 h-10 text-white" />

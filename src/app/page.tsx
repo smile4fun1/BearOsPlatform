@@ -156,7 +156,7 @@ export default function Dashboard() {
                 </div>
                 <div className="text-xs sm:text-sm font-medium text-gray-400 truncate">{metric.label}</div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -175,11 +175,8 @@ export default function Dashboard() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {myRobots.map((robot, index) => (
-                <motion.div
-                  key={robot.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + index * 0.05 }}
+                <div
+                  key={robot.id}}}}
                 >
                   <Link
                     href={`/robots/${robot.id}`}
@@ -221,7 +218,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </Link>
-                </motion.div>
+                </div>
               ))}
             </div>
           </section>
@@ -230,12 +227,7 @@ export default function Dashboard() {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 lg:mb-10">
           {/* Main Action Card - Knowledge Base */}
-          <motion.div 
-            className="lg:col-span-2 bear-feature-card p-6 sm:p-7 lg:p-9 relative overflow-hidden group min-h-[300px] sm:min-h-[340px] flex flex-col"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-          >
+          <div className="lg:col-span-2 bear-feature-card p-6 sm:p-7 lg:p-9 relative overflow-hidden group min-h-[300px] sm:min-h-[340px] flex flex-col">
             <div className="relative z-10 flex flex-col h-full justify-between">
               <div>
                 <div className="flex items-center gap-3 sm:gap-4 mb-4">
@@ -297,16 +289,12 @@ export default function Dashboard() {
                  className="object-contain translate-y-10 translate-x-10 transform group-hover:scale-105 transition-transform duration-500 w-full h-full"
                />
             </div>
-          </motion.div>
+          </div>
 
           {/* Secondary Actions */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-6">
-            <motion.div 
-              className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer min-h-[130px] sm:min-h-[140px] flex flex-col justify-between"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              whileHover={{ scale: 1.02 }}
+            <div 
+              className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer min-h-[130px] sm:min-h-[140px] flex flex-col justify-between"}}}}
             >
               <Link href="/connect" className="block h-full flex flex-col justify-between">
                 <div className="flex items-center gap-4 mb-4">
@@ -322,15 +310,9 @@ export default function Dashboard() {
                   Open Channel <ArrowRight className="w-4 h-4" />
                 </div>
               </Link>
-            </motion.div>
+            </div>
 
-            <motion.div 
-              className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer min-h-[130px] sm:min-h-[140px] flex flex-col justify-between"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-              whileHover={{ scale: 1.02 }}
-            >
+            <div className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer min-h-[130px] sm:min-h-[140px] flex flex-col justify-between">
               <Link href="/robots" className="block h-full flex flex-col justify-between">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="p-3 sm:p-3.5 lg:p-4 rounded-xl bg-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform">
@@ -349,16 +331,10 @@ export default function Dashboard() {
                   {isPartnerOrCustomer ? 'View Robots' : 'View Telemetry'} <ArrowRight className="w-4 h-4" />
                 </div>
               </Link>
-            </motion.div>
+            </div>
 
             {isPartnerOrCustomer && (
-              <motion.div 
-                className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer sm:col-span-2 lg:col-span-1 min-h-[130px] sm:min-h-[140px] flex flex-col justify-between"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 }}
-                whileHover={{ scale: 1.02 }}
-              >
+              <div className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer sm:col-span-2 lg:col-span-1 min-h-[130px] sm:min-h-[140px] flex flex-col justify-between">
                 <Link href="/robots" className="block h-full flex flex-col justify-between">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="p-3 sm:p-3.5 lg:p-4 rounded-xl bg-bear-blue/20 text-bear-blue group-hover:scale-110 transition-transform">
@@ -373,7 +349,7 @@ export default function Dashboard() {
                     Manage Locations <ArrowRight className="w-4 h-4" />
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
@@ -387,13 +363,8 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {['Robot Won\'t Start', 'Connection Issues', 'Maintenance Guide'].map((topic, i) => (
               <Link href="/knowledge" key={topic}>
-                <motion.div 
-                  className="bear-glass-card p-5 sm:p-6 flex items-center justify-between group cursor-pointer h-full min-h-[70px] sm:min-h-[80px]"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + i * 0.1 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <div 
+                  className="bear-glass-card p-5 sm:p-6 flex items-center justify-between group cursor-pointer h-full min-h-[70px] sm:min-h-[80px]"}}}}}
                 >
                   <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                     <div className="p-2.5 sm:p-3 rounded-xl bg-bear-blue/10 group-hover:bg-bear-blue/20 transition-colors flex-shrink-0">
@@ -402,16 +373,17 @@ export default function Dashboard() {
                     <span className="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm sm:text-base lg:text-lg truncate">{topic}</span>
                   </div>
                   <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-bear-blue opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0 flex-shrink-0 hidden sm:block" />
-                </motion.div>
+                </div>
               </Link>
             ))}
           </div>
         </section>
 
-      </motion.div>
+      </div>
       </div>
       </main>
       <Footer />
     </div>
   );
 }
+

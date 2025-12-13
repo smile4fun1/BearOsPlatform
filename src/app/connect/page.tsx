@@ -1071,7 +1071,7 @@ export default function ConnectPage() {
         </AnimatePresence>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 lg:mb-0" style={{ marginBottom: 'calc(252px + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 lg:mb-0" style={{ marginBottom: 'calc(252px + env(safe-area-inset-bottom, 0px))' }}>
           {currentMessages.map((msg) => (
             <motion.div 
               key={msg.id} 
@@ -1087,11 +1087,11 @@ export default function ConnectPage() {
                 {msg.isBot ? <Bot className="w-4 h-4 sm:w-5 sm:h-5" /> : msg.sender[0]}
               </div>
               <div className="flex-1 min-w-0 relative">
-                <div className="flex items-baseline gap-1.5 sm:gap-2 mb-0.5 sm:mb-1 relative">
-                  <span className={`font-semibold text-sm sm:text-base select-text ${msg.isBot ? 'text-bear-blue' : 'text-white'}`}>
+                <div className="flex items-baseline gap-2 mb-1 relative">
+                  <span className={`font-semibold text-[15px] sm:text-base select-text ${msg.isBot ? 'text-bear-blue' : 'text-white'}`}>
                     {msg.sender}
                   </span>
-                  <span className="text-[10px] sm:text-xs text-gray-500 select-text">{msg.timestamp}</span>
+                  <span className="text-[11px] sm:text-xs text-gray-500 select-text">{msg.timestamp}</span>
                   
                   {/* Hover actions - absolutely positioned to prevent layout shift */}
                   {hoveredMessageId === msg.id && (
@@ -1127,7 +1127,7 @@ export default function ConnectPage() {
                     </div>
                   )}
                 </div>
-                <p className="text-sm sm:text-base text-gray-300 leading-relaxed select-text" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+                <p className="text-[15px] sm:text-base text-gray-200 leading-[1.6] sm:leading-relaxed select-text" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', letterSpacing: '0.01em' }}>
                   <MessageContent content={msg.content} />
                 </p>
                 {msg.attachments && msg.attachments.length > 0 && (

@@ -366,10 +366,10 @@ function KnowledgeContent() {
                             </div>
                             <div className="flex items-center gap-1.5 p-3 rounded-2xl bg-white/5 border border-white/10 rounded-tl-sm">
                                 <div 
-                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"}}
+                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"
                                 />
                                 <div 
-                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"}}
+                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"
                                 />
                                 <div 
                                     className="w-1.5 h-1.5 bg-purple-400 rounded-full"}}

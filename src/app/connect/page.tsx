@@ -684,7 +684,7 @@ export default function ConnectPage() {
 
       {/* Main Chat Area */}
       <div 
-        className="flex-1 flex flex-col min-w-0 bg-[#020511]"
+        className="flex-1 flex flex-col min-w-0 bg-[#020511] relative overflow-hidden"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}

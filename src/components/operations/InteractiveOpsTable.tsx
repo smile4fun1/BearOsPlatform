@@ -55,20 +55,33 @@ export function InteractiveOpsTable({ operations }: InteractiveOpsTableProps) {
 
   // Lazy loading with Intersection Observer
   useEffect(() => {
-    if (!loadMoreRef.current || visibleCount >= filteredOps.length) {
+    // Don't create observer if we've loaded all data
+    if (visibleCount >= filteredOps.length) {
       return;
     }
 
+    // Don't create observer if ref doesn't exist
+    if (!loadMoreRef.current) {
+      return;
+    }
+
+    const currentRef = loadMoreRef.current;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && visibleCount < filteredOps.length) {
-          setVisibleCount(prev => Math.min(prev + 5, filteredOps.length));
+        if (entries[0].isIntersecting) {
+          setVisibleCount(prev => {
+            // Only increment if we haven't reached the end
+            if (prev < filteredOps.length) {
+              return Math.min(prev + 5, filteredOps.length);
+            }
+            return prev;
+          });
         }
       },
-      { threshold: 0.5, rootMargin: '100px' }
+      { threshold: 0.5, rootMargin: '50px' }
     );
 
-    observer.observe(loadMoreRef.current);
+    observer.observe(currentRef);
 
     return () => {
       observer.disconnect();

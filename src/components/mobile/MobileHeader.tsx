@@ -1,40 +1,48 @@
 'use client';
 
+import { Search, Bell, Menu, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
-import { Menu, Bell, Search } from 'lucide-react';
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { usePathname } from 'next/navigation';
 
 interface MobileHeaderProps {
   onMenuClick?: () => void;
   showMenu?: boolean;
+  showSearch?: boolean;
+  showNotifications?: boolean;
+  onSearchClick?: () => void;
+  onNotificationsClick?: () => void;
+  title?: string;
+  showBack?: boolean;
+  onBackClick?: () => void;
 }
 
-export function MobileHeader({ onMenuClick, showMenu = true }: MobileHeaderProps) {
-  const [showSearch, setShowSearch] = useState(false);
-  const pathname = usePathname();
-  
-  const getPageTitle = () => {
-    if (pathname === '/') return 'Dashboard';
-    if (pathname === '/robots') return 'My Robots';
-    if (pathname === '/connect') return 'Connect';
-    if (pathname === '/settings') return 'Settings';
-    if (pathname === '/knowledge') return 'Knowledge';
-    if (pathname === '/support') return 'Support';
-    if (pathname === '/fleet') return 'Fleet';
-    if (pathname === '/operations') return 'Operations';
-    if (pathname === '/ai-models') return 'AI Models';
-    if (pathname === '/data-lake') return 'Data Lake';
-    return 'Bear OS';
-  };
-  
+export function MobileHeader({
+  onMenuClick,
+  showMenu = true,
+  showSearch = false,
+  showNotifications = false,
+  onSearchClick,
+  onNotificationsClick,
+  title = 'BearOS',
+  showBack = false,
+  onBackClick,
+}: MobileHeaderProps) {
+  const [searchOpen, setSearchOpen] = useState(false);
+
   return (
     <header className="lg:hidden flex-shrink-0 bg-[#0F1117]/95 backdrop-blur-sm border-b border-white/10 safe-area-top">
       <div className="flex items-center justify-between px-4 py-3">
         {/* Left: Menu or Logo */}
         <div className="flex items-center gap-3">
-          {showMenu && onMenuClick ? (
+          {showBack ? (
+            <button
+              onClick={onBackClick}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              style={{ minWidth: '44px', minHeight: '44px' }}
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-400" />
+            </button>
+          ) : showMenu && onMenuClick ? (
             <button
               onClick={onMenuClick}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -48,36 +56,44 @@ export function MobileHeader({ onMenuClick, showMenu = true }: MobileHeaderProps
                 <img 
                   src="/download.png" 
                   alt="Bear Robotics" 
-                  className="h-full w-full object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </Link>
           )}
-          <h1 className="text-lg font-bold text-white">{getPageTitle()}</h1>
+          <h1 className="text-lg font-bold text-white truncate">{title}</h1>
         </div>
-        
+
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            style={{ minWidth: '44px', minHeight: '44px' }}
-          >
-            <Search className="w-5 h-5 text-gray-400" />
-          </button>
-          <button
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors relative"
-            style={{ minWidth: '44px', minHeight: '44px' }}
-          >
-            <Bell className="w-5 h-5 text-gray-400" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-          </button>
+          {showSearch && (
+            <button
+              onClick={() => {
+                setSearchOpen(!searchOpen);
+                onSearchClick?.();
+              }}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              style={{ minWidth: '44px', minHeight: '44px' }}
+            >
+              <Search className="w-6 h-6 text-gray-400" />
+            </button>
+          )}
+          {showNotifications && (
+            <button
+              onClick={onNotificationsClick}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors relative"
+              style={{ minWidth: '44px', minHeight: '44px' }}
+            >
+              <Bell className="w-6 h-6 text-gray-400" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full" />
+            </button>
+          )}
         </div>
       </div>
       
       {/* Search Bar */}
-      <AnimatePresence>
-        {showSearch && (
+      <>
+        {searchOpen && (
           <div
             className="overflow-hidden border-t border-white/10"
           >
@@ -91,9 +107,7 @@ export function MobileHeader({ onMenuClick, showMenu = true }: MobileHeaderProps
             </div>
           </div>
         )}
-      </AnimatePresence>
+      </>
     </header>
   );
 }
-
-

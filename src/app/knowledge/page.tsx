@@ -181,7 +181,7 @@ function KnowledgeContent() {
           <p className="text-sm sm:text-base lg:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
             Find answers and documentation for your Bear robots
           </p>
-        </motion.header>
+        </header>
 
         {/* Search Bar - Premium Design */}
         <div 

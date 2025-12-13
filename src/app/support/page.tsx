@@ -92,7 +92,7 @@ export default function SupportPage() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         
         {/* Hero Section */}
-        <div}}
+        <div
           className="text-center mb-16"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/60 text-xs font-medium mb-6">

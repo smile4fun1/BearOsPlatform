@@ -141,7 +141,7 @@ function RobotMentionDropdown({
       <div className="p-2 border-b border-white/5">
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <Bot className="w-3 h-3" />
-          <span>Mention a robot (Tab to autocomplete)</span>
+          <span>Mention a robot (Tab/Enter to select)</span>
         </div>
       </div>
       <div className="max-h-60 overflow-y-auto">
@@ -181,6 +181,114 @@ function RobotMentionDropdown({
   );
 }
 
+// Robot search modal for robot button
+function RobotSearchModal({
+  searchQuery,
+  onSearchChange,
+  onSelect,
+  onClose
+}: {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  onSelect: (robot: Robot) => void;
+  onClose: () => void;
+}) {
+  const results = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 1) return robotFleet;
+    return searchRobots(searchQuery);
+  }, [searchQuery]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[600px] flex flex-col overflow-hidden shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-4 border-b border-white/10">
+          <div className="flex items-center gap-3 mb-3">
+            <Bot className="w-5 h-5 text-bear-blue" />
+            <h3 className="text-lg font-bold text-white">Select Robot</h3>
+          </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search robots by name, serial, or location..."
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="w-full bg-[#0a0f1c] border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-gray-300 focus:outline-none focus:border-bear-blue/50 transition-colors"
+              autoFocus
+            />
+          </div>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-2">
+          {results.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <Bot className="w-12 h-12 mx-auto mb-3 opacity-20" />
+              <p>No robots found</p>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {results.map((robot) => (
+                <button
+                  key={robot.id}
+                  onClick={() => onSelect(robot)}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors text-left"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-bear-blue/20 flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-bear-blue" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-white truncate">{robot.name}</div>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span className="font-mono">{robot.serialNumber}</span>
+                      <span>•</span>
+                      <span className="truncate">{robot.location}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <Battery className="w-3 h-3" />
+                      {robot.battery}%
+                    </div>
+                    <span className={`text-xs font-medium ${
+                      robot.status === 'active' ? 'text-emerald-400' :
+                      robot.status === 'error' ? 'text-rose-400' :
+                      robot.status === 'charging' ? 'text-blue-400' :
+                      'text-gray-400'
+                    }`}>
+                      {robot.status}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="p-4 border-t border-white/10">
+          <button
+            onClick={onClose}
+            className="w-full py-2 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function ConnectPage() {
   const { role } = useRole();
   const [activeChannel, setActiveChannel] = useState('general');
@@ -192,6 +300,8 @@ export default function ConnectPage() {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [channelMessages, setChannelMessages] = useState<Record<string, Message[]>>({});
+  const [showRobotSearch, setShowRobotSearch] = useState(false);
+  const [robotSearchQuery, setRobotSearchQuery] = useState('');
   
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -227,10 +337,26 @@ export default function ConnectPage() {
     'announcements': []
   };
 
-  // Initialize messages
+  // Initialize messages from localStorage or use initial messages
   useEffect(() => {
-    setChannelMessages(initialMessages);
+    const savedMessages = localStorage.getItem('bear-connect-messages');
+    if (savedMessages) {
+      try {
+        setChannelMessages(JSON.parse(savedMessages));
+      } catch (e) {
+        setChannelMessages(initialMessages);
+      }
+    } else {
+      setChannelMessages(initialMessages);
+    }
   }, []);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (Object.keys(channelMessages).length > 0) {
+      localStorage.setItem('bear-connect-messages', JSON.stringify(channelMessages));
+    }
+  }, [channelMessages]);
 
   const visibleChannels = channels.filter(c => c.allowedRoles.includes(role));
   const currentMessages = channelMessages[activeChannel] || [];
@@ -274,7 +400,7 @@ export default function ConnectPage() {
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setSelectedMentionIndex((prev) => (prev - 1 + results.length) % results.length);
-      } else if (e.key === 'Tab' && results.length > 0) {
+      } else if ((e.key === 'Tab' || e.key === 'Enter') && results.length > 0) {
         e.preventDefault();
         handleRobotSelect(results[selectedMentionIndex]);
       } else if (e.key === 'Escape') {
@@ -325,9 +451,29 @@ export default function ConnectPage() {
     const before = inputText.slice(0, cursorPos);
     const after = inputText.slice(cursorPos);
     setInputText(before + emoji + after);
+    setShowEmojiPicker(false);
     setTimeout(() => {
       inputRef.current?.focus();
+      // Move cursor after emoji
+      const newPos = cursorPos + emoji.length;
+      inputRef.current?.setSelectionRange(newPos, newPos);
     }, 0);
+  };
+
+  // Handle robot search from robot button
+  const handleRobotButtonClick = () => {
+    setShowRobotSearch(true);
+    setRobotSearchQuery('');
+  };
+
+  const handleRobotSearchSelect = (robot: Robot) => {
+    const cursorPos = inputRef.current?.selectionStart || inputText.length;
+    const before = inputText.slice(0, cursorPos);
+    const after = inputText.slice(cursorPos);
+    setInputText(`${before}@${robot.name} ${after}`);
+    setShowRobotSearch(false);
+    setRobotSearchQuery('');
+    inputRef.current?.focus();
   };
 
   // Handle file selection
@@ -511,7 +657,7 @@ export default function ConnectPage() {
                   </span>
                   <span className="text-[10px] sm:text-xs text-gray-500">{msg.timestamp}</span>
                 </div>
-                <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
+                <p className="text-sm sm:text-base text-gray-300 leading-relaxed" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                   <MessageContent content={msg.content} />
                 </p>
                 {msg.attachments && msg.attachments.length > 0 && (
@@ -571,8 +717,26 @@ export default function ConnectPage() {
                   exit={{ opacity: 0, y: 10 }}
                   className="absolute bottom-full left-0 mb-2 z-50"
                 >
-                  <EmojiPicker onEmojiClick={handleEmojiSelect} theme="dark" />
+                  <EmojiPicker 
+                    onEmojiClick={handleEmojiSelect} 
+                    theme="dark"
+                    emojiStyle="native"
+                  />
                 </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {showRobotSearch && (
+                <RobotSearchModal
+                  searchQuery={robotSearchQuery}
+                  onSearchChange={setRobotSearchQuery}
+                  onSelect={handleRobotSearchSelect}
+                  onClose={() => {
+                    setShowRobotSearch(false);
+                    setRobotSearchQuery('');
+                  }}
+                />
               )}
             </AnimatePresence>
             
@@ -598,7 +762,10 @@ export default function ConnectPage() {
                 placeholder={`Message #${activeChannel} — Type @ to mention a robot`}
                 className="w-full bg-transparent text-sm sm:text-base text-white px-2 sm:px-3 py-1.5 sm:py-2 focus:outline-none resize-none min-h-[36px] sm:min-h-[40px] max-h-32 placeholder-gray-500"
                 rows={1}
-                style={{ height: 'auto' }}
+                style={{ 
+                  height: 'auto',
+                  fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+                }}
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = 'auto';
@@ -622,12 +789,9 @@ export default function ConnectPage() {
                     <Smile className="w-4 h-4" />
                   </button>
                   <button 
-                    onClick={() => {
-                      setMentionQuery('');
-                      inputRef.current?.focus();
-                    }}
+                    onClick={handleRobotButtonClick}
                     className="p-1.5 sm:p-2 hover:bg-bear-blue/10 rounded-lg transition-colors hover:text-bear-blue flex items-center gap-1"
-                    title="Mention a robot"
+                    title="Search and mention a robot"
                   >
                     <Bot className="w-4 h-4" />
                   </button>

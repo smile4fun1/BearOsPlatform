@@ -363,8 +363,8 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {['Robot Won\'t Start', 'Connection Issues', 'Maintenance Guide'].map((topic, i) => (
               <Link href="/knowledge" key={topic}>
-                <div 
-                  className="bear-glass-card p-5 sm:p-6 flex items-center justify-between group cursor-pointer h-full min-h-[70px] sm:min-h-[80px]"}
+                <div
+                  className="bear-glass-card p-5 sm:p-6 flex items-center justify-between group cursor-pointer h-full min-h-[70px] sm:min-h-[80px]"
                 >
                   <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                     <div className="p-2.5 sm:p-3 rounded-xl bg-bear-blue/10 group-hover:bg-bear-blue/20 transition-colors flex-shrink-0">

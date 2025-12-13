@@ -6,7 +6,6 @@ import {
   MapPin, Bot, Mail, Save, ChevronRight, Edit2, Trash2
 } from 'lucide-react';
 import { SettingsList, SettingsDetail } from './SettingsList';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface MobileSettingsProps {
   userData: {
@@ -73,7 +72,7 @@ export function MobileSettings({
   
   return (
     <div className="lg:hidden h-full flex flex-col overflow-hidden">
-      <AnimatePresence mode="wait">
+      <>
         {currentView === 'main' && (
           <div
             key="main"
@@ -342,7 +341,7 @@ export function MobileSettings({
             </SettingsDetail>
           </div>
         )}
-      </AnimatePresence>
+      </>
     </div>
   );
 }

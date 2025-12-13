@@ -90,7 +90,8 @@ export default function Dashboard() {
   const currentMetrics = metrics[role] || metrics.internal_admin;
 
   return (
-    <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-[1600px] mx-auto min-h-screen relative">
+    <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] flex flex-col overflow-hidden">
+      <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-[1600px] mx-auto w-full relative">
       {/* BearEmeaSupport Style Decorative Elements */}
       <div className="fixed top-20 right-0 w-[400px] lg:w-[600px] h-[400px] lg:h-[600px] bg-bear-blue/5 rounded-full blur-3xl pointer-events-none" />
       <div className="fixed bottom-20 left-0 w-[300px] lg:w-[400px] h-[300px] lg:h-[400px] bg-purple-500/3 rounded-full blur-3xl pointer-events-none" />
@@ -436,6 +437,7 @@ export default function Dashboard() {
         </section>
 
       </motion.div>
+      </main>
       <Footer />
     </div>
   );

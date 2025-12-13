@@ -101,7 +101,8 @@ export default function FleetPage() {
   ];
 
   return (
-    <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-[1600px] mx-auto relative min-h-screen">
+    <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] flex flex-col overflow-hidden">
+      <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-[1600px] mx-auto w-full relative">
       {/* Decorative Background - Optimized for performance */}
       <div className="fixed top-20 right-0 w-[300px] sm:w-[400px] lg:w-[600px] h-[300px] sm:h-[400px] lg:h-[600px] bg-bear-blue/5 rounded-full blur-3xl pointer-events-none opacity-30 will-change-transform" />
       <div className="fixed bottom-20 left-0 w-[200px] sm:w-[300px] lg:w-[400px] h-[200px] sm:h-[300px] lg:h-[400px] bg-purple-500/3 rounded-full blur-3xl pointer-events-none opacity-30 will-change-transform" />
@@ -220,6 +221,7 @@ export default function FleetPage() {
           <LazyInteractiveOpsTable operations={operationsDataset.slice(-50)} />
         </Suspense>
       </section>
+      </main>
       <Footer />
     </div>
   );

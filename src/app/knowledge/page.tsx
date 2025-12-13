@@ -158,7 +158,8 @@ function KnowledgeContent() {
   };
 
   return (
-    <div className="min-h-screen relative">
+    <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] flex flex-col overflow-hidden">
+      <main className="flex-1 overflow-y-auto relative w-full">
       {/* Decorative Background */}
       <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-bear-blue/5 rounded-full blur-3xl pointer-events-none" />
       <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/3 rounded-full blur-3xl pointer-events-none" />
@@ -763,6 +764,7 @@ function KnowledgeContent() {
             </motion.div>
         )}
       </div>
+      </main>
       <Footer />
     </div>
   );

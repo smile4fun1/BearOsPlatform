@@ -14,8 +14,8 @@ export default async function FeaturesPage() {
   const universe = composeCurationResponse();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white">
-      <main className="mx-auto flex max-w-7xl flex-col gap-10 px-6 py-12 lg:px-10">
+    <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white flex flex-col overflow-hidden">
+      <main className="flex-1 overflow-y-auto mx-auto flex max-w-7xl flex-col gap-10 px-6 py-12 lg:px-10 w-full">
         <section className="rounded-[40px] border border-white/10 bg-gradient-to-br from-[#090f2f] via-[#080d24] to-[#02040c] p-8 shadow-[0_30px_120px_rgba(3,4,10,0.8)] backdrop-blur-3xl transition-all duration-500 hover:shadow-[0_40px_140px_rgba(3,4,10,0.9)] lg:p-12">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl space-y-5">

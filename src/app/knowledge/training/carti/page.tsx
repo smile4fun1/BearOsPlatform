@@ -22,7 +22,8 @@ import {
   ArrowRight as ArrowRightIcon,
   AlertTriangle as ExclamationTriangleIcon,
   ChevronLeft as ChevronLeftIcon,
-  RotateCcw as RestartIcon
+  RotateCcw as RestartIcon,
+  Truck as TruckIcon
 } from 'lucide-react';
 
 export default function TrainingPage() {
@@ -34,7 +35,7 @@ export default function TrainingPage() {
 
   // Load progress from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('bear-training-progress');
+    const saved = localStorage.getItem('bear-training-carti-progress');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -57,7 +58,7 @@ export default function TrainingPage() {
   // Save progress
   useEffect(() => {
     if (completedModules.length > 0) {
-      localStorage.setItem('bear-training-progress', JSON.stringify(completedModules));
+      localStorage.setItem('bear-training-carti-progress', JSON.stringify(completedModules));
     }
   }, [completedModules]);
 
@@ -71,9 +72,9 @@ export default function TrainingPage() {
     },
     {
       id: 1,
-      title: 'Meet Servi',
+      title: 'Meet Carti',
       subtitle: 'Hardware Overview',
-      icon: <CubeIcon className="w-5 h-5" />,
+      icon: <TruckIcon className="w-5 h-5" />,
       duration: '3 min',
     },
     {
@@ -85,7 +86,7 @@ export default function TrainingPage() {
     },
     {
       id: 3,
-      title: 'Using Servi',
+      title: 'Using Carti',
       subtitle: 'Core Operations',
       icon: <PlayCircleIcon className="w-5 h-5" />,
       duration: '5 min',
@@ -120,7 +121,7 @@ export default function TrainingPage() {
         setCompletedModules([]);
         setTrainingStarted(false);
         setCurrentModule(0);
-        localStorage.removeItem('bear-training-progress');
+        localStorage.removeItem('bear-training-carti-progress');
     }
   };
 
@@ -135,8 +136,6 @@ export default function TrainingPage() {
     } else {
       const nextId = moduleId + 1;
       setCurrentModule(nextId);
-      // Optional: scroll top if content is very long, but with fixed footer it might not be needed
-      // window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -167,9 +166,9 @@ export default function TrainingPage() {
                     </Link>
                     <div>
                         <h1 className="text-xl font-bold text-white flex items-center gap-2">
-                            Servi Training
+                            Carti 100 Training
                             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-bear-blue/20 text-bear-blue border border-bear-blue/20">
-                                NEW STAFF
+                                LOGISTICS
                             </span>
                         </h1>
                     </div>
@@ -271,10 +270,11 @@ export default function TrainingPage() {
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
                                         transition={{ duration: 0.3 }}
+                                        className="h-full"
                                     >
-                                        {currentModule === 1 && <ModuleMeetServi />}
+                                        {currentModule === 1 && <ModuleMeetCarti />}
                                         {currentModule === 2 && <ModuleGettingStarted />}
-                                        {currentModule === 3 && <ModuleUsingServi />}
+                                        {currentModule === 3 && <ModuleUsingCarti />}
                                         {currentModule === 4 && <ModuleBestPractices />}
                                         {currentModule === 5 && <ModuleQuickTips />}
                                     </motion.div>
@@ -357,7 +357,7 @@ export default function TrainingPage() {
                   Training Complete!
                 </h2>
                 <p className="text-gray-400 mb-8 leading-relaxed">
-                  You've successfully completed the Servi training modules. You're now certified to work with Servi Plus!
+                  You've successfully completed the Carti 100 training modules. You're now certified to work with Carti!
                 </p>
                 
                 <div className="flex flex-col gap-3">
@@ -398,14 +398,14 @@ function ModuleWelcome({ onComplete }: { onComplete: () => void }) {
             <AcademicCapIcon className="w-10 h-10 text-white" />
         </motion.div>
 
-        <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Welcome to the Team</h2>
+        <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Welcome to Carti Training</h2>
         <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-            This interactive training will guide you through everything you need to know about working with your new robot colleague, Servi Plus.
+            This interactive training will guide you through everything you need to know about working with Carti 100, your autonomous logistics robot.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-3xl mb-12">
             {[
-                { icon: ClockIcon, label: "20 Minutes", desc: "Short & sweet" },
+                { icon: ClockIcon, label: "25 Minutes", desc: "Comprehensive" },
                 { icon: PlayCircleIcon, label: "Interactive", desc: "Learn by doing" },
                 { icon: ShieldCheckIcon, label: "Certified", desc: "Get ready" },
             ].map((item, i) => (
@@ -428,7 +428,7 @@ function ModuleWelcome({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-function ModuleMeetServi() {
+function ModuleMeetCarti() {
     return (
         <div className="space-y-6">
             <div className="bear-glass-card p-8 relative overflow-hidden">
@@ -436,27 +436,27 @@ function ModuleMeetServi() {
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
                     <div className="flex-1">
                         <div className="flex items-center gap-3 text-bear-blue mb-2">
-                            <CubeIcon className="w-5 h-5" />
+                            <TruckIcon className="w-5 h-5" />
                             <span className="text-sm font-bold uppercase tracking-wider">Overview</span>
                         </div>
-                        <h2 className="text-3xl font-bold text-white mb-4">Meet Servi Plus</h2>
+                        <h2 className="text-3xl font-bold text-white mb-4">Meet Carti 100</h2>
                         <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                            Servi Plus is an autonomous service robot that helps deliver food and clear tables. It works alongside you to make service faster and more efficient.
+                            Carti 100 is a heavy-duty autonomous mobile robot designed for warehouse and logistics operations. It moves heavy loads efficiently and safely.
                         </p>
                     </div>
                     {/* Placeholder for Robot Image/Graphic */}
-                    <div className="w-32 h-32 bg-gradient-to-br from-bear-blue to-cyan-500 rounded-full flex items-center justify-center shadow-2xl shadow-bear-blue/20">
-                        <CubeIcon className="w-16 h-16 text-white" />
+                    <div className="w-32 h-32 bg-gradient-to-br from-bear-blue to-purple-500 rounded-full flex items-center justify-center shadow-2xl shadow-bear-blue/20">
+                        <TruckIcon className="w-16 h-16 text-white" />
                     </div>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                    { icon: WrenchScrewdriverIcon, title: "Three Trays", desc: "Can carry multiple dishes at once. Maximum 40kg total capacity.", color: "text-blue-400", bg: "bg-blue-500/10" },
-                    { icon: ShieldCheckIcon, title: "Smart & Safe", desc: "Automatically stops if someone is in the way. Built-in safety features.", color: "text-green-400", bg: "bg-green-500/10" },
-                    { icon: MapIcon, title: "Easy Control", desc: "Simple touchscreen interface - tap where you want it to go.", color: "text-purple-400", bg: "bg-purple-500/10" },
-                    { icon: BoltIcon, title: "All-Day Battery", desc: "Runs for 8-12 hours on a full charge. Perfect for busy shifts.", color: "text-orange-400", bg: "bg-orange-500/10" },
+                    { icon: WrenchScrewdriverIcon, title: "100kg Payload", desc: "Capable of transporting heavy goods and materials across the facility.", color: "text-blue-400", bg: "bg-blue-500/10" },
+                    { icon: ShieldCheckIcon, title: "LiDAR Navigation", desc: "Advanced sensors for precise mapping and obstacle avoidance in dynamic environments.", color: "text-green-400", bg: "bg-green-500/10" },
+                    { icon: MapIcon, title: "Fleet Management", desc: "Integrated with Bear Fleet Cloud for coordinated multi-robot operations.", color: "text-purple-400", bg: "bg-purple-500/10" },
+                    { icon: BoltIcon, title: "Auto-Charging", desc: "Intelligent battery management ensures continuous operation with minimal downtime.", color: "text-orange-400", bg: "bg-orange-500/10" },
                 ].map((item, i) => (
                     <motion.div 
                         key={i}
@@ -482,23 +482,23 @@ function ModuleGettingStarted() {
         <div className="space-y-6">
             <div className="bear-glass-card p-8">
                 <h2 className="text-3xl font-bold text-white mb-2">Getting Started</h2>
-                <p className="text-gray-400 text-lg mb-8">Follow this morning checklist to start your shift right.</p>
+                <p className="text-gray-400 text-lg mb-8">Pre-operation safety checks.</p>
 
                 <div className="space-y-4">
                     {[
                         { 
-                            title: "Check the Battery", 
-                            desc: "Look at the screen - you should see a green battery icon showing 80-100%. This means Servi is ready to work.",
+                            title: "E-Stop Check", 
+                            desc: "Ensure the Emergency Stop button is disengaged (rotate clockwise).",
                             icon: "1"
                         },
                         { 
-                            title: "Visual Inspection", 
-                            desc: "Check if the trays look good and the wheels are clean. Takes just a few seconds.",
+                            title: "Sensor Clean", 
+                            desc: "Wipe LiDAR and depth camera lenses with a microfiber cloth.",
                             icon: "2"
                         },
                         { 
-                            title: "Clean the Trays", 
-                            desc: "Give the trays a quick wipe with a clean cloth to ensure everything is sanitary.",
+                            title: "Path Clearance", 
+                            desc: "Verify that the main transport aisles are free of large debris.",
                             icon: "3"
                         },
                     ].map((step, i) => (
@@ -529,8 +529,8 @@ function ModuleGettingStarted() {
                             <CheckCircleIcon className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-green-400 mb-1">You're Ready</h3>
-                            <p className="text-green-200/70 leading-relaxed">That's it! Servi is ready to help you have a productive shift.</p>
+                            <h3 className="text-lg font-bold text-green-400 mb-1">Systems Go</h3>
+                            <p className="text-green-200/70 leading-relaxed">Carti 100 is online and ready for tasks.</p>
                         </div>
                     </motion.div>
                 </div>
@@ -539,21 +539,21 @@ function ModuleGettingStarted() {
     );
 }
 
-function ModuleUsingServi() {
+function ModuleUsingCarti() {
     return (
         <div className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
                 <div className="bear-glass-card p-6 h-full">
                     <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                         <CheckCircleIcon className="w-5 h-5 text-green-500" />
-                        Correct Loading
+                        Loading Procedures
                     </h3>
                     <div className="space-y-3">
                         {[
-                            "Place items in the center of trays",
-                            "Distribute weight evenly",
-                            "Use all three trays when possible",
-                            "Make sure items are stable"
+                            "Center load on the platform",
+                            "Secure loose items",
+                            "Respect payload limits",
+                            "Check overhead clearance"
                         ].map((item, i) => (
                             <div key={i} className="flex items-start gap-3 text-sm text-gray-300">
                                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0" />
@@ -566,14 +566,14 @@ function ModuleUsingServi() {
                 <div className="bear-glass-card p-6 h-full border-red-500/20">
                     <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                         <XMarkIcon className="w-5 h-5 text-red-500" />
-                        Avoid This
+                        Prohibited Actions
                     </h3>
                     <div className="space-y-3">
                         {[
-                            "Overload (max 40kg total)",
-                            "Stack items too high",
-                            "Rush - take your time",
-                            "Let items hang off edges"
+                            "Riding on the robot",
+                            "Overhanging loads > 10cm",
+                            "Blocking safety scanners",
+                            "Operating on wet floors"
                         ].map((item, i) => (
                             <div key={i} className="flex items-start gap-3 text-sm text-gray-300">
                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 flex-shrink-0" />
@@ -585,12 +585,12 @@ function ModuleUsingServi() {
             </div>
 
             <div className="bear-glass-card p-8">
-                <h3 className="text-2xl font-bold text-white mb-6">Sending Servi</h3>
+                <h3 className="text-2xl font-bold text-white mb-6">Mission Control</h3>
                 <div className="grid md:grid-cols-3 gap-6">
                     {[
-                        { title: "Tap Screen", desc: "Select where you want Servi to go from the map." },
-                        { title: "Confirm", desc: "Tap 'Yes' and Servi will start moving to destination." },
-                        { title: "Walk Ahead", desc: "Clear the path and inform customers if needed." },
+                        { title: "Select Destination", desc: "Choose a predefined station from the tablet interface." },
+                        { title: "Engage Auto", desc: "Press 'Start' to begin autonomous navigation." },
+                        { title: "Monitor Status", desc: "Watch the LED ring: Blue is moving, Yellow is obstacle." },
                     ].map((step, i) => (
                         <div key={i} className="text-center relative">
                             <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-xl font-bold mx-auto mb-4 border border-white/10">
@@ -613,13 +613,13 @@ function ModuleBestPractices() {
     return (
         <div className="space-y-6">
             <div className="bear-glass-card p-8">
-                <h2 className="text-3xl font-bold text-white mb-6">Best Practices</h2>
+                <h2 className="text-3xl font-bold text-white mb-6">Operational Excellence</h2>
                 <div className="grid md:grid-cols-2 gap-4">
                     {[
-                        { icon: UserGroupIcon, title: "Communicate", desc: "Always announce when Servi is approaching. A simple heads-up keeps everyone aware and comfortable.", color: "text-blue-400" },
-                        { icon: WrenchScrewdriverIcon, title: "Efficient Loading", desc: "Use all three trays to maximize each trip. Heavy items on bottom, lighter items on top.", color: "text-green-400" },
-                        { icon: MapIcon, title: "Clear Paths", desc: "Watch for obstacles like chairs and bags. A clear path means faster and smoother service.", color: "text-purple-400" },
-                        { icon: ClipboardDocumentCheckIcon, title: "End of Shift", desc: "Quick wipe down, check for debris, and park on charger. Takes 2 minutes and keeps Servi ready.", color: "text-orange-400" },
+                        { icon: UserGroupIcon, title: "Zone Safety", desc: "Maintain a clear zone around picking stations. Allow Carti space to maneuver.", color: "text-blue-400" },
+                        { icon: WrenchScrewdriverIcon, title: "Maintenance", desc: "Report any unusual noises or wheel wear immediately to the fleet manager.", color: "text-green-400" },
+                        { icon: MapIcon, title: "Mapping Updates", desc: "Alert admins if layout changes occur (new racks, moved pallets) so maps can be updated.", color: "text-purple-400" },
+                        { icon: ClipboardDocumentCheckIcon, title: "Charge Management", desc: "Send Carti to charge during break times to ensure full shift coverage.", color: "text-orange-400" },
                     ].map((item, i) => (
                         <div key={i} className="bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors h-full">
                             <div className="flex items-start gap-4 h-full">
@@ -633,16 +633,6 @@ function ModuleBestPractices() {
                     ))}
                 </div>
             </div>
-
-            <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 p-6 rounded-2xl border border-yellow-500/20 flex items-start gap-4">
-                <div className="bg-yellow-500/20 p-3 rounded-lg">
-                    <LightBulbIcon className="w-6 h-6 text-yellow-500" />
-                </div>
-                <div>
-                    <h3 className="font-bold text-white mb-1">Key Reminder</h3>
-                    <p className="text-gray-300">If something doesn't feel right, tell your manager. It's always better to ask than to guess.</p>
-                </div>
-            </div>
         </div>
     );
 }
@@ -651,31 +641,23 @@ function ModuleQuickTips() {
     return (
         <div className="space-y-6">
             <div className="bear-glass-card p-8">
-                <h2 className="text-3xl font-bold text-white mb-2">Quick Tips</h2>
-                <p className="text-gray-400 mb-8">Common situations and simple solutions</p>
+                <h2 className="text-3xl font-bold text-white mb-2">Troubleshooting</h2>
+                <p className="text-gray-400 mb-8">Resolving common issues.</p>
 
                 <div className="space-y-4">
                     <div className="bg-white/5 p-5 rounded-2xl border border-white/10 flex gap-4">
-                        <BoltIcon className="w-6 h-6 text-yellow-500 flex-shrink-0" />
+                        <ExclamationTriangleIcon className="w-6 h-6 text-yellow-500 flex-shrink-0" />
                         <div>
-                            <h3 className="font-bold text-white mb-1">Low Battery</h3>
-                            <p className="text-sm text-gray-400">Servi will automatically return to the charger. If it seems lost, send it to "Home" on the screen.</p>
+                            <h3 className="font-bold text-white mb-1">Obstacle Detected</h3>
+                            <p className="text-sm text-gray-400">If Carti stops and flashes yellow, check for objects in its path. Clear the way and it will resume.</p>
                         </div>
                     </div>
 
                     <div className="bg-white/5 p-5 rounded-2xl border border-white/10 flex gap-4">
-                        <ExclamationTriangleIcon className="w-6 h-6 text-red-500 flex-shrink-0" />
+                        <BoltIcon className="w-6 h-6 text-red-500 flex-shrink-0" />
                         <div>
-                            <h3 className="font-bold text-white mb-1">Servi Won't Move</h3>
-                            <p className="text-sm text-gray-400">Check if the red emergency button on the base is pressed. Twist it clockwise to release.</p>
-                        </div>
-                    </div>
-
-                    <div className="bg-white/5 p-5 rounded-2xl border border-white/10 flex gap-4">
-                        <ClockIcon className="w-6 h-6 text-blue-500 flex-shrink-0" />
-                        <div>
-                            <h3 className="font-bold text-white mb-1">Screen Not Working</h3>
-                            <p className="text-sm text-gray-400">Wipe it with a clean cloth first. Still not working? Restart Servi by holding the power button for 10 seconds.</p>
+                            <h3 className="font-bold text-white mb-1">System Error</h3>
+                            <p className="text-sm text-gray-400">If the status light turns red, press the E-Stop, wait 5 seconds, then release to reboot.</p>
                         </div>
                     </div>
                 </div>
@@ -683,3 +665,4 @@ function ModuleQuickTips() {
         </div>
     );
 }
+

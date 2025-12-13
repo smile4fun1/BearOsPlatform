@@ -22,10 +22,9 @@ export function TouchTarget({
   disabled = false 
 }: TouchTargetProps) {
   return (
-    <motion.button
+    <button
       onClick={onClick}
-      disabled={disabled}
-      whileTap={disabled ? {} : { scale: 0.95 }}
+      disabled={disabled} : { scale: 0.95 }}
       className={`relative inline-flex items-center justify-center ${className}`}
       style={{
         minWidth: `${minSize}px`,
@@ -33,6 +32,7 @@ export function TouchTarget({
       }}
     >
       {children}
-    </motion.button>
+    </button>
   );
 }
+

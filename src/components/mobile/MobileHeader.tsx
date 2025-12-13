@@ -78,10 +78,7 @@ export function MobileHeader({ onMenuClick, showMenu = true }: MobileHeaderProps
       {/* Search Bar */}
       <AnimatePresence>
         {showSearch && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+          <div}}}
             className="overflow-hidden border-t border-white/10"
           >
             <div className="px-4 py-3">
@@ -92,9 +89,10 @@ export function MobileHeader({ onMenuClick, showMenu = true }: MobileHeaderProps
                 autoFocus
               />
             </div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </header>
   );
 }
+

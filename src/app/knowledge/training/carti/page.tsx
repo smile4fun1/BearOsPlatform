@@ -207,11 +207,8 @@ export default function TrainingPage() {
                         <div className="text-sm font-bold text-white">{progress}%</div>
                     </div>
                     <div className="w-32 h-2 bg-white/5 rounded-full overflow-hidden">
-                        <motion.div 
-                            className="h-full bg-gradient-to-r from-bear-blue to-cyan-400"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${progress}%` }}
-                            transition={{ duration: 0.5 }}
+                        <div 
+                            className="h-full bg-gradient-to-r from-bear-blue to-cyan-400"}%` }}}
                         />
                     </div>
                 </div>
@@ -255,7 +252,7 @@ export default function TrainingPage() {
                                     </div>
                                 </div>
                                 {isActive && (
-                                    <motion.div layoutId="active-indicator" className="w-1.5 h-1.5 rounded-full bg-white" />
+                                    <div layoutId="active-indicator" className="w-1.5 h-1.5 rounded-full bg-white" />
                                 )}
                             </button>
                         );
@@ -269,22 +266,15 @@ export default function TrainingPage() {
                     {!trainingStarted ? (
                              <ModuleWelcome onComplete={startTraining} />
                     ) : (
-                        <motion.div
-                            key="content-card"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
+                        <div
+                            key="content-card"}}}
                             className="bg-[#0f1423] border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden relative h-[calc(100vh-200px)] max-h-[700px]"
                         >
                             {/* Content - FIXED HEIGHT NO SCROLL */}
                             <div className="flex-1 p-6 lg:p-8 overflow-hidden">
                                 <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={currentModule}
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        transition={{ duration: 0.3 }}
+                                    <div
+                                        key={currentModule}}}}}
                                     >
                                         {currentModule === 0 && <WelcomeContent onComplete={handleNext} />}
                                         {currentModule === 1 && <ModuleMeetCarti />}
@@ -293,7 +283,7 @@ export default function TrainingPage() {
                                         {currentModule === 4 && <ModuleWarehouseSafety />}
                                         {currentModule === 5 && <ModuleBestPractices />}
                                         {currentModule === 6 && <ModuleQuickTips />}
-                                    </motion.div>
+                                    </div>
                                 </AnimatePresence>
                             </div>
 
@@ -326,7 +316,7 @@ export default function TrainingPage() {
                                 </div>
                             </div>
                             )}
-                        </motion.div>
+                        </div>
                     )}
                 </AnimatePresence>
             </div>
@@ -336,17 +326,11 @@ export default function TrainingPage() {
       {/* Restart Confirmation Modal */}
       <AnimatePresence>
         {showRestartConfirm && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <div}}}
               className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4"
               onClick={cancelRestart}
             >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+            <div}}}
               className="bg-[#0a0f1c] border border-white/10 rounded-3xl p-8 lg:p-12 max-w-lg w-full relative shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -358,14 +342,11 @@ export default function TrainingPage() {
               </button>
 
               <div className="text-center relative z-10">
-                <motion.div 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
+                <div}}}
                     className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-orange-500/30"
                 >
                   <ExclamationTriangleIcon className="w-12 h-12 text-white" />
-                </motion.div>
+                </div>
                 <h2 className="text-3xl font-bold text-white mb-4">
                   Restart Training?
                 </h2>
@@ -389,25 +370,19 @@ export default function TrainingPage() {
                     </button>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
       </AnimatePresence>
 
       {/* Congrats Modal */}
       <AnimatePresence>
         {showCongrats && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div}}}
             className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4"
             onClick={() => setShowCongrats(false)}
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+            <div}}}
               className="bg-[#0a0f1c] border border-white/10 rounded-3xl p-8 lg:p-12 max-w-lg w-full relative shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -424,14 +399,11 @@ export default function TrainingPage() {
               </button>
 
               <div className="text-center relative z-10">
-                <motion.div 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
+                <div}}}
                     className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/30"
                 >
                   <CheckCircleIcon className="w-12 h-12 text-white" />
-                </motion.div>
+                </div>
                 <h2 className="text-3xl font-bold text-white mb-4">
                   Training Complete!
                 </h2>
@@ -458,8 +430,8 @@ export default function TrainingPage() {
                     </button>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
       </AnimatePresence>
     </div>
@@ -473,13 +445,11 @@ function WelcomeContent({ onComplete }: { onComplete: () => void }) {
         <div className="flex flex-col justify-center items-center text-center py-12 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-bear-blue/5 to-transparent pointer-events-none" />
             
-            <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+            <div}}
                 className="w-20 h-20 bg-bear-blue rounded-2xl flex items-center justify-center mb-8 shadow-xl shadow-bear-blue/20 rotate-3"
             >
                 <AcademicCapIcon className="w-10 h-10 text-white" />
-            </motion.div>
+            </div>
     
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">Welcome to Carti Training</h2>
             <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed px-4">
@@ -548,11 +518,8 @@ function ModuleMeetCarti() {
                     { icon: MapIcon, title: "Fleet Management", desc: "Integrated with Bear Fleet Cloud for coordinated multi-robot operations.", bg: "bg-bear-blue/10", border: "border-bear-blue/20" },
                     { icon: BoltIcon, title: "Auto-Charging", desc: "Intelligent battery management ensures continuous operation with minimal downtime.", bg: "bg-bear-blue/10", border: "border-bear-blue/20" },
                 ].map((item, i) => (
-                    <motion.div 
-                        key={i}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
+                    <div 
+                        key={i}}}}
                         className={`${item.bg} border ${item.border} p-5 rounded-xl hover:bg-bear-blue/15 transition-all flex flex-col`}
                     >
                         <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-3 flex-shrink-0">
@@ -560,7 +527,7 @@ function ModuleMeetCarti() {
                         </div>
                         <h3 className="font-bold text-white mb-2">{item.title}</h3>
                         <p className="text-sm text-gray-300 leading-relaxed">{item.desc}</p>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
         </div>
@@ -603,11 +570,8 @@ function ModuleGettingStarted() {
                         icon: "5"
                     },
                 ].map((step, i) => (
-                    <motion.div 
-                        key={i}
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
+                    <div 
+                        key={i}}}}
                         className="flex gap-4 bg-white/5 p-5 rounded-xl border border-white/10 hover:bg-white/10 transition-all"
                     >
                         <div className="flex-shrink-0 w-10 h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-lg shadow-lg shadow-bear-blue/20">
@@ -617,13 +581,10 @@ function ModuleGettingStarted() {
                             <h3 className="font-bold text-white mb-2 text-sm">{step.title}</h3>
                             <p className="text-gray-300 leading-relaxed text-xs">{step.desc}</p>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
 
-                <motion.div 
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.5 }}
+                <div}}}
                     className="flex gap-4 bg-green-500/10 p-5 rounded-xl border border-green-500/20"
                 >
                     <div className="flex-shrink-0 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/20">
@@ -633,7 +594,7 @@ function ModuleGettingStarted() {
                         <h3 className="font-bold text-green-400 mb-2 text-sm">Systems Go</h3>
                         <p className="text-green-200/70 leading-relaxed text-xs">Carti 100 is online and ready for tasks.</p>
                     </div>
-                </motion.div>
+                </div>
             </div>
         </div>
     );
@@ -723,11 +684,8 @@ function ModuleWarehouseSafety() {
                     { icon: WrenchScrewdriverIcon, title: "Visual Signals", desc: "Blue LED = moving, Yellow = obstacle detected, Red = error or emergency stop." },
                     { icon: BoltIcon, title: "Emergency Protocol", desc: "Hit E-Stop immediately if someone is at risk. Report all incidents to supervisor." },
                     ].map((item, i) => (
-                    <motion.div 
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.05 }}
+                    <div 
+                        key={i}}}}
                         className="bg-bear-blue/5 p-4 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
                         <div className="flex items-start gap-3">
@@ -739,7 +697,7 @@ function ModuleWarehouseSafety() {
                                 <p className="text-xs text-gray-300 leading-relaxed">{item.desc}</p>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
 
@@ -773,11 +731,8 @@ function ModuleBestPractices() {
                     { icon: ShieldCheckIcon, title: "Weight Limits", desc: "Never exceed 100kg payload. Overloading can damage the robot and void warranty." },
                     { icon: SparklesIcon, title: "Clean Sensors", desc: "Daily LiDAR sensor wipe down prevents navigation errors and maintains efficiency." },
                 ].map((item, i) => (
-                    <motion.div 
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.05 }}
+                    <div 
+                        key={i}}}}
                         className="bg-bear-blue/5 p-4 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
                         <div className="flex items-start gap-3">
@@ -789,7 +744,7 @@ function ModuleBestPractices() {
                                 <p className="text-xs text-gray-300 leading-relaxed">{item.desc}</p>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
 
@@ -860,3 +815,4 @@ function ModuleQuickTips() {
         </div>
     );
 }
+

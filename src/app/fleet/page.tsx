@@ -25,10 +25,7 @@ const StatCard = memo(function StatCard({ stat, index }: { stat: any; index: num
   const colors = colorClasses[stat.color] || colorClasses['bear-blue'];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.02, duration: 0.2 }}
+    <div}}}
       className={`rounded-2xl border border-white/10 bg-gradient-to-br ${colors.bg} p-4 sm:p-5 lg:p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer group`}
     >
       <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
@@ -47,7 +44,7 @@ const StatCard = memo(function StatCard({ stat, index }: { stat: any; index: num
         />
       </div>
       <div className="text-xs sm:text-sm text-white/50">{stat.subtitle}</div>
-    </motion.div>
+    </div>
   );
 });
 
@@ -74,11 +71,8 @@ export default function FleetPage() {
   if (!['internal_admin', 'internal_rfe'].includes(role)) {
     return (
       <div className="flex items-center justify-center h-full min-h-screen px-4">
-        <motion.div 
-          className="text-center bear-glass-card p-8 sm:p-12 max-w-md w-full"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
+        <div 
+          className="text-center bear-glass-card p-8 sm:p-12 max-w-md w-full"}}}
         >
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-rose-500/20 flex items-center justify-center mx-auto mb-5 sm:mb-6">
             <AlertTriangle className="w-7 h-7 sm:w-8 sm:h-8 text-rose-400" />
@@ -88,7 +82,7 @@ export default function FleetPage() {
           <Link href="/" className="btn-primary">
             Return to Dashboard
           </Link>
-        </motion.div>
+        </div>
       </div>
     );
   }
@@ -110,10 +104,7 @@ export default function FleetPage() {
       
       {/* Page Header */}
       <motion.header 
-        className="relative mb-6 sm:mb-8 lg:mb-10"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
+        className="relative mb-6 sm:mb-8 lg:mb-10"}}}
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -153,11 +144,8 @@ export default function FleetPage() {
       </section>
 
       {/* Quick Access Card */}
-      <motion.section 
-        className="mb-6 sm:mb-8 lg:mb-10 bear-glass-card p-4 sm:p-5 lg:p-6"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05, duration: 0.2 }}
+      <section 
+        className="mb-6 sm:mb-8 lg:mb-10 bear-glass-card p-4 sm:p-5 lg:p-6"}}}
       >
         <div className="flex items-center justify-between mb-2 sm:mb-3">
           <h3 className="font-bold text-white flex items-center gap-2 text-sm sm:text-base">
@@ -171,7 +159,7 @@ export default function FleetPage() {
         <p className="text-xs sm:text-sm text-gray-400">
           Jump to individual robot pages or use the Fleet Management view for detailed control.
         </p>
-      </motion.section>
+      </section>
 
       {/* KPI Cards */}
       <section className="mb-6 sm:mb-8 lg:mb-10">
@@ -228,3 +216,5 @@ export default function FleetPage() {
     </div>
   );
 }
+
+

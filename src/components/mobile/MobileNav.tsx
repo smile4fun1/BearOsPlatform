@@ -3,7 +3,6 @@
 import { Home, Bot, MessageSquare, Settings, BookOpen, LifeBuoy } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
 
 interface NavItem {
   id: string;
@@ -45,11 +44,7 @@ export function MobileNav() {
               style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               {active && (
-                <motion.div
-                  layoutId="mobile-nav-active"
-                  className="absolute inset-0 bg-bear-blue/10 rounded-lg"
-                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                />
+                <div className="absolute inset-0 bg-bear-blue/10 rounded-lg" />
               )}
               
               <div className="relative">

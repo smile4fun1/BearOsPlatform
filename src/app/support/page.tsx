@@ -92,9 +92,7 @@ export default function SupportPage() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         
         {/* Hero Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div}}
           className="text-center mb-16"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/60 text-xs font-medium mb-6">
@@ -144,16 +142,13 @@ export default function SupportPage() {
               </button>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Quick Links Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {quickLinks.map((link, index) => (
-            <motion.div
-              key={link.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+            <div
+              key={link.title}}}}
             >
               <div 
                 onClick={() => link.href ? router.push(link.href) : link.action?.()}
@@ -179,7 +174,7 @@ export default function SupportPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -187,10 +182,7 @@ export default function SupportPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
           
           {/* Troubleshooting Section */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
+          <div}}}
             className="lg:col-span-2 rounded-3xl border border-white/10 bg-[#0F1117]/30 backdrop-blur-xl p-8 relative overflow-hidden"
           >
             <div className="relative z-10">
@@ -233,13 +225,10 @@ export default function SupportPage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Resources List */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
+          <div}}}
             className="rounded-3xl border border-white/10 bg-[#0F1117]/30 backdrop-blur-xl p-8"
           >
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
@@ -278,15 +267,12 @@ export default function SupportPage() {
                 </div>
               </a>
             </div>
-          </motion.div>
+          </div>
 
         </div>
 
         {/* Contact CTA */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+        <div}}}
           className="rounded-3xl bg-gradient-to-r from-bear-blue to-blue-600 p-1 mb-12"
         >
           <div className="bg-[#0b1021] rounded-[22px] p-8 md:p-12 text-center relative overflow-hidden">
@@ -317,7 +303,7 @@ export default function SupportPage() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
       </div>
 
@@ -330,4 +316,5 @@ export default function SupportPage() {
     </div>
   );
 }
+
 

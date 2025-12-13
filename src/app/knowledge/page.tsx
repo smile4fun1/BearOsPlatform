@@ -167,18 +167,13 @@ function KnowledgeContent() {
       <div className="relative px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-6xl mx-auto">
         {/* Hero Header - BearEmeaSupport Style */}
         <motion.header 
-          className="mb-6 sm:mb-8 lg:mb-10 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 sm:mb-8 lg:mb-10 text-center"}}
         >
-          <motion.div 
-            className="inline-block px-4 py-2 rounded-full bg-bear-blue/20 text-bear-blue text-sm font-semibold mb-6"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
+          <div 
+            className="inline-block px-4 py-2 rounded-full bg-bear-blue/20 text-bear-blue text-sm font-semibold mb-6"}}}
           >
             SUPPORT & DOCUMENTATION
-          </motion.div>
+          </div>
           
           <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-white mb-2 sm:mb-4 tracking-tight">
             Knowledge Base
@@ -189,11 +184,8 @@ function KnowledgeContent() {
         </motion.header>
 
         {/* Search Bar - Premium Design */}
-        <motion.div 
-          className="relative mb-10 max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div 
+          className="relative mb-10 max-w-4xl mx-auto"}}}
         >
           {/* Search Container */}
           <div className={`group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl border transition-all duration-500 shadow-2xl ${
@@ -266,10 +258,7 @@ function KnowledgeContent() {
                 
                 {/* Search/Ask Button */}
                 {isAiMode && query && (
-                  <motion.button
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0, opacity: 0 }}
+                  <button}}}
                     onClick={() => handleAiSearch()}
                     disabled={isSearching}
                     className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:scale-110 disabled:opacity-50 disabled:scale-100 transition-all shadow-lg shadow-purple-500/50 focus:outline-none focus:ring-0 focus-visible:outline-none"
@@ -280,7 +269,7 @@ function KnowledgeContent() {
                     ) : (
                       <ArrowRight className="w-5 h-5" />
                     )}
-                  </motion.button>
+                  </button>
                 )}
               </div>
             </div>
@@ -300,15 +289,12 @@ function KnowledgeContent() {
               </button>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* AI Chat Interface */}
         <AnimatePresence>
           {isAiMode && chatMessages.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
+            <div}}}
               className="mb-10 max-w-4xl mx-auto"
             >
               {/* Chat Container */}
@@ -379,20 +365,14 @@ function KnowledgeContent() {
                                 <Sparkles className="w-4 h-4 text-purple-400" />
                             </div>
                             <div className="flex items-center gap-1.5 p-3 rounded-2xl bg-white/5 border border-white/10 rounded-tl-sm">
-                                <motion.div 
-                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"
-                                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                                    transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+                                <div 
+                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"}}
                                 />
-                                <motion.div 
-                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"
-                                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                                    transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+                                <div 
+                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"}}
                                 />
-                                <motion.div 
-                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"
-                                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                                    transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                                <div 
+                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"}}
                                 />
                             </div>
                         </div>
@@ -439,17 +419,14 @@ function KnowledgeContent() {
                 </div>
 
               </div>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
         {/* Training Banner - BearEmeaSupport Featured Course Style */}
         {(!isAiMode || (isAiMode && chatMessages.length === 0)) && !query && (
           <div className="mb-10 grid gap-6 md:grid-cols-2">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+            <div}}}
             >
               <Link href="/knowledge/training" className="block group h-full">
                 <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-bear-blue/20 via-purple-500/10 to-bear-blue/20 border border-white/10 p-8 hover:border-bear-blue/50 transition-all duration-500 hover:shadow-2xl hover:shadow-bear-blue/10 h-full">
@@ -490,12 +467,9 @@ function KnowledgeContent() {
                   </div>
                 </div>
               </Link>
-            </motion.div>
+            </div>
 
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+            <div}}}
             >
               <Link href="/knowledge/training/carti" className="block group h-full">
                 <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-bear-blue/20 via-purple-500/10 to-bear-blue/20 border border-white/10 p-8 hover:border-bear-blue/50 transition-all duration-500 hover:shadow-2xl hover:shadow-bear-blue/10 h-full">
@@ -536,17 +510,14 @@ function KnowledgeContent() {
                   </div>
                 </div>
               </Link>
-            </motion.div>
+            </div>
           </div>
         )}
 
         {/* Categories - Modern Horizontal Scroll Design */}
         {(!isAiMode || (isAiMode && chatMessages.length === 0)) && !query && (
-          <motion.div 
-            className="mb-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <div 
+            className="mb-10"}}}
           >
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 px-1">
               <HelpCircle className="w-5 h-5 text-bear-blue" />
@@ -557,13 +528,9 @@ function KnowledgeContent() {
             <div className="lg:hidden overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
               <div className="flex gap-3 min-w-max">
                 {categories.map((cat, index) => (
-                  <motion.button
+                  <button
                     key={cat.id}
-                    onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 + index * 0.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}}}}}
                     className={`group relative flex-shrink-0 w-[140px] h-[140px] rounded-2xl border transition-all duration-300 focus:outline-none focus:ring-0 overflow-hidden ${
                       activeCategory === cat.id
                         ? 'bg-bear-blue/20 border-bear-blue shadow-lg shadow-bear-blue/20'
@@ -591,7 +558,7 @@ function KnowledgeContent() {
                         {cat.label}
                       </div>
                     </div>
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </div>
@@ -599,14 +566,9 @@ function KnowledgeContent() {
             {/* Desktop: 3x2 Grid */}
             <div className="hidden lg:grid lg:grid-cols-3 gap-4">
               {categories.map((cat, index) => (
-                <motion.button
+                <button
                   key={cat.id}
-                  onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + index * 0.05 }}
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}}}}}}
                   className={`group relative h-[100px] rounded-2xl border transition-all duration-300 focus:outline-none focus:ring-0 overflow-hidden ${
                     activeCategory === cat.id
                       ? 'bg-bear-blue/20 border-bear-blue shadow-xl shadow-bear-blue/20'
@@ -648,27 +610,21 @@ function KnowledgeContent() {
                       ? 'text-bear-blue translate-x-1' 
                       : 'text-gray-600 group-hover:text-gray-400 group-hover:translate-x-1'
                   }`} />
-                </motion.button>
+                </button>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* FAQ Results - Modern Clean Accordion */}
         {(!isAiMode || (isAiMode && chatMessages.length === 0)) && (
-            <motion.div 
-            className="space-y-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            <div 
+            className="space-y-3"}}}
             >
             {filteredFaqs.length > 0 ? (
                 filteredFaqs.map((faq, index) => (
-                <motion.div
-                    key={faq.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.03 }}
+                <div
+                    key={faq.id}}}}
                     className={`group rounded-2xl border transition-all duration-300 overflow-hidden ${
                     expandedFaq === faq.id 
                         ? 'bg-white/10 border-bear-blue/50 shadow-xl shadow-bear-blue/10' 
@@ -697,9 +653,7 @@ function KnowledgeContent() {
                         {faq.question}
                         </h3>
                     </div>
-                    <motion.div
-                        animate={{ rotate: expandedFaq === faq.id ? 180 : 0 }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    <div}}
                         className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-300 ${
                         expandedFaq === faq.id 
                             ? 'bg-bear-blue text-white shadow-lg shadow-bear-blue/30' 
@@ -707,17 +661,13 @@ function KnowledgeContent() {
                         }`}
                     >
                         <ChevronDown className="w-5 h-5" />
-                    </motion.div>
+                    </div>
                     </button>
                     
                     {/* Answer Content */}
                     <AnimatePresence>
                     {expandedFaq === faq.id && (
-                        <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        <div}}}}
                         className="overflow-hidden"
                         >
                         <div className="px-5 sm:px-6 pb-5 sm:pb-6">
@@ -736,16 +686,14 @@ function KnowledgeContent() {
                             </div>
                             </div>
                         </div>
-                        </motion.div>
+                        </div>
                     )}
                     </AnimatePresence>
-                </motion.div>
+                </div>
                 ))
             ) : (
-                <motion.div 
-                className="text-center py-20"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                <div 
+                className="text-center py-20"}}
                 >
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/5 mb-6">
                     <Search className="w-10 h-10 text-gray-600" />
@@ -759,9 +707,9 @@ function KnowledgeContent() {
                     <Sparkles className="w-4 h-4" />
                     Try AI Search
                 </button>
-                </motion.div>
+                </div>
             )}
-            </motion.div>
+            </div>
         )}
       </div>
       </main>
@@ -781,3 +729,5 @@ export default function KnowledgePage() {
     </Suspense>
   );
 }
+
+

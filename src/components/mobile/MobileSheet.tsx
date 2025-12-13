@@ -61,24 +61,15 @@ export function MobileSheet({
       {isOpen && (
         <>
           {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+          <div}}}}
             className="fixed inset-0 bg-black/80 z-[100] lg:hidden"
             onClick={onClose}
           />
           
           {/* Sheet */}
-          <motion.div
-            ref={sheetRef}
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
+          <div
+            ref={sheetRef}}}}}
+            drag="y"}
             dragElastic={{ top: 0, bottom: 0.5 }}
             onDragEnd={handleDrag}
             className={`fixed inset-x-0 bottom-0 z-[101] bg-[#0F1117] border-t border-white/10 rounded-t-2xl shadow-2xl lg:hidden flex flex-col ${className}`}
@@ -109,9 +100,10 @@ export function MobileSheet({
             <div className="flex-1 overflow-y-auto mobile-scroll">
               {children}
             </div>
-          </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
   );
 }
+

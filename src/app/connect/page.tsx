@@ -147,10 +147,7 @@ function RobotMentionDropdown({
   if (results.length === 0) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
+    <div}}}
       className="absolute bottom-full left-0 mb-2 w-80 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50"
     >
       <div className="p-2 border-b border-white/5">
@@ -192,7 +189,7 @@ function RobotMentionDropdown({
           </button>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -214,19 +211,12 @@ function RobotSearchModal({
   }, [searchQuery]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div}}}
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
       style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        transition={{ duration: 0.2 }}
+      <div}}}}
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl h-[550px] max-h-[75vh] flex flex-col overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -300,8 +290,8 @@ function RobotSearchModal({
             </div>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -911,11 +901,8 @@ export default function ConnectPage() {
         {/* Notifications Panel */}
         <AnimatePresence>
           {showNotifications && (
-            <motion.div
-              ref={notificationsRef}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+            <div
+              ref={notificationsRef}}}}
               className="absolute top-16 right-4 w-80 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
             >
               <div className="p-4 border-b border-white/10 flex items-center justify-between">
@@ -938,18 +925,15 @@ export default function ConnectPage() {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
         {/* Channel Menu */}
         <AnimatePresence>
           {showChannelMenu && (
-            <motion.div
-              ref={channelMenuRef}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+            <div
+              ref={channelMenuRef}}}}
               className="absolute top-16 right-4 w-64 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
             >
               <div className="p-2">
@@ -1013,18 +997,15 @@ export default function ConnectPage() {
                   <span className="text-sm">Leave Channel</span>
                 </button>
               </div>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
         {/* Files Panel */}
         <AnimatePresence>
           {showFilesPanel && (
-            <motion.div
-              ref={filesPanelRef}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+            <div
+              ref={filesPanelRef}}}}
               className="absolute top-16 right-4 w-96 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40 max-h-[500px] flex flex-col"
             >
               <div className="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
@@ -1066,17 +1047,15 @@ export default function ConnectPage() {
                   </div>
                 )}
               </div>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 lg:mb-0" style={{ marginBottom: 'calc(232px + env(safe-area-inset-bottom, 0px))' }}>
           {currentMessages.map((msg) => (
-            <motion.div 
-              key={msg.id} 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+            <div 
+              key={msg.id}}}
               className={`flex gap-2 sm:gap-4 group relative ${msg.isBot ? 'bg-bear-blue/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-bear-blue/20' : ''}`}
               onMouseEnter={() => setHoveredMessageId(msg.id)}
               onMouseLeave={() => setHoveredMessageId(null)}
@@ -1192,10 +1171,7 @@ export default function ConnectPage() {
               {/* Full Emoji Picker for Reactions */}
               <AnimatePresence>
                 {showReactionPicker === msg.id && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                  <div}}}
                     className="absolute top-full left-0 mt-2 z-50"
                   >
                     <div className="relative">
@@ -1212,10 +1188,10 @@ export default function ConnectPage() {
                         theme="dark"
                       />
               </div>
-                  </motion.div>
+                  </div>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </div>
           ))}
           
           {currentMessages.length === 0 && (
@@ -1243,17 +1219,14 @@ export default function ConnectPage() {
 
             <AnimatePresence>
               {showEmojiPicker && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
+                <div}}}
                   className="absolute bottom-full left-0 mb-2 z-50"
                 >
                   <EmojiPicker 
                     onEmojiClick={handleEmojiSelect} 
                     theme="dark"
                   />
-                </motion.div>
+                </div>
               )}
             </AnimatePresence>
             
@@ -1446,17 +1419,11 @@ function CreateChannelModal({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div}}}
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+      <div}}}
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
@@ -1620,8 +1587,8 @@ function CreateChannelModal({
             Create Channel
           </button>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -1639,17 +1606,11 @@ function ChannelSettingsModal({
   const [description, setDescription] = useState('');
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div}}}
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+      <div}}}
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-lg p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -1703,8 +1664,8 @@ function ChannelSettingsModal({
             Save Changes
           </button>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -1731,17 +1692,11 @@ function MembersModal({
   );
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div}}}
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+      <div}}}
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-lg max-h-[600px] flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -1791,8 +1746,8 @@ function MembersModal({
             ))}
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -1807,17 +1762,11 @@ function PinnedMessagesModal({
   onUnpin: (msgId: string) => void;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div}}}
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+      <div}}}
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[600px] flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -1869,7 +1818,8 @@ function PinnedMessagesModal({
             </div>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
+

@@ -486,6 +486,7 @@ export function MyRobotsView() {
           </div>
         </section>
       </main>
+      
       <Footer />
 
       {/* Scan QR Modal */}
@@ -536,8 +537,6 @@ export function MyRobotsView() {
           </motion.div>
         )}
       </AnimatePresence>
-      </main>
-      <Footer />
     </div>
   );
 }

@@ -1043,20 +1043,32 @@ export default function ConnectPage() {
                   </span>
                   <span className="text-[10px] sm:text-xs text-gray-500">{msg.timestamp}</span>
                   {hoveredMessageId === msg.id && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePinMessage(msg);
-                      }}
-                      className={`ml-1 p-1 hover:bg-white/10 rounded transition-all ${
-                        pinnedMessages[activeChannel]?.some(m => m.id === msg.id)
-                          ? 'text-bear-blue'
-                          : 'text-gray-400 hover:text-white'
-                      }`}
-                      title={pinnedMessages[activeChannel]?.some(m => m.id === msg.id) ? "Unpin message" : "Pin message"}
-                    >
-                      <Pin className="w-3 h-3" />
-                    </button>
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowReactionPicker(msg.id);
+                        }}
+                        className="ml-1 p-1 hover:bg-white/10 rounded transition-all text-gray-400 hover:text-white"
+                        title="Add reaction"
+                      >
+                        <Smile className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePinMessage(msg);
+                        }}
+                        className={`p-1 hover:bg-white/10 rounded transition-all ${
+                          pinnedMessages[activeChannel]?.some(m => m.id === msg.id)
+                            ? 'text-bear-blue'
+                            : 'text-gray-400 hover:text-white'
+                        }`}
+                        title={pinnedMessages[activeChannel]?.some(m => m.id === msg.id) ? "Unpin message" : "Pin message"}
+                      >
+                        <Pin className="w-3 h-3" />
+                      </button>
+                    </>
                   )}
                 </div>
                 <p className="text-sm sm:text-base text-gray-300 leading-relaxed" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
@@ -1119,26 +1131,6 @@ export default function ConnectPage() {
                       <Smile className="w-3 h-3" />
                     </button>
                   </div>
-                )}
-                {/* Show add reaction button on hover if no reactions exist */}
-                {hoveredMessageId === msg.id && (!msg.reactions || msg.reactions.length === 0) && !showReactionPicker && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="mt-2"
-                  >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowReactionPicker(msg.id);
-                      }}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all text-xs"
-                    >
-                      <Smile className="w-3 h-3" />
-                      <span>Add reaction</span>
-                    </button>
-                  </motion.div>
                 )}
               </div>
               {/* Full Emoji Picker for Reactions */}

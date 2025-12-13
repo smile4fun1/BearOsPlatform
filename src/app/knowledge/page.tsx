@@ -496,33 +496,39 @@ function KnowledgeContent() {
               transition={{ delay: 0.4 }}
             >
               <Link href="/knowledge/training/carti" className="block group h-full">
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-500/20 via-pink-500/10 to-purple-500/20 border border-white/10 p-8 hover:border-purple-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/10 h-full">
-                  {/* Background Image Placeholder for Carti */}
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-bear-blue/20 via-purple-500/10 to-bear-blue/20 border border-white/10 p-8 hover:border-bear-blue/50 transition-all duration-500 hover:shadow-2xl hover:shadow-bear-blue/10 h-full">
+                  {/* Background Image */}
                   <div className="absolute right-0 bottom-0 w-48 h-48 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
-                     {/* Using Servi image as placeholder or another asset if available, styled differently */}
-                     <div className="w-full h-full bg-purple-500/20 rounded-full blur-3xl translate-x-10 translate-y-10"></div>
+                    <Image
+                      src="/whybear_amr.webp"
+                      alt=""
+                      width={192}
+                      height={192}
+                      className="object-contain translate-x-8 translate-y-8 w-full h-full"
+                      loading="eager"
+                    />
                   </div>
                   
                   <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                     <div>
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="px-3 py-1 rounded-full bg-purple-600 text-white text-xs font-bold tracking-wider uppercase shadow-lg shadow-purple-600/30">
-                          New
+                        <span className="px-3 py-1 rounded-full bg-bear-blue text-white text-xs font-bold tracking-wider uppercase shadow-lg shadow-bear-blue/30">
+                          Featured
                         </span>
-                        <span className="text-purple-400 font-medium flex items-center gap-1.5">
+                        <span className="text-bear-blue font-medium flex items-center gap-1.5">
                           <GraduationCap className="w-4 h-4" />
                           Course
                         </span>
                       </div>
-                      <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">
+                      <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2 group-hover:text-bear-blue transition-colors">
                         Carti 100 Training
                       </h2>
                       <p className="text-gray-400 leading-relaxed text-sm">
                         Comprehensive guide for the Carti 100 autonomous logistics robot. Safety, mapping, and heavy payload ops.
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 text-purple-400 font-semibold group-hover:gap-4 transition-all">
+                    <div className="flex items-center gap-2 text-bear-blue font-semibold group-hover:gap-4 transition-all">
                         Start Training <ChevronRight className="w-5 h-5" />
                     </div>
                   </div>

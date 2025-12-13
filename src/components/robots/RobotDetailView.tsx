@@ -223,8 +223,8 @@ export function RobotDetailView({ robot }: RobotDetailViewProps) {
 
           {/* Action Buttons - Role Aware */}
           <div className="mt-6 flex flex-col sm:flex-row gap-4">
-            {/* RFE Diagnostic Panel - Internal Only */}
-            {isInternalUser && (
+            {/* RFE Diagnostic Panel - Internal Users & Partners */}
+            {(isInternalUser || isPartner) && (
               <button
                 onClick={() => setShowRFEPanel(true)}
                 className="flex-1 flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-indigo-500/20 to-sky-500/20 border border-indigo-500/30 p-4 text-white transition-all hover:from-indigo-500/30 hover:to-sky-500/30 hover:scale-[1.01] hover:shadow-lg hover:shadow-indigo-500/20"
@@ -914,8 +914,8 @@ export function RobotDetailView({ robot }: RobotDetailViewProps) {
       </main>
       <Footer />
 
-      {/* RFE Diagnostic Panel - Internal Users Only */}
-      {isInternalUser && showRFEPanel && (
+      {/* RFE Diagnostic Panel - Internal Users & Partners */}
+      {(isInternalUser || isPartner) && showRFEPanel && (
         <RFEDiagnosticPanel
           robot={robot}
           onClose={() => setShowRFEPanel(false)}

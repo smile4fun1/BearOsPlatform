@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { useRole } from '@/lib/roleContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { 
   Hash, 
   Search, 
@@ -17,9 +18,15 @@ import {
   ExternalLink,
   QrCode,
   Battery,
-  MapPin
+  MapPin,
+  X,
+  FileText,
+  Image as ImageIcon
 } from 'lucide-react';
 import { robotFleet, searchRobots, Robot } from '@/lib/robotData';
+
+// Dynamic import for emoji picker to avoid SSR issues
+const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false });
 
 interface Message {
   id: string;
@@ -29,7 +36,7 @@ interface Message {
   timestamp: string;
   isBot?: boolean;
   robotId?: string;
-  attachments?: string[];
+  attachments?: { name: string; type: string; url: string }[];
 }
 
 interface Channel {
@@ -42,19 +49,16 @@ interface Channel {
 
 // Parse message content for @mentions and render them as links
 function MessageContent({ content }: { content: string }) {
-  // Match @ROBOT-ID patterns (e.g., @Servi-Plus-C44E79 or @c44e79)
   const mentionPattern = /@([A-Za-z0-9\-]+)/g;
   const parts = [];
   let lastIndex = 0;
   let match;
 
   while ((match = mentionPattern.exec(content)) !== null) {
-    // Add text before the match
     if (match.index > lastIndex) {
       parts.push({ type: 'text', value: content.slice(lastIndex, match.index) });
     }
 
-    // Extract potential robot ID
     const mention = match[1];
     const robotId = mention.toLowerCase().split('-').pop() || mention.toLowerCase().slice(0, 6);
     const robot = robotFleet.find(r => 
@@ -72,7 +76,6 @@ function MessageContent({ content }: { content: string }) {
     lastIndex = match.index + match[0].length;
   }
 
-  // Add remaining text
   if (lastIndex < content.length) {
     parts.push({ type: 'text', value: content.slice(lastIndex) });
   }
@@ -113,11 +116,13 @@ function MessageContent({ content }: { content: string }) {
 function RobotMentionDropdown({ 
   query, 
   onSelect, 
-  onClose 
+  onClose,
+  selectedIndex
 }: { 
   query: string; 
   onSelect: (robot: Robot) => void; 
   onClose: () => void;
+  selectedIndex: number;
 }) {
   const results = useMemo(() => {
     if (!query || query.length < 1) return [];
@@ -136,15 +141,17 @@ function RobotMentionDropdown({
       <div className="p-2 border-b border-white/5">
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <Bot className="w-3 h-3" />
-          <span>Mention a robot</span>
+          <span>Mention a robot (Tab to autocomplete)</span>
         </div>
       </div>
       <div className="max-h-60 overflow-y-auto">
-        {results.map((robot) => (
+        {results.map((robot, index) => (
           <button
             key={robot.id}
             onClick={() => onSelect(robot)}
-            className="w-full flex items-center gap-3 p-3 hover:bg-white/5 transition-colors text-left"
+            className={`w-full flex items-center gap-3 p-3 transition-colors text-left ${
+              index === selectedIndex ? 'bg-bear-blue/20' : 'hover:bg-white/5'
+            }`}
           >
             <div className="w-8 h-8 rounded-lg bg-bear-blue/20 flex items-center justify-center">
               <Bot className="w-4 h-4 text-bear-blue" />
@@ -180,7 +187,14 @@ export default function ConnectPage() {
   const [inputText, setInputText] = useState('');
   const [mentionQuery, setMentionQuery] = useState<string | null>(null);
   const [mentionStartIndex, setMentionStartIndex] = useState(0);
+  const [selectedMentionIndex, setSelectedMentionIndex] = useState(0);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [channelMessages, setChannelMessages] = useState<Record<string, Message[]>>({});
+  
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const channels: Channel[] = [
     { id: 'general', name: 'general', type: 'public', allowedRoles: ['internal_admin', 'internal_rfe', 'partner_qcom'] },
@@ -190,7 +204,7 @@ export default function ConnectPage() {
     { id: 'robot-alerts', name: 'robot-alerts', type: 'bot', allowedRoles: ['internal_admin', 'internal_rfe'], unread: 5 },
   ];
 
-  const messages: Record<string, Message[]> = {
+  const initialMessages: Record<string, Message[]> = {
     'general': [
       { id: '1', sender: 'Sarah Connor', content: 'Has anyone seen the new Servi Plus deployment docs?', timestamp: '10:30 AM' },
       { id: '2', sender: 'John Smith', content: 'Yes, check the Knowledge Base, I just updated them.', timestamp: '10:32 AM' },
@@ -209,18 +223,23 @@ export default function ConnectPage() {
     'field-ops': [
       { id: '1', sender: 'RFE Team Lead', content: 'Deploying 3 new robots at London Service Hub today. @j1k2l3, @m4n5o6, @p7q8r9', timestamp: '08:00 AM' },
       { id: '2', sender: 'Field Engineer', content: 'Confirmed. Maps already uploaded. Starting calibration in 30 mins.', timestamp: '08:05 AM' },
-    ]
+    ],
+    'announcements': []
   };
 
+  // Initialize messages
+  useEffect(() => {
+    setChannelMessages(initialMessages);
+  }, []);
+
   const visibleChannels = channels.filter(c => c.allowedRoles.includes(role));
-  const currentMessages = messages[activeChannel] || [];
+  const currentMessages = channelMessages[activeChannel] || [];
 
   // Handle input change and detect @ mentions
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setInputText(value);
 
-    // Check if user is typing a mention
     const cursorPos = e.target.selectionStart || 0;
     const textBeforeCursor = value.slice(0, cursorPos);
     const mentionMatch = textBeforeCursor.match(/@([A-Za-z0-9\-]*)$/);
@@ -228,6 +247,7 @@ export default function ConnectPage() {
     if (mentionMatch) {
       setMentionQuery(mentionMatch[1]);
       setMentionStartIndex(mentionMatch.index || 0);
+      setSelectedMentionIndex(0);
     } else {
       setMentionQuery(null);
     }
@@ -236,16 +256,123 @@ export default function ConnectPage() {
   // Handle robot selection from dropdown
   const handleRobotSelect = (robot: Robot) => {
     const before = inputText.slice(0, mentionStartIndex);
-    const after = inputText.slice(mentionStartIndex + (mentionQuery?.length || 0) + 1);
+    const after = inputText.slice(inputRef.current?.selectionStart || inputText.length);
     setInputText(`${before}@${robot.name} ${after}`);
     setMentionQuery(null);
     inputRef.current?.focus();
+  };
+
+  // Handle keyboard navigation in mention dropdown
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Handle mention dropdown navigation
+    if (mentionQuery !== null) {
+      const results = searchRobots(mentionQuery).slice(0, 5);
+      
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedMentionIndex((prev) => (prev + 1) % results.length);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedMentionIndex((prev) => (prev - 1 + results.length) % results.length);
+      } else if (e.key === 'Tab' && results.length > 0) {
+        e.preventDefault();
+        handleRobotSelect(results[selectedMentionIndex]);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        setMentionQuery(null);
+      }
+      return;
+    }
+
+    // Handle Enter to send (Shift+Enter for new line)
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  // Send message
+  const handleSendMessage = () => {
+    if (!inputText.trim() && attachedFiles.length === 0) return;
+
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      sender: 'You',
+      content: inputText,
+      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      attachments: attachedFiles.length > 0 ? attachedFiles.map(file => ({
+        name: file.name,
+        type: file.type,
+        url: URL.createObjectURL(file)
+      })) : undefined
+    };
+
+    setChannelMessages(prev => ({
+      ...prev,
+      [activeChannel]: [...(prev[activeChannel] || []), newMessage]
+    }));
+
+    setInputText('');
+    setAttachedFiles([]);
+    setShowEmojiPicker(false);
+    inputRef.current?.focus();
+  };
+
+  // Handle emoji selection
+  const handleEmojiSelect = (emojiData: any) => {
+    const emoji = emojiData.emoji;
+    const cursorPos = inputRef.current?.selectionStart || inputText.length;
+    const before = inputText.slice(0, cursorPos);
+    const after = inputText.slice(cursorPos);
+    setInputText(before + emoji + after);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
+
+  // Handle file selection
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setAttachedFiles(prev => [...prev, ...Array.from(e.target.files || [])]);
+    }
+  };
+
+  // Handle drag and drop
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files) {
+      setAttachedFiles(prev => [...prev, ...Array.from(e.dataTransfer.files)]);
+    }
+  };
+
+  // Remove attached file
+  const handleRemoveFile = (index: number) => {
+    setAttachedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const [showSidebar, setShowSidebar] = useState(false);
   
   return (
     <div className="flex h-screen bg-[#020511] overflow-hidden">
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+      
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {showSidebar && (
@@ -259,7 +386,7 @@ export default function ConnectPage() {
         )}
       </AnimatePresence>
       
-      {/* Channel Sidebar - Hidden on mobile by default */}
+      {/* Channel Sidebar */}
       <div className={`fixed lg:relative inset-y-0 left-0 w-64 sm:w-72 bg-[#0F1117] border-r border-white/5 flex flex-col z-50 transform transition-transform duration-300 lg:translate-x-0 ${showSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="p-3 sm:p-4 border-b border-white/5">
           <div className="relative">
@@ -303,24 +430,40 @@ export default function ConnectPage() {
             ))}
           </div>
           
-          {/* Tip for @mentions - Hidden on mobile */}
           <div className="hidden sm:block mx-4 mt-6 p-3 rounded-xl bg-white/5 border border-white/10">
             <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
               <Bot className="w-3 h-3 text-bear-blue" />
               <span className="font-medium text-bear-blue">Pro Tip</span>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 mb-1">
               Type <code className="px-1 py-0.5 bg-white/10 rounded text-bear-blue">@</code> to mention a robot.
+            </p>
+            <p className="text-xs text-gray-500">
+              Press <code className="px-1 py-0.5 bg-white/10 rounded text-bear-blue">Tab</code> to autocomplete.
             </p>
           </div>
         </div>
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#020511]">
+      <div 
+        className="flex-1 flex flex-col min-w-0 bg-[#020511]"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {/* Drag overlay */}
+        {isDragging && (
+          <div className="absolute inset-0 bg-bear-blue/20 backdrop-blur-sm z-40 flex items-center justify-center border-4 border-dashed border-bear-blue">
+            <div className="text-center">
+              <Paperclip className="w-16 h-16 text-bear-blue mx-auto mb-4" />
+              <p className="text-white text-xl font-bold">Drop files here</p>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <header className="h-14 sm:h-16 px-3 sm:px-6 border-b border-white/5 flex items-center justify-between bg-[#0F1117]/50 backdrop-blur-sm">
-          {/* Mobile menu toggle */}
           <button 
             onClick={() => setShowSidebar(!showSidebar)}
             className="p-2 -ml-2 rounded-lg hover:bg-white/5 lg:hidden"
@@ -371,6 +514,16 @@ export default function ConnectPage() {
                 <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
                   <MessageContent content={msg.content} />
                 </p>
+                {msg.attachments && msg.attachments.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {msg.attachments.map((file, i) => (
+                      <div key={i} className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-lg border border-white/10">
+                        {file.type.startsWith('image/') ? <ImageIcon className="w-4 h-4 text-bear-blue" /> : <FileText className="w-4 h-4 text-bear-blue" />}
+                        <span className="text-xs text-gray-300">{file.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {msg.robotId && (
                   <div className="mt-3 flex items-center gap-3">
                     <Link 
@@ -381,9 +534,6 @@ export default function ConnectPage() {
                       View Robot
                       <ExternalLink className="w-3 h-3" />
                     </Link>
-                    <button className="text-xs font-medium text-gray-400 hover:text-white px-3 py-1.5 rounded-lg transition-colors border border-white/10 hover:bg-white/5">
-                      View Logs
-                    </button>
                   </div>
                 )}
               </div>
@@ -408,31 +558,85 @@ export default function ConnectPage() {
                   query={mentionQuery}
                   onSelect={handleRobotSelect}
                   onClose={() => setMentionQuery(null)}
+                  selectedIndex={selectedMentionIndex}
                 />
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {showEmojiPicker && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute bottom-full left-0 mb-2 z-50"
+                >
+                  <EmojiPicker onEmojiClick={handleEmojiSelect} theme="dark" />
+                </motion.div>
               )}
             </AnimatePresence>
             
             <div className="bg-[#0F1117] border border-white/10 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 focus-within:border-bear-blue/50 transition-all duration-300 focus-within:shadow-lg focus-within:shadow-bear-blue/5">
+              {attachedFiles.length > 0 && (
+                <div className="px-2 py-2 flex flex-wrap gap-2 border-b border-white/5 mb-2">
+                  {attachedFiles.map((file, i) => (
+                    <div key={i} className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+                      {file.type.startsWith('image/') ? <ImageIcon className="w-3 h-3 text-bear-blue" /> : <FileText className="w-3 h-3 text-bear-blue" />}
+                      <span className="text-xs text-gray-300 truncate max-w-[150px]">{file.name}</span>
+                      <button onClick={() => handleRemoveFile(i)} className="text-gray-500 hover:text-white">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
               <textarea
                 ref={inputRef}
                 value={inputText}
                 onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
                 placeholder={`Message #${activeChannel} — Type @ to mention a robot`}
-                className="w-full bg-transparent text-sm sm:text-base text-white px-2 sm:px-3 py-1.5 sm:py-2 focus:outline-none resize-none h-9 sm:h-10 min-h-[36px] sm:min-h-[40px] placeholder-gray-500"
+                className="w-full bg-transparent text-sm sm:text-base text-white px-2 sm:px-3 py-1.5 sm:py-2 focus:outline-none resize-none min-h-[36px] sm:min-h-[40px] max-h-32 placeholder-gray-500"
+                rows={1}
+                style={{ height: 'auto' }}
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = Math.min(target.scrollHeight, 128) + 'px';
+                }}
               />
               <div className="flex items-center justify-between px-1.5 sm:px-2 pt-1.5 sm:pt-2 border-t border-white/5 mt-1.5 sm:mt-2">
                 <div className="flex items-center gap-0.5 sm:gap-1 text-gray-500">
-                  <button className="p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"><Paperclip className="w-4 h-4" /></button>
-                  <button className="p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"><Smile className="w-4 h-4" /></button>
                   <button 
-                    onClick={() => setMentionQuery('')}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"
+                    title="Attach file"
+                  >
+                    <Paperclip className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className="p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"
+                    title="Add emoji"
+                  >
+                    <Smile className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setMentionQuery('');
+                      inputRef.current?.focus();
+                    }}
                     className="p-1.5 sm:p-2 hover:bg-bear-blue/10 rounded-lg transition-colors hover:text-bear-blue flex items-center gap-1"
                     title="Mention a robot"
                   >
                     <Bot className="w-4 h-4" />
                   </button>
                 </div>
-                <button className="p-2 sm:p-2.5 bg-bear-blue text-white rounded-lg sm:rounded-xl hover:bg-bear-blue/90 transition-all active:scale-95 sm:hover:scale-105 shadow-lg shadow-bear-blue/20">
+                <button 
+                  onClick={handleSendMessage}
+                  disabled={!inputText.trim() && attachedFiles.length === 0}
+                  className="p-2 sm:p-2.5 bg-bear-blue text-white rounded-lg sm:rounded-xl hover:bg-bear-blue/90 transition-all active:scale-95 sm:hover:scale-105 shadow-lg shadow-bear-blue/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <Send className="w-4 h-4" />
                 </button>
               </div>

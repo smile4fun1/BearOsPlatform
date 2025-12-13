@@ -430,8 +430,8 @@ function ModuleWelcome({ onComplete }: { onComplete: () => void }) {
 
 function ModuleMeetCarti() {
     return (
-        <div className="space-y-6">
-            <div className="bear-glass-card p-8 relative overflow-hidden">
+        <div className="space-y-6 h-full flex flex-col">
+            <div className="bear-glass-card p-8 relative overflow-hidden flex-shrink-0">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-bear-blue/5 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/2" />
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
                     <div className="flex-1">
@@ -451,7 +451,7 @@ function ModuleMeetCarti() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
                 {[
                     { icon: WrenchScrewdriverIcon, title: "100kg Payload", desc: "Capable of transporting heavy goods and materials across the facility.", color: "text-blue-400", bg: "bg-blue-500/10" },
                     { icon: ShieldCheckIcon, title: "LiDAR Navigation", desc: "Advanced sensors for precise mapping and obstacle avoidance in dynamic environments.", color: "text-green-400", bg: "bg-green-500/10" },
@@ -479,61 +479,61 @@ function ModuleMeetCarti() {
 
 function ModuleGettingStarted() {
     return (
-        <div className="space-y-6">
-            <div className="bear-glass-card p-8">
+        <div className="space-y-6 h-full flex flex-col">
+            <div className="bear-glass-card p-8 flex-shrink-0">
                 <h2 className="text-3xl font-bold text-white mb-2">Getting Started</h2>
-                <p className="text-gray-400 text-lg mb-8">Pre-operation safety checks.</p>
+                <p className="text-gray-400 text-lg">Pre-operation safety checks.</p>
+            </div>
 
-                <div className="space-y-4">
-                    {[
-                        { 
-                            title: "E-Stop Check", 
-                            desc: "Ensure the Emergency Stop button is disengaged (rotate clockwise).",
-                            icon: "1"
-                        },
-                        { 
-                            title: "Sensor Clean", 
-                            desc: "Wipe LiDAR and depth camera lenses with a microfiber cloth.",
-                            icon: "2"
-                        },
-                        { 
-                            title: "Path Clearance", 
-                            desc: "Verify that the main transport aisles are free of large debris.",
-                            icon: "3"
-                        },
-                    ].map((step, i) => (
-                        <motion.div 
-                            key={i}
-                            initial={{ x: -20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            transition={{ delay: i * 0.15 }}
-                            className="flex gap-5 bg-white/5 p-5 rounded-2xl border border-white/5"
-                        >
-                            <div className="flex-shrink-0 w-10 h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-lg shadow-lg shadow-bear-blue/20">
-                                {step.icon}
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-bold text-white mb-1">{step.title}</h3>
-                                <p className="text-gray-400 leading-relaxed">{step.desc}</p>
-                            </div>
-                        </motion.div>
-                    ))}
-
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+                {[
+                    { 
+                        title: "E-Stop Check", 
+                        desc: "Ensure the Emergency Stop button is disengaged (rotate clockwise).",
+                        icon: "1"
+                    },
+                    { 
+                        title: "Sensor Clean", 
+                        desc: "Wipe LiDAR and depth camera lenses with a microfiber cloth.",
+                        icon: "2"
+                    },
+                    { 
+                        title: "Path Clearance", 
+                        desc: "Verify that the main transport aisles are free of large debris.",
+                        icon: "3"
+                    },
+                ].map((step, i) => (
                     <motion.div 
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                        className="flex gap-5 bg-green-500/10 p-5 rounded-2xl border border-green-500/20"
+                        key={i}
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: i * 0.15 }}
+                        className="flex flex-col gap-4 bg-white/5 p-5 rounded-2xl border border-white/5 h-full"
                     >
-                        <div className="flex-shrink-0 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/20">
-                            <CheckCircleIcon className="w-6 h-6" />
+                        <div className="flex-shrink-0 w-10 h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-lg shadow-lg shadow-bear-blue/20">
+                            {step.icon}
                         </div>
-                        <div>
-                            <h3 className="text-lg font-bold text-green-400 mb-1">Systems Go</h3>
-                            <p className="text-green-200/70 leading-relaxed">Carti 100 is online and ready for tasks.</p>
+                        <div className="flex-1">
+                            <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                            <p className="text-sm text-gray-400 leading-relaxed">{step.desc}</p>
                         </div>
                     </motion.div>
-                </div>
+                ))}
+
+                <motion.div 
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex flex-col gap-4 bg-green-500/10 p-5 rounded-2xl border border-green-500/20 h-full"
+                >
+                    <div className="flex-shrink-0 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/20">
+                        <CheckCircleIcon className="w-6 h-6" />
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="text-lg font-bold text-green-400 mb-2">Systems Go</h3>
+                        <p className="text-sm text-green-200/70 leading-relaxed">Carti 100 is online and ready for tasks.</p>
+                    </div>
+                </motion.div>
             </div>
         </div>
     );
@@ -541,8 +541,8 @@ function ModuleGettingStarted() {
 
 function ModuleUsingCarti() {
     return (
-        <div className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-6 h-full flex flex-col">
+            <div className="grid md:grid-cols-2 gap-6 flex-shrink-0">
                 <div className="bear-glass-card p-6 h-full">
                     <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                         <CheckCircleIcon className="w-5 h-5 text-green-500" />
@@ -584,9 +584,9 @@ function ModuleUsingCarti() {
                 </div>
             </div>
 
-            <div className="bear-glass-card p-8">
+            <div className="bear-glass-card p-8 flex-1">
                 <h3 className="text-2xl font-bold text-white mb-6">Mission Control</h3>
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-3 gap-6 h-full items-center">
                     {[
                         { title: "Select Destination", desc: "Choose a predefined station from the tablet interface." },
                         { title: "Engage Auto", desc: "Press 'Start' to begin autonomous navigation." },
@@ -611,22 +611,22 @@ function ModuleUsingCarti() {
 
 function ModuleBestPractices() {
     return (
-        <div className="space-y-6">
-            <div className="bear-glass-card p-8">
+        <div className="space-y-6 h-full flex flex-col">
+            <div className="bear-glass-card p-8 flex-1">
                 <h2 className="text-3xl font-bold text-white mb-6">Operational Excellence</h2>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 gap-4 h-full">
                     {[
                         { icon: UserGroupIcon, title: "Zone Safety", desc: "Maintain a clear zone around picking stations. Allow Carti space to maneuver.", color: "text-blue-400" },
                         { icon: WrenchScrewdriverIcon, title: "Maintenance", desc: "Report any unusual noises or wheel wear immediately to the fleet manager.", color: "text-green-400" },
                         { icon: MapIcon, title: "Mapping Updates", desc: "Alert admins if layout changes occur (new racks, moved pallets) so maps can be updated.", color: "text-purple-400" },
                         { icon: ClipboardDocumentCheckIcon, title: "Charge Management", desc: "Send Carti to charge during break times to ensure full shift coverage.", color: "text-orange-400" },
                     ].map((item, i) => (
-                        <div key={i} className="bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors h-full">
-                            <div className="flex items-start gap-4 h-full">
+                        <div key={i} className="bg-white/5 p-5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors h-full flex flex-col justify-center">
+                            <div className="flex items-start gap-4">
                                 <item.icon className={`w-6 h-6 ${item.color} mt-1 flex-shrink-0`} />
-                                <div className="flex flex-col h-full">
+                                <div className="flex-1">
                                     <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                                    <p className="text-sm text-gray-400 leading-relaxed flex-1">{item.desc}</p>
+                                    <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
                                 </div>
                             </div>
                         </div>
@@ -639,8 +639,8 @@ function ModuleBestPractices() {
 
 function ModuleQuickTips() {
     return (
-        <div className="space-y-6">
-            <div className="bear-glass-card p-8">
+        <div className="space-y-6 h-full flex flex-col">
+            <div className="bear-glass-card p-8 flex-1">
                 <h2 className="text-3xl font-bold text-white mb-2">Troubleshooting</h2>
                 <p className="text-gray-400 mb-8">Resolving common issues.</p>
 
@@ -665,4 +665,3 @@ function ModuleQuickTips() {
         </div>
     );
 }
-

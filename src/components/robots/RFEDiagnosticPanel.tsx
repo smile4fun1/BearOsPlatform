@@ -76,9 +76,10 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/20 bg-gradient-to-br from-[#020511]/98 via-[#0a1628]/98 to-[#020511]/98 backdrop-blur-xl shadow-2xl"
+        className="relative w-full max-w-5xl max-h-[90vh] rounded-3xl border border-white/20 bg-gradient-to-br from-[#020511]/98 via-[#0a1628]/98 to-[#020511]/98 backdrop-blur-xl shadow-2xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="overflow-y-auto flex-1">
         {/* Header */}
         <div className="sticky top-0 z-10 border-b border-white/10 bg-gradient-to-r from-indigo-500/10 to-sky-500/10 p-6">
           <button
@@ -379,6 +380,7 @@ export function RFEDiagnosticPanel({ robot, onClose }: RFEDiagnosticPanelProps) 
               )}
             </>
           )}
+        </div>
         </div>
       </div>
 

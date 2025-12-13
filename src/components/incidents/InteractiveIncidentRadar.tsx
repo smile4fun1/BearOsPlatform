@@ -242,9 +242,10 @@ Please provide:
           onClick={() => setSelectedIncident(null)}
         >
           <div 
-            className="relative max-h-[95vh] sm:max-h-[90vh] w-full sm:max-w-4xl overflow-y-auto rounded-t-2xl sm:rounded-2xl border-t sm:border border-white/20 bg-gradient-to-br from-[#0a0f1c] via-[#0a1628] to-[#0a0f1c] backdrop-blur-xl shadow-2xl sm:m-4"
+            className="relative max-h-[95vh] sm:max-h-[90vh] w-full sm:max-w-4xl rounded-t-2xl sm:rounded-2xl border-t sm:border border-white/20 bg-gradient-to-br from-[#0a0f1c] via-[#0a1628] to-[#0a0f1c] backdrop-blur-xl shadow-2xl sm:m-4 overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="overflow-y-auto flex-1">
             {/* Close button */}
             <button
               onClick={() => setSelectedIncident(null)}
@@ -455,6 +456,7 @@ Please provide:
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>

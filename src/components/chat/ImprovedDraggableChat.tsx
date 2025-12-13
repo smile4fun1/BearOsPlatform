@@ -80,11 +80,11 @@ export function ImprovedDraggableChat() {
     // Default positions: desktop = closer to logo, mobile = bottom left above nav
     const isMobileDevice = window.innerWidth < 1024;
     if (isMobileDevice) {
-      // Position above the home icon (bottom left) with more breathing space
-      // Bottom nav is ~60px (smaller now), icon is 56px, add 32px spacing for more height
+      // Position as shown in screenshot: bottom left, above home icon
+      // Bottom nav is ~60px, icon is 48px (smaller), add spacing
       return {
-        x: 16, // 16px from left edge (above home icon)
-        y: window.innerHeight - 60 - 56 - 32, // Higher above nav bar with extra spacing
+        x: 12, // Close to left edge
+        y: window.innerHeight - 60 - 48 - 24, // Above nav bar
       };
     }
     return {
@@ -147,7 +147,8 @@ export function ImprovedDraggableChat() {
   useEffect(() => {
     const handleResize = () => {
       // Constrain icon position
-      const iconSize = 56; // h-14 = 56px
+      const isMobileDevice = window.innerWidth < 1024;
+      const iconSize = isMobileDevice ? 48 : 64; // 12 (48px) on mobile, 16 (64px) on desktop
       setIconPosition(prev => ({
         x: Math.max(0, Math.min(window.innerWidth - iconSize, prev.x)),
         y: Math.max(0, Math.min(window.innerHeight - iconSize, prev.y)),
@@ -908,7 +909,7 @@ export function ImprovedDraggableChat() {
               }
               setHasIconMoved(false); // Reset for next interaction
             }}
-            className={`flex h-16 w-16 items-center justify-center transition-all hover:scale-110 z-50 ${
+            className={`flex lg:h-16 lg:w-16 h-12 w-12 items-center justify-center transition-all lg:hover:scale-110 active:scale-95 z-50 ${
               isDraggingIcon ? "cursor-grabbing" : "cursor-grab"
             }`}
             aria-label="Open Ursa Minor"

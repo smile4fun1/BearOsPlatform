@@ -45,6 +45,7 @@ interface Message {
   isBot?: boolean;
   robotId?: string;
   attachments?: { name: string; type: string; url: string }[];
+  reactions?: { emoji: string; users: string[]; count: number }[];
 }
 
 interface Channel {
@@ -211,15 +212,15 @@ function RobotSearchModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/90 z-[100] flex items-start justify-center p-4 pt-16"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+        initial={{ scale: 0.95, opacity: 0, y: -20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.95, opacity: 0, y: -20 }}
         transition={{ duration: 0.2 }}
-        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl h-[600px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl"
+        className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl h-[600px] max-h-[80vh] flex flex-col overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-4 border-b border-white/10 flex-shrink-0">
@@ -313,6 +314,9 @@ export default function ConnectPage() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showChannelMenu, setShowChannelMenu] = useState(false);
   const [showFilesPanel, setShowFilesPanel] = useState(false);
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+  const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
+  const [showSidebar, setShowSidebar] = useState(false);
   
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -513,12 +517,61 @@ export default function ConnectPage() {
     }
   };
 
+  // Handle emoji reactions
+  const handleReactionClick = (messageId: string, emoji: string) => {
+    setChannelMessages(prev => {
+      const newMessages = { ...prev };
+      const channelMsgs = newMessages[activeChannel] || [];
+      const messageIndex = channelMsgs.findIndex(m => m.id === messageId);
+      
+      if (messageIndex !== -1) {
+        const message = { ...channelMsgs[messageIndex] };
+        const reactions = message.reactions || [];
+        const existingReactionIndex = reactions.findIndex(r => r.emoji === emoji);
+        
+        if (existingReactionIndex !== -1) {
+          // User already reacted with this emoji, remove their reaction
+          const reaction = { ...reactions[existingReactionIndex] };
+          if (reaction.users.includes('You')) {
+            reaction.users = reaction.users.filter(u => u !== 'You');
+            reaction.count = Math.max(0, reaction.count - 1);
+            if (reaction.count === 0) {
+              reactions.splice(existingReactionIndex, 1);
+            } else {
+              reactions[existingReactionIndex] = reaction;
+            }
+          } else {
+            // Add user's reaction
+            reaction.users = [...reaction.users, 'You'];
+            reaction.count += 1;
+            reactions[existingReactionIndex] = reaction;
+          }
+        } else {
+          // Add new reaction
+          reactions.push({ emoji, users: ['You'], count: 1 });
+        }
+        
+        message.reactions = reactions;
+        channelMsgs[messageIndex] = message;
+        newMessages[activeChannel] = channelMsgs;
+      }
+      
+      return newMessages;
+    });
+    setShowReactionPicker(null);
+    
+    // Save to localStorage
+    const storageKey = `bear-connect-messages-${activeChannel}`;
+    const updatedMessages = channelMessages[activeChannel];
+    if (updatedMessages) {
+      localStorage.setItem(storageKey, JSON.stringify(updatedMessages));
+    }
+  };
+
   // Remove attached file
   const handleRemoveFile = (index: number) => {
     setAttachedFiles(prev => prev.filter((_, i) => i !== index));
   };
-
-  const [showSidebar, setShowSidebar] = useState(false);
 
   // Mock channel files data
   const channelFiles: Record<string, { name: string; type: string; size: string; uploadedBy: string; date: string }[]> = {
@@ -836,7 +889,9 @@ export default function ConnectPage() {
               key={msg.id} 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex gap-2 sm:gap-4 ${msg.isBot ? 'bg-bear-blue/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-bear-blue/20' : ''}`}
+              className={`flex gap-2 sm:gap-4 group relative ${msg.isBot ? 'bg-bear-blue/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-bear-blue/20' : ''}`}
+              onMouseEnter={() => setHoveredMessageId(msg.id)}
+              onMouseLeave={() => setHoveredMessageId(null)}
             >
               <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-sm sm:text-base ${
                 msg.isBot ? 'bg-bear-blue text-white' : 'bg-gradient-to-br from-gray-700 to-gray-600 text-white'
@@ -850,7 +905,7 @@ export default function ConnectPage() {
                   </span>
                   <span className="text-[10px] sm:text-xs text-gray-500">{msg.timestamp}</span>
                 </div>
-                <p className="text-sm sm:text-base text-gray-300 leading-relaxed" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                <p className="text-sm sm:text-base text-gray-300 leading-relaxed" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
                   <MessageContent content={msg.content} />
                 </p>
                 {msg.attachments && msg.attachments.length > 0 && (
@@ -875,7 +930,90 @@ export default function ConnectPage() {
                     </Link>
                   </div>
                 )}
+                {/* Reactions */}
+                {msg.reactions && msg.reactions.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {msg.reactions.map((reaction, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleReactionClick(msg.id, reaction.emoji)}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm transition-all border ${
+                          reaction.users.includes('You')
+                            ? 'bg-bear-blue/20 border-bear-blue/40 text-white'
+                            : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
+                        }`}
+                        title={reaction.users.join(', ')}
+                        style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif' }}
+                      >
+                        <span className="text-base leading-none">{reaction.emoji}</span>
+                        <span className="text-xs font-medium">{reaction.count}</span>
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setShowReactionPicker(msg.id)}
+                      className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:text-white transition-all"
+                    >
+                      <Smile className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
               </div>
+              {/* Reaction Picker on Hover */}
+              <AnimatePresence>
+                {hoveredMessageId === msg.id && !showReactionPicker && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute -top-2 right-4 flex items-center gap-1 bg-[#1a1f36] border border-white/10 rounded-full px-2 py-1.5 shadow-xl z-10"
+                  >
+                    {['👍', '❤️', '😂', '🎉', '🚀', '👀'].map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => handleReactionClick(msg.id, emoji)}
+                        className="w-8 h-8 flex items-center justify-center text-lg hover:scale-125 transition-transform rounded-full hover:bg-white/10"
+                        style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif' }}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                    <div className="w-px h-5 bg-white/10 mx-1" />
+                    <button
+                      onClick={() => setShowReactionPicker(msg.id)}
+                      className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all rounded-full"
+                    >
+                      <Smile className="w-4 h-4" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              {/* Full Emoji Picker for Reactions */}
+              <AnimatePresence>
+                {showReactionPicker === msg.id && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full left-0 mt-2 z-50"
+                  >
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowReactionPicker(null)}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-[#1a1f36] border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-white z-10"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                      <EmojiPicker
+                        onEmojiClick={(emojiData) => {
+                          handleReactionClick(msg.id, emojiData.emoji);
+                        }}
+                        theme="dark"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           ))}
           
@@ -956,7 +1094,7 @@ export default function ConnectPage() {
                 rows={1}
                 style={{ 
                   height: 'auto',
-                  fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+                  fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
                 }}
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;

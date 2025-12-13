@@ -13,7 +13,7 @@ export default function PartnerPage() {
     return (
       <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] flex flex-col overflow-hidden">
         <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-[1600px] mx-auto w-full">
-          <AdminPartnerView />
+        <AdminPartnerView />
         </main>
         <Footer />
       </div>
@@ -38,7 +38,7 @@ export default function PartnerPage() {
     return (
       <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] flex flex-col overflow-hidden">
         <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-[1600px] mx-auto w-full">
-          <PartnerDashboard partner={partner} />
+        <PartnerDashboard partner={partner} />
         </main>
         <Footer />
       </div>

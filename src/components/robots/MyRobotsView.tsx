@@ -19,10 +19,10 @@ import {
 } from '@/lib/locationData';
 import { Robot, getRobotImage } from '@/lib/robotData';
 import Image from 'next/image';
+import { Footer } from '@/components/Footer';
 import { RobotQRBadge } from './RobotQRCode';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Footer } from '@/components/Footer';
 
 dayjs.extend(relativeTime);
 
@@ -260,8 +260,8 @@ export function MyRobotsView() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white flex flex-col overflow-hidden">
-      <main className="flex-1 overflow-y-auto overflow-x-hidden mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12 w-full">
+    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white overflow-x-hidden">
+      <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12 overflow-x-hidden">
         {/* Header with decorative elements */}
         <div className="relative mb-6 sm:mb-8 lg:mb-12">
           {/* Decorative blur circles - BearEmeaSupport style */}
@@ -414,15 +414,15 @@ export function MyRobotsView() {
             robots={displayRobots}
             getStatusColor={getStatusColor}
             getStatusIcon={getStatusIcon}
-          />
+                          />
 
-          {displayRobots.length === 0 && (
-            <div className="py-20 text-center">
-              <Bot className="mx-auto h-16 w-16 text-white/20 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No robots found</h3>
-              <p className="text-white/50">Try adjusting your search or location filter</p>
-            </div>
-          )}
+        {displayRobots.length === 0 && (
+          <div className="py-20 text-center">
+            <Bot className="mx-auto h-16 w-16 text-white/20 mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No robots found</h3>
+            <p className="text-white/50">Try adjusting your search or location filter</p>
+          </div>
+        )}
         </div>
 
         {/* Locations Grid - Below robots */}
@@ -486,7 +486,6 @@ export function MyRobotsView() {
           </div>
         </section>
       </main>
-      
       <Footer />
 
       {/* Scan QR Modal */}

@@ -978,27 +978,43 @@ export function ImprovedDraggableChat() {
 
           {/* Welcome Popup - Shows after 5 seconds */}
           {showWelcomePopup && !showNotificationBubble && (
-            <div 
+            <button 
               onClick={() => {
                 toggleChat();
                 setShowWelcomePopup(false);
               }}
-              className="absolute left-16 w-56 bg-gradient-to-r from-indigo-500/20 to-sky-500/20 backdrop-blur-xl border border-indigo-400/30 rounded-xl p-3 shadow-2xl animate-in slide-in-from-left-2 fade-in duration-300 cursor-pointer hover:border-indigo-400/50 transition-all hover:scale-105"
+              className="absolute bg-[#0F1117] backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl transition-all lg:hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
               style={{ 
                 zIndex: 10000,
+                left: isMobile ? '16px' : '80px',
+                maxWidth: isMobile ? '280px' : '300px',
+                WebkitTapHighlightColor: 'transparent',
                 // Smart positioning: show above icon if icon is in bottom half, below if in top half
                 ...(iconPosition.y > (typeof window !== "undefined" ? window.innerHeight / 2 : 400)
-                  ? { bottom: "100%", marginBottom: "8px" } // Icon in bottom half - show above
-                  : { top: 0 } // Icon in top half - show below
+                  ? { bottom: "100%", marginBottom: "12px" } // Icon in bottom half - show above
+                  : { top: isMobile ? "0" : "-4px" } // Icon in top half - show below
                 )
               }}
             >
-              <div className="flex items-center gap-2">
-                <div className="flex-shrink-0 text-xl">👋</div>
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-white mb-0.5">I'm here to help!</div>
-                  <div className="text-xs text-white/70">
-                    Click to chat with Ursa Minor
+              {/* Subtle gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-bear-blue/10 via-transparent to-purple-500/5 opacity-50" />
+              
+              <div className="relative px-4 py-3.5 flex items-start gap-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-bear-blue to-bear-blue/80 flex items-center justify-center shadow-lg">
+                  <Image 
+                    src="/cartoon-bear-face-clipart-vector-design_780593-20643.png" 
+                    alt="Ursa Minor" 
+                    width={24}
+                    height={24}
+                    className="object-contain"
+                  />
+                </div>
+                <div className="flex-1 min-w-0 text-left pt-0.5">
+                  <div className="text-[13px] font-semibold text-white mb-0.5" style={{ letterSpacing: '-0.01em' }}>
+                    Ursa Minor
+                  </div>
+                  <div className="text-[14px] text-gray-300 leading-snug" style={{ letterSpacing: '0.005em' }}>
+                    I'm here to help! 👋
                   </div>
                 </div>
                 <button
@@ -1006,12 +1022,25 @@ export function ImprovedDraggableChat() {
                     e.stopPropagation();
                     setShowWelcomePopup(false);
                   }}
-                  className="flex-shrink-0 text-white/40 hover:text-white transition-colors"
+                  className="flex-shrink-0 p-1.5 lg:hover:bg-white/10 active:bg-white/10 rounded-lg transition-colors -mt-0.5 -mr-1"
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="w-4 h-4 text-gray-400" />
                 </button>
               </div>
-            </div>
+              
+              {/* Arrow pointing to chat icon */}
+              <div 
+                className="absolute w-3 h-3 bg-[#0F1117] border-l border-b border-white/10"
+                style={{
+                  [iconPosition.y > (typeof window !== "undefined" ? window.innerHeight / 2 : 400) ? 'bottom' : 'top']: "-6px",
+                  left: isMobile ? "28px" : "-6px",
+                  transform: iconPosition.y > (typeof window !== "undefined" ? window.innerHeight / 2 : 400) 
+                    ? (isMobile ? "rotate(-45deg)" : "rotate(45deg)")
+                    : (isMobile ? "rotate(135deg)" : "rotate(-135deg)")
+                }}
+              />
+            </button>
           )}
         </div>
       </>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useRole } from '@/lib/roleContext';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -92,58 +91,33 @@ export default function Dashboard() {
   return (
     <div className="h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] flex flex-col overflow-hidden">
       <main className="flex-1 overflow-y-auto relative">
-        <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-[1600px] mx-auto w-full">
+        <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-[1600px] mx-auto w-full pb-24 lg:pb-10">
       {/* BearEmeaSupport Style Decorative Elements */}
       <div className="fixed top-20 right-0 w-[400px] lg:w-[600px] h-[400px] lg:h-[600px] bg-bear-blue/5 rounded-full blur-3xl pointer-events-none" />
       <div className="fixed bottom-20 left-0 w-[300px] lg:w-[400px] h-[300px] lg:h-[400px] bg-purple-500/3 rounded-full blur-3xl pointer-events-none" />
       
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative"
-      >
+      <div className="relative">
         {/* Hero Header - BearEmeaSupport Inspired */}
         <header className="mb-6 sm:mb-8 lg:mb-10 relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#0a0f1c] via-[#111827] to-[#0a0f1c] p-5 sm:p-8 lg:p-12 border border-white/10 shadow-2xl">
           <div className="relative z-10 flex flex-col gap-6">
             <div>
-              <motion.div 
-                className="flex items-center gap-3 mb-3 sm:mb-4"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
+              <div className="flex items-center gap-3 mb-3 sm:mb-4">
                 <span className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-bear-blue/20 border border-bear-blue/30 text-[10px] sm:text-xs font-bold text-bear-blue uppercase tracking-wider">
                   {getRoleLabel(role)}
                 </span>
-              </motion.div>
-              <motion.h1 
-                className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white mb-2 sm:mb-4 tracking-tight"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-              >
+              </div>
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white mb-2 sm:mb-4 tracking-tight">
                 {getGreeting()}, <span className="text-gradient">George</span>.
-              </motion.h1>
-              <motion.p 
-                className="text-gray-400 text-sm sm:text-base lg:text-lg max-w-2xl font-medium leading-relaxed"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
+              </h1>
+              <p className="text-gray-400 text-sm sm:text-base lg:text-lg max-w-2xl font-medium leading-relaxed">
                 {isPartnerOrCustomer 
                   ? 'Monitor your robots and get instant support.'
                   : 'Your operational command center is ready.'}
-              </motion.p>
+              </p>
             </div>
             
             {/* Quick Action Buttons - BearEmeaSupport Style */}
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-3"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
+            <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/robots" className="btn-primary text-center justify-center" style={{ minHeight: '48px' }}>
                 <Bot className="w-5 h-5" />
                 {isPartnerOrCustomer ? 'My Robots' : 'Fleet Overview'}
@@ -152,7 +126,7 @@ export default function Dashboard() {
                 <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
                 Get Help
               </Link>
-            </motion.div>
+            </div>
           </div>
           
           {/* Decorative Background */}
@@ -163,11 +137,8 @@ export default function Dashboard() {
         {/* Metrics Grid - BearEmeaSupport Card Style */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 lg:mb-10">
           {currentMetrics.map((metric, index) => (
-            <motion.div
+            <div
               key={metric.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + index * 0.05 }}
               className="bear-glass-card p-4 sm:p-5 lg:p-6 group cursor-pointer min-h-[120px] sm:min-h-[140px] flex flex-col justify-between"
             >
               <div className="flex justify-between items-start mb-2 sm:mb-3">

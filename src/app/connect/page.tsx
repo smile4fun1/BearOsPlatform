@@ -1087,11 +1087,11 @@ export default function ConnectPage() {
                 {msg.isBot ? <Bot className="w-4 h-4 sm:w-5 sm:h-5" /> : msg.sender[0]}
               </div>
               <div className="flex-1 min-w-0 relative">
-                <div className="flex items-baseline gap-2 mb-1 relative">
-                  <span className={`font-semibold text-[15px] sm:text-base select-text ${msg.isBot ? 'text-bear-blue' : 'text-white'}`}>
+                <div className="flex items-baseline gap-2 mb-1.5 relative">
+                  <span className={`font-semibold text-[15px] lg:text-base select-text ${msg.isBot ? 'text-bear-blue' : 'text-white'}`} style={{ letterSpacing: '-0.01em' }}>
                     {msg.sender}
                   </span>
-                  <span className="text-[11px] sm:text-xs text-gray-500 select-text">{msg.timestamp}</span>
+                  <span className="text-[12px] lg:text-xs text-gray-500 select-text" style={{ letterSpacing: '0.01em' }}>{msg.timestamp}</span>
                   
                   {/* Hover actions - absolutely positioned to prevent layout shift */}
                   {hoveredMessageId === msg.id && (
@@ -1127,7 +1127,7 @@ export default function ConnectPage() {
                     </div>
                   )}
                 </div>
-                <p className="text-[15px] sm:text-base text-gray-200 leading-[1.6] sm:leading-relaxed select-text" style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', letterSpacing: '0.01em' }}>
+                <p className="text-[16px] lg:text-base text-gray-100 select-text" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif', lineHeight: '1.5', letterSpacing: '0.005em', wordSpacing: '0.05em' }}>
                   <MessageContent content={msg.content} />
                 </p>
                 {msg.attachments && msg.attachments.length > 0 && (

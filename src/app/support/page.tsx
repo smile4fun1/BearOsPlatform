@@ -286,7 +286,7 @@ export default function SupportPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="rounded-3xl bg-gradient-to-r from-bear-blue to-blue-600 p-1"
+          className="rounded-3xl bg-gradient-to-r from-bear-blue to-blue-600 p-1 mb-12"
         >
           <div className="bg-[#0b1021] rounded-[22px] p-8 md:p-12 text-center relative overflow-hidden">
              {/* Background Effects */}
@@ -319,8 +319,6 @@ export default function SupportPage() {
         </motion.div>
 
       </div>
-
-      <div className="mb-10" />
 
       <SystemStatus
         isOpen={isSystemStatusOpen}

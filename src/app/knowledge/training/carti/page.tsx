@@ -129,12 +129,12 @@ export default function TrainingPage() {
   };
 
   const confirmRestart = () => {
-    setCompletedModules([]);
-    setTrainingStarted(false);
-    setCurrentModule(0);
+        setCompletedModules([]);
+        setTrainingStarted(false);
+        setCurrentModule(0);
     setShowCongrats(false);
     setShowRestartConfirm(false);
-    localStorage.removeItem('bear-training-carti-progress');
+        localStorage.removeItem('bear-training-carti-progress');
   };
 
   const cancelRestart = () => {
@@ -267,7 +267,7 @@ export default function TrainingPage() {
             <div className="col-span-12 lg:col-span-9 flex flex-col">
                 <AnimatePresence mode="wait">
                     {!trainingStarted ? (
-                        <ModuleWelcome onComplete={startTraining} />
+                             <ModuleWelcome onComplete={startTraining} />
                     ) : (
                         <motion.div
                             key="content-card"
@@ -715,14 +715,14 @@ function ModuleWarehouseSafety() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 flex-1">
-                {[
+                    {[
                     { icon: UserGroupIcon, title: "Team Communication", desc: "Alert team members when Carti is entering their work zone. Use radio or verbal warnings." },
                     { icon: ShieldCheckIcon, title: "Safety Zones", desc: "Maintain 2 meter clearance around Carti when moving. Never walk directly in front." },
                     { icon: MapIcon, title: "Aisle Management", desc: "Keep main aisles clear. Stack pallets properly and secure loose materials." },
                     { icon: ClockIcon, title: "Shift Changes", desc: "Brief incoming team on Carti's current tasks and any issues encountered." },
                     { icon: WrenchScrewdriverIcon, title: "Visual Signals", desc: "Blue LED = moving, Yellow = obstacle detected, Red = error or emergency stop." },
                     { icon: BoltIcon, title: "Emergency Protocol", desc: "Hit E-Stop immediately if someone is at risk. Report all incidents to supervisor." },
-                ].map((item, i) => (
+                    ].map((item, i) => (
                     <motion.div 
                         key={i}
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -750,9 +750,9 @@ function ModuleWarehouseSafety() {
                 <div>
                     <h3 className="font-bold text-white text-sm mb-1">Safety First Always</h3>
                     <p className="text-gray-300 text-xs leading-relaxed">If you see a potential hazard, stop Carti immediately. Safety trumps productivity every time.</p>
-                </div>
-            </div>
-        </div>
+                                </div>
+                            </div>
+                        </div>
     );
 }
 
@@ -845,14 +845,14 @@ function ModuleQuickTips() {
                     </div>
                     <h3 className="font-bold text-white mb-1.5 text-sm">Need Help?</h3>
                     <p className="text-xs text-gray-300 leading-relaxed">Contact fleet manager for any technical issues or operational questions.</p>
-                </div>
-            </div>
+                        </div>
+                    </div>
 
             <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-3 rounded-xl border border-green-500/30 flex items-center gap-3">
                 <div className="bg-green-500/20 p-2 rounded-lg flex-shrink-0">
                     <SparklesIcon className="w-5 h-5 text-green-400" />
                 </div>
-                <div>
+                        <div>
                     <h3 className="font-bold text-white text-sm">You're Certified!</h3>
                     <p className="text-gray-200 text-xs leading-relaxed">You're ready to operate Carti 100. Welcome to the logistics team!</p>
                 </div>

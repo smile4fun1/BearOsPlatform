@@ -77,7 +77,7 @@ export function MyRobotsView() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white">
       <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
         {/* Header with decorative elements */}
         <div className="relative mb-6 sm:mb-8 lg:mb-12">
@@ -182,8 +182,8 @@ export function MyRobotsView() {
 
         {/* Location Filter & Search */}
         <div className="flex flex-col gap-3 sm:gap-4 mb-6 sm:mb-8">
-          {/* Location Pills - Horizontal scroll on mobile */}
-          <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap scrollbar-hide">
+          {/* Location Pills - Wrapped */}
+          <div className="flex gap-2 flex-wrap pb-2">
             <button
               onClick={() => setSelectedLocation(null)}
               className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
@@ -238,7 +238,7 @@ export function MyRobotsView() {
               >
                 <Link
                   href={`/robots/${robot.id}`}
-                  className="group block bear-glass-card p-5 relative overflow-hidden h-full min-h-[320px] flex flex-col"
+                  className="group block bear-glass-card p-5 relative overflow-hidden h-full flex flex-col"
                 >
                   {/* Robot Image Background */}
                   <div className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
@@ -282,7 +282,7 @@ export function MyRobotsView() {
                   </div>
 
                   {/* Quick Stats */}
-                  <div className="space-y-3 flex-1">
+                  <div className="space-y-3 flex-1 flex flex-col">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-white/60">Model</span>
                       <span className="font-medium text-bear-blue">{robot.model}</span>
@@ -324,14 +324,16 @@ export function MyRobotsView() {
                       </div>
                     </div>
 
-                    {robot.errors.length > 0 && (
-                      <div className="flex items-start gap-2 rounded-lg bg-rose-500/10 border border-rose-500/20 p-2 text-xs text-rose-400">
-                        <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
-                        <span className="line-clamp-1">{robot.errors[0].message}</span>
-                      </div>
-                    )}
+                    <div className="h-12 flex items-center">
+                      {robot.errors.length > 0 && (
+                        <div className="flex items-start gap-2 rounded-lg bg-rose-500/10 border border-rose-500/20 p-2 text-xs text-rose-400 w-full">
+                          <AlertTriangle className="h-3 w-3 flex-shrink-0 mt-0.5" />
+                          <span className="line-clamp-2 flex-1">{robot.errors[0].message}</span>
+                        </div>
+                      )}
+                    </div>
 
-                    <div className="pt-2 border-t border-white/5 text-xs text-white/40 flex items-center gap-1.5">
+                    <div className="pt-2 mt-auto border-t border-white/5 text-xs text-white/40 flex items-center gap-1.5">
                       <Clock className="h-3 w-3" />
                       Last seen: {dayjs(robot.lastSeen).fromNow()}
                     </div>

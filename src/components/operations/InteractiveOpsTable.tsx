@@ -53,45 +53,36 @@ export function InteractiveOpsTable({ operations }: InteractiveOpsTableProps) {
     );
   }, [operations, sortField, sortDirection, filter]);
 
-  // Lazy loading with Intersection Observer
-  useEffect(() => {
-    // Don't create observer if we've loaded all data
-    if (visibleCount >= filteredOps.length) {
-      return;
-    }
-
-    // Don't create observer if ref doesn't exist
-    if (!loadMoreRef.current) {
-      return;
-    }
-
-    const currentRef = loadMoreRef.current;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount(prev => {
-            // Only increment if we haven't reached the end
-            if (prev < filteredOps.length) {
-              return Math.min(prev + 5, filteredOps.length);
-            }
-            return prev;
-          });
-        }
-      },
-      { threshold: 0.5, rootMargin: '50px' }
-    );
-
-    observer.observe(currentRef);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [visibleCount, filteredOps.length]);
-
   // Reset visible count when filter changes
   useEffect(() => {
     setVisibleCount(5);
-  }, [filter]);
+  }, [filter, sortField, sortDirection]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < filteredOps.length) {
+          setVisibleCount((prev) => Math.min(prev + 5, filteredOps.length));
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+      observer.disconnect();
+    };
+  }, [visibleCount, filteredOps.length]);
 
   const SortButton = ({ field, label, className = "" }: { field: keyof OpsDataPoint; label: string; className?: string }) => (
     <button
@@ -369,17 +360,11 @@ export function InteractiveOpsTable({ operations }: InteractiveOpsTableProps) {
 
       {/* Load More Trigger */}
       {visibleCount < filteredOps.length && (
-        <div ref={loadMoreRef} className="flex items-center justify-center py-8">
+        <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
           <div className="flex items-center gap-2 text-sm text-white/40">
-            <div className="w-2 h-2 bg-bear-blue/50 rounded-full animate-pulse" />
-            <span>Loading more...</span>
+            <div className="w-2 h-2 rounded-full bg-bear-blue animate-pulse" />
+            Loading more...
           </div>
-        </div>
-      )}
-
-      {visibleCount >= filteredOps.length && filteredOps.length > 5 && (
-        <div className="flex items-center justify-center py-6 text-sm text-white/30">
-          <span>All {filteredOps.length} records loaded</span>
         </div>
       )}
     </div>

@@ -29,7 +29,7 @@ export function PartnerDashboard({ partner }: { partner: Partner }) {
   }, 0);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-12">
       {/* Partner Header */}
       <header>
         <div className="flex items-center gap-3 mb-2">
@@ -197,8 +197,6 @@ export function PartnerDashboard({ partner }: { partner: Partner }) {
           View Technical Manuals
         </Link>
       </div>
-
-      <div className="mb-10" />
     </div>
   );
 }

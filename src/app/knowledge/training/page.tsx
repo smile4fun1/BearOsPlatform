@@ -128,12 +128,12 @@ export default function TrainingPage() {
   };
 
   const confirmRestart = () => {
-    setCompletedModules([]);
-    setTrainingStarted(false);
-    setCurrentModule(0);
+        setCompletedModules([]);
+        setTrainingStarted(false);
+        setCurrentModule(0);
     setShowCongrats(false);
     setShowRestartConfirm(false);
-    localStorage.removeItem('bear-training-progress');
+        localStorage.removeItem('bear-training-progress');
   };
 
   const cancelRestart = () => {
@@ -269,7 +269,7 @@ export default function TrainingPage() {
             <div className="col-span-12 lg:col-span-9 flex flex-col">
                 <AnimatePresence mode="wait">
                     {!trainingStarted ? (
-                        <ModuleWelcome onComplete={startTraining} />
+                             <ModuleWelcome onComplete={startTraining} />
                     ) : (
                         <motion.div
                             key="content-card"
@@ -767,14 +767,14 @@ function ModuleBestPractices() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 flex-1">
-                {[
+                    {[
                     { icon: UserGroupIcon, title: "Customer Alert", desc: "Always announce when Servi is approaching. A simple heads-up keeps everyone aware and comfortable." },
                     { icon: WrenchScrewdriverIcon, title: "Smart Loading", desc: "Use all three trays to maximize each trip. Heavy items on bottom, lighter items on top." },
                     { icon: MapIcon, title: "Path Watch", desc: "Watch for obstacles like chairs and bags. A clear path means faster and smoother service." },
                     { icon: ClipboardDocumentCheckIcon, title: "Shift End", desc: "Quick wipe down, check for debris, and park on charger. Takes 2 minutes and keeps Servi ready." },
                     { icon: ShieldCheckIcon, title: "Safety First", desc: "Never rush loading or sending. Stable loads only. Safety over speed always." },
                     { icon: SparklesIcon, title: "Keep Clean", desc: "Daily tray wipes are essential. Clean robot means happy customers." },
-                ].map((item, i) => (
+                    ].map((item, i) => (
                     <motion.div 
                         key={i}
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -787,12 +787,12 @@ function ModuleBestPractices() {
                                 <item.icon className="w-5 h-5 text-bear-blue" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-white mb-2">{item.title}</h3>
+                                    <h3 className="font-bold text-white mb-2">{item.title}</h3>
                                 <p className="text-sm text-gray-300 leading-relaxed">{item.desc}</p>
+                                </div>
                             </div>
-                        </div>
                     </motion.div>
-                ))}
+                    ))}
             </div>
 
             <div className="bg-gradient-to-r from-yellow-500/10 to-amber-500/10 p-5 rounded-xl border border-yellow-500/30 flex items-start gap-4">
@@ -836,10 +836,10 @@ function ModuleQuickTips() {
                 <div className="bg-gradient-to-br from-bear-blue/10 to-cyan-600/5 p-3 rounded-xl border-2 border-bear-blue/30 flex flex-col">
                     <div className="w-9 h-9 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-2">
                         <ClockIcon className="w-5 h-5 text-bear-blue" />
-                    </div>
+                        </div>
                     <h3 className="font-bold text-white mb-1.5 text-sm">Screen Not Working</h3>
                     <p className="text-xs text-gray-300 leading-relaxed">Wipe with cloth first. Still not working? Hold power button 10 seconds.</p>
-                </div>
+                    </div>
 
                 <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 p-3 rounded-xl border-2 border-green-500/30 flex flex-col">
                     <div className="w-9 h-9 bg-green-500/20 rounded-lg flex items-center justify-center mb-2">
@@ -847,14 +847,14 @@ function ModuleQuickTips() {
                     </div>
                     <h3 className="font-bold text-white mb-1.5 text-sm">Need Help?</h3>
                     <p className="text-xs text-gray-300 leading-relaxed">Your manager and team are always there for you. Don't hesitate to ask.</p>
-                </div>
-            </div>
+                        </div>
+                    </div>
 
             <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-3 rounded-xl border border-green-500/30 flex items-center gap-3">
                 <div className="bg-green-500/20 p-2 rounded-lg flex-shrink-0">
                     <SparklesIcon className="w-5 h-5 text-green-400" />
                 </div>
-                <div>
+                        <div>
                     <h3 className="font-bold text-white text-sm">You're Ready!</h3>
                     <p className="text-gray-200 text-xs leading-relaxed">Working with Servi will feel natural within a few shifts. Welcome to the team!</p>
                 </div>

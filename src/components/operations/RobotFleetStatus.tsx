@@ -1,12 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import { UtensilsCrossed, TruckIcon, Container, Battery, Zap, Activity, AlertCircle, CheckCircle } from "lucide-react";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 
 export function RobotFleetStatus() {
-  const [visibleModels, setVisibleModels] = useState(0);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   // Real-time fleet status data (in production, this would come from API)
   const fleetData = {
     serviPlus: {
@@ -65,31 +62,6 @@ export function RobotFleetStatus() {
     },
   ];
 
-  // Lazy load robot cards one by one
-  useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-
-    models.forEach((_, index) => {
-      if (cardRefs.current[index] && visibleModels <= index) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            if (entries[0].isIntersecting) {
-              setVisibleModels(prev => Math.max(prev, index + 1));
-            }
-          },
-          { threshold: 0.1, rootMargin: '100px' }
-        );
-        
-        observer.observe(cardRefs.current[index]!);
-        observers.push(observer);
-      }
-    });
-
-    return () => {
-      observers.forEach(observer => observer.disconnect());
-    };
-  }, [models.length, visibleModels]);
-
   return (
     <div>
       <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -104,17 +76,10 @@ export function RobotFleetStatus() {
       </div>
 
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {models.map((model, index) => (
+        {models.map((model) => (
           <div
             key={model.name}
-            ref={el => cardRefs.current[index] = el}
-            className={`rounded-xl sm:rounded-2xl border ${model.border} bg-gradient-to-br ${model.gradient} p-4 sm:p-5 lg:p-6 backdrop-blur-sm transition-all hover:shadow-lg ${
-              visibleModels > index ? 'opacity-100' : 'opacity-0'
-            }`}
-            style={{
-              transition: 'opacity 0.5s ease-in-out',
-              transitionDelay: `${index * 0.15}s`
-            }}
+            className={`rounded-xl sm:rounded-2xl border ${model.border} bg-gradient-to-br ${model.gradient} p-4 sm:p-5 lg:p-6 backdrop-blur-sm transition-all hover:shadow-lg`}
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4 sm:mb-6">

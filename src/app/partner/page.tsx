@@ -11,12 +11,10 @@ export default function PartnerPage() {
 
   if (role === 'internal_admin') {
     return (
-      <>
-        <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
-          <AdminPartnerView />
-        </div>
+      <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto min-h-screen">
+        <AdminPartnerView />
         <Footer />
-      </>
+      </div>
     );
   }
 
@@ -36,33 +34,29 @@ export default function PartnerPage() {
     }
 
     return (
-      <>
-        <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
-          <PartnerDashboard partner={partner} />
-        </div>
+      <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto min-h-screen">
+        <PartnerDashboard partner={partner} />
         <Footer />
-      </>
+      </div>
     );
   }
 
   // Fallback for unauthorized roles
   return (
-    <>
-      <div className="flex items-center justify-center min-h-screen bg-[#020511]">
-        <div className="text-center p-8 bg-white/5 rounded-2xl border border-white/10 max-w-md">
-          <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🔒</span>
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Access Restricted</h2>
-          <p className="text-gray-400 mb-6">
-            This portal is reserved for authorized Bear Robotics partners and administrators.
-          </p>
-          <div className="text-xs text-gray-500 uppercase tracking-widest">
-            Current Role: {role}
-          </div>
+    <div className="flex items-center justify-center h-screen bg-[#020511]">
+      <div className="text-center p-8 bg-white/5 rounded-2xl border border-white/10 max-w-md">
+        <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <span className="text-2xl">🔒</span>
+        </div>
+        <h2 className="text-2xl font-bold text-white mb-2">Access Restricted</h2>
+        <p className="text-gray-400 mb-6">
+          This portal is reserved for authorized Bear Robotics partners and administrators.
+        </p>
+        <div className="text-xs text-gray-500 uppercase tracking-widest">
+          Current Role: {role}
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }

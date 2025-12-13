@@ -336,7 +336,7 @@ export default function ConnectPage() {
     { id: 'qcom-support', name: 'qcom-support', type: 'private', allowedRoles: ['internal_admin', 'partner_qcom'] },
     { id: 'robot-alerts', name: 'robot-alerts', type: 'bot', allowedRoles: ['internal_admin', 'internal_rfe'], unread: 5 },
   ]);
-  
+
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
@@ -1073,7 +1073,7 @@ export default function ConnectPage() {
                         >
                           <Pin className="w-3 h-3" />
                         </button>
-                      </div>
+                </div>
                     </div>
                   )}
                 </div>
@@ -1161,7 +1161,7 @@ export default function ConnectPage() {
                         }}
                         theme="dark"
                       />
-                    </div>
+              </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -1206,7 +1206,7 @@ export default function ConnectPage() {
                 </motion.div>
               )}
             </AnimatePresence>
-
+            
             <div className="bg-[#0F1117] border border-white/10 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 focus-within:border-bear-blue/50 transition-all duration-300 focus-within:shadow-lg focus-within:shadow-bear-blue/5">
               {attachedFiles.length > 0 && (
                 <div className="px-2 py-2 flex flex-wrap gap-2 border-b border-white/5 mb-2">

@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo, Suspense, useState, useEffect, useRef } from 'react';
+import { memo, useMemo, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, TrendingUp, AlertTriangle, Bot, Zap, RefreshCw, ArrowRight } from "lucide-react";
 import { LazyKPICardGrid, LazyTrendPanel, LazyInteractiveIncidentRadar, LazyFleetPerformanceDashboard, LazyRobotFleetStatus, LazyInteractiveOpsTable } from "@/components/LazyComponents";
@@ -12,35 +12,6 @@ import { Footer } from "@/components/Footer";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
-
-// Lazy Section Wrapper Component
-function LazySectionWrapper({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.01, rootMargin: '200px' }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <section ref={sectionRef} className={className}>
-      {isVisible ? children : <SectionSkeleton height="h-96" />}
-    </section>
-  );
-}
 
 // Memoized stat card for performance - optimized animations
 const StatCard = memo(function StatCard({ stat, index }: { stat: any; index: number }) {
@@ -200,7 +171,7 @@ export default function FleetPage() {
         </p>
       </motion.section>
 
-      {/* KPI Cards - Always visible (priority content) */}
+      {/* KPI Cards */}
       <section className="mb-6 sm:mb-8 lg:mb-10">
         <h2 className="mb-4 sm:mb-6 text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-2">
           <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-bear-blue" />
@@ -211,44 +182,44 @@ export default function FleetPage() {
         </Suspense>
       </section>
 
-      {/* Fleet Performance Dashboard - Lazy Load */}
-      <LazySectionWrapper className="mb-6 sm:mb-8 lg:mb-10">
+      {/* Fleet Performance Dashboard */}
+      <section className="mb-6 sm:mb-8 lg:mb-10">
         <Suspense fallback={<SectionSkeleton height="h-80" />}>
           <LazyFleetPerformanceDashboard />
         </Suspense>
-      </LazySectionWrapper>
+      </section>
 
-      {/* Interactive Incident Radar - Lazy Load */}
-      <LazySectionWrapper className="mb-6 sm:mb-8 lg:mb-10">
+      {/* Interactive Incident Radar */}
+      <section className="mb-6 sm:mb-8 lg:mb-10">
         <Suspense fallback={<SectionSkeleton height="h-96" />}>
           <LazyInteractiveIncidentRadar />
         </Suspense>
-      </LazySectionWrapper>
+      </section>
 
-      {/* Trends Chart - Lazy Load */}
-      <LazySectionWrapper className="mb-6 sm:mb-8 lg:mb-10">
+      {/* Trends Chart */}
+      <section className="mb-6 sm:mb-8 lg:mb-10">
         <Suspense fallback={<SectionSkeleton height="h-80" />}>
           <LazyTrendPanel data={universe.trend} />
         </Suspense>
-      </LazySectionWrapper>
+      </section>
 
-      {/* Robot Fleet Status - Lazy Load */}
-      <LazySectionWrapper className="mb-6 sm:mb-8 lg:mb-10">
+      {/* Robot Fleet Status */}
+      <section className="mb-6 sm:mb-8 lg:mb-10">
         <Suspense fallback={<SectionSkeleton height="h-96" />}>
           <LazyRobotFleetStatus />
         </Suspense>
-      </LazySectionWrapper>
+      </section>
 
-      {/* Interactive Operations Table - Lazy Load */}
-      <LazySectionWrapper className="mb-6 sm:mb-8 lg:mb-10">
+      {/* Interactive Operations Table */}
+      <section className="mb-6 sm:mb-8 lg:mb-10">
         <h2 className="mb-4 sm:mb-6 text-lg sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-2">
           <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-bear-blue" />
           Live Operations Data
         </h2>
         <Suspense fallback={<SectionSkeleton height="h-96" />}>
-          <LazyInteractiveOpsTable operations={operationsDataset} />
+          <LazyInteractiveOpsTable operations={operationsDataset.slice(-50)} />
         </Suspense>
-      </LazySectionWrapper>
+      </section>
       <Footer />
     </div>
   );

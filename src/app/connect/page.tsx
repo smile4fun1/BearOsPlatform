@@ -522,18 +522,19 @@ export default function ConnectPage() {
   const handleReactionClick = (messageId: string, emoji: string) => {
     setChannelMessages(prev => {
       const newMessages = { ...prev };
-      const channelMsgs = newMessages[activeChannel] || [];
+      const channelMsgs = [...(newMessages[activeChannel] || [])];
       const messageIndex = channelMsgs.findIndex(m => m.id === messageId);
       
       if (messageIndex !== -1) {
         const message = { ...channelMsgs[messageIndex] };
-        const reactions = message.reactions || [];
+        const reactions = [...(message.reactions || [])];
         const existingReactionIndex = reactions.findIndex(r => r.emoji === emoji);
         
         if (existingReactionIndex !== -1) {
-          // User already reacted with this emoji, remove their reaction
+          // Toggle user's reaction
           const reaction = { ...reactions[existingReactionIndex] };
           if (reaction.users.includes('You')) {
+            // Remove reaction
             reaction.users = reaction.users.filter(u => u !== 'You');
             reaction.count = Math.max(0, reaction.count - 1);
             if (reaction.count === 0) {
@@ -542,7 +543,7 @@ export default function ConnectPage() {
               reactions[existingReactionIndex] = reaction;
             }
           } else {
-            // Add user's reaction
+            // Add reaction
             reaction.users = [...reaction.users, 'You'];
             reaction.count += 1;
             reactions[existingReactionIndex] = reaction;
@@ -555,18 +556,15 @@ export default function ConnectPage() {
         message.reactions = reactions;
         channelMsgs[messageIndex] = message;
         newMessages[activeChannel] = channelMsgs;
+        
+        // Save to localStorage immediately
+        const storageKey = `bear-connect-messages-${activeChannel}`;
+        localStorage.setItem(storageKey, JSON.stringify(channelMsgs));
       }
       
       return newMessages;
     });
     setShowReactionPicker(null);
-    
-    // Save to localStorage
-    const storageKey = `bear-connect-messages-${activeChannel}`;
-    const updatedMessages = channelMessages[activeChannel];
-    if (updatedMessages) {
-      localStorage.setItem(storageKey, JSON.stringify(updatedMessages));
-    }
   };
 
   // Remove attached file
@@ -931,60 +929,98 @@ export default function ConnectPage() {
                     </Link>
                   </div>
                 )}
-                {/* Reactions */}
+                {/* Reactions - Slack Style */}
                 {msg.reactions && msg.reactions.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
+                  <div className="mt-2 flex flex-wrap gap-1.5">
                     {msg.reactions.map((reaction, i) => (
                       <button
                         key={i}
-                        onClick={() => handleReactionClick(msg.id, reaction.emoji)}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm transition-all border ${
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleReactionClick(msg.id, reaction.emoji);
+                        }}
+                        className={`group inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-sm transition-all border ${
                           reaction.users.includes('You')
-                            ? 'bg-bear-blue/20 border-bear-blue/40 text-white'
-                            : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
+                            ? 'bg-bear-blue/15 border-bear-blue/50 text-white hover:bg-bear-blue/25 hover:border-bear-blue/60'
+                            : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/20'
                         }`}
-                        title={reaction.users.join(', ')}
+                        title={`${reaction.count} ${reaction.count === 1 ? 'person' : 'people'} reacted: ${reaction.users.join(', ')}`}
                         style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif' }}
                       >
-                        <span className="text-base leading-none">{reaction.emoji}</span>
-                        <span className="text-xs font-medium">{reaction.count}</span>
+                        <span className="text-sm leading-none">{reaction.emoji}</span>
+                        <span className={`text-xs font-semibold ${reaction.users.includes('You') ? 'text-bear-blue' : 'text-gray-400 group-hover:text-gray-300'}`}>
+                          {reaction.count}
+                        </span>
                       </button>
                     ))}
                     <button
-                      onClick={() => setShowReactionPicker(msg.id)}
-                      className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:text-white transition-all"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowReactionPicker(msg.id);
+                      }}
+                      className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all opacity-0 group-hover:opacity-100"
+                      title="Add reaction"
                     >
-                      <Smile className="w-3.5 h-3.5" />
+                      <Smile className="w-3 h-3" />
                     </button>
                   </div>
                 )}
+                {/* Show add reaction button on hover if no reactions exist */}
+                {hoveredMessageId === msg.id && (!msg.reactions || msg.reactions.length === 0) && !showReactionPicker && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="mt-2"
+                  >
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowReactionPicker(msg.id);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all text-xs"
+                    >
+                      <Smile className="w-3 h-3" />
+                      <span>Add reaction</span>
+                    </button>
+                  </motion.div>
+                )}
               </div>
-              {/* Reaction Picker on Hover */}
+              {/* Reaction Picker on Hover - Slack Style */}
               <AnimatePresence>
                 {hoveredMessageId === msg.id && !showReactionPicker && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute -top-2 right-4 flex items-center gap-1 bg-[#1a1f36] border border-white/10 rounded-full px-2 py-1.5 shadow-xl z-10"
+                    initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                    transition={{ duration: 0.12 }}
+                    className="absolute -top-3 right-2 flex items-center gap-0.5 bg-[#1a1f36] border border-white/20 rounded-lg px-1 py-1 shadow-2xl z-20"
+                    style={{ backdropFilter: 'blur(8px)' }}
                   >
                     {['👍', '❤️', '😂', '🎉', '🚀', '👀'].map((emoji) => (
                       <button
                         key={emoji}
-                        onClick={() => handleReactionClick(msg.id, emoji)}
-                        className="w-8 h-8 flex items-center justify-center text-lg hover:scale-125 transition-transform rounded-full hover:bg-white/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleReactionClick(msg.id, emoji);
+                        }}
+                        className="w-7 h-7 flex items-center justify-center text-base hover:scale-110 transition-all rounded hover:bg-white/10"
                         style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif' }}
+                        title={`React with ${emoji}`}
                       >
                         {emoji}
                       </button>
                     ))}
-                    <div className="w-px h-5 bg-white/10 mx-1" />
+                    <div className="w-px h-4 bg-white/20 mx-0.5" />
                     <button
-                      onClick={() => setShowReactionPicker(msg.id)}
-                      className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all rounded-full"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowReactionPicker(msg.id);
+                      }}
+                      className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all rounded"
+                      title="More reactions"
                     >
-                      <Smile className="w-4 h-4" />
+                      <Smile className="w-3.5 h-3.5" />
                     </button>
                   </motion.div>
                 )}

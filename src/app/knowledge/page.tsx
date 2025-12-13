@@ -372,7 +372,7 @@ function KnowledgeContent() {
                                     className="w-1.5 h-1.5 bg-purple-400 rounded-full"
                                 />
                                 <div 
-                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"}}
+                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"
                                 />
                             </div>
                         </div>

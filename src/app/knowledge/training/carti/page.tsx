@@ -708,48 +708,48 @@ function ModuleUsingCarti() {
 
 function ModuleWarehouseSafety() {
     return (
-        <div className="space-y-6 h-full flex flex-col">
-            <div className="bear-glass-card p-6 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Warehouse Safety</h2>
-                <p className="text-gray-300 text-sm">Safe operations in shared spaces</p>
+        <div className="space-y-4 h-full flex flex-col">
+            <div className="bear-glass-card p-5 flex flex-col justify-center">
+                <h2 className="text-xl font-bold text-white mb-1">Warehouse Safety</h2>
+                <p className="text-gray-300 text-xs">Safe operations in shared spaces</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
+            <div className="grid grid-cols-2 gap-3 flex-1">
                 {[
-                    { icon: UserGroupIcon, title: "Team Communication", desc: "Alert team members when Carti is entering their work zone. Use radio or verbal warnings." },
-                    { icon: ShieldCheckIcon, title: "Safety Zones", desc: "Maintain 2 meter clearance around Carti when moving. Never walk directly in front." },
-                    { icon: MapIcon, title: "Aisle Management", desc: "Keep main aisles clear. Stack pallets properly and secure loose materials." },
-                    { icon: ClockIcon, title: "Shift Changes", desc: "Brief incoming team on Carti's current tasks and any issues encountered." },
-                    { icon: WrenchScrewdriverIcon, title: "Visual Signals", desc: "Blue LED = moving, Yellow = obstacle detected, Red = error or emergency stop." },
-                    { icon: BoltIcon, title: "Emergency Protocol", desc: "Hit E-Stop immediately if someone is at risk. Report all incidents to supervisor." },
+                    { icon: UserGroupIcon, title: "Team Communication", desc: "Alert team when Carti enters their zone. Use radio or verbal warnings." },
+                    { icon: ShieldCheckIcon, title: "Safety Zones", desc: "Maintain 2 meter clearance when moving. Never walk in front." },
+                    { icon: MapIcon, title: "Aisle Management", desc: "Keep aisles clear. Stack pallets properly and secure loose materials." },
+                    { icon: ClockIcon, title: "Shift Changes", desc: "Brief incoming team on Carti's tasks and any issues." },
+                    { icon: WrenchScrewdriverIcon, title: "Visual Signals", desc: "Blue = moving, Yellow = obstacle, Red = error or E-stop." },
+                    { icon: BoltIcon, title: "Emergency Protocol", desc: "Hit E-Stop if someone at risk. Report all incidents to supervisor." },
                 ].map((item, i) => (
                     <motion.div 
                         key={i}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: i * 0.05 }}
-                        className="bg-bear-blue/5 p-5 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
+                        className="bg-bear-blue/5 p-3 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
-                        <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <item.icon className="w-5 h-5 text-bear-blue" />
+                        <div className="flex items-start gap-2">
+                            <div className="w-8 h-8 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <item.icon className="w-4 h-4 text-bear-blue" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                                <p className="text-sm text-gray-300 leading-relaxed">{item.desc}</p>
+                                <h3 className="font-bold text-white mb-1 text-xs">{item.title}</h3>
+                                <p className="text-xs text-gray-300 leading-snug">{item.desc}</p>
                             </div>
                         </div>
                     </motion.div>
                 ))}
             </div>
 
-            <div className="bg-gradient-to-r from-red-500/10 to-orange-500/10 p-5 rounded-xl border border-red-500/30 flex items-start gap-4">
-                <div className="bg-red-500/20 p-3 rounded-lg flex-shrink-0">
-                    <ShieldCheckIcon className="w-6 h-6 text-red-500" />
+            <div className="bg-gradient-to-r from-red-500/10 to-orange-500/10 p-3 rounded-xl border border-red-500/30 flex items-center gap-3">
+                <div className="bg-red-500/20 p-2 rounded-lg flex-shrink-0">
+                    <ShieldCheckIcon className="w-5 h-5 text-red-500" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-white mb-2">Safety First Always</h3>
-                    <p className="text-gray-300 text-sm leading-relaxed">If you see a potential hazard, stop Carti immediately. Safety trumps productivity every time.</p>
+                    <h3 className="font-bold text-white text-sm">Safety First Always</h3>
+                    <p className="text-gray-300 text-xs leading-snug">Stop Carti immediately if you see any hazard. Safety trumps productivity.</p>
                 </div>
             </div>
         </div>
@@ -758,48 +758,48 @@ function ModuleWarehouseSafety() {
 
 function ModuleBestPractices() {
     return (
-        <div className="space-y-6 h-full flex flex-col">
-            <div className="bear-glass-card p-6 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Operational Excellence</h2>
-                <p className="text-gray-300 text-sm">Professional standards for warehouse operations</p>
+        <div className="space-y-4 h-full flex flex-col">
+            <div className="bear-glass-card p-5 flex flex-col justify-center">
+                <h2 className="text-xl font-bold text-white mb-1">Operational Excellence</h2>
+                <p className="text-gray-300 text-xs">Professional standards for warehouse operations</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
+            <div className="grid grid-cols-2 gap-3 flex-1">
                 {[
-                    { icon: UserGroupIcon, title: "Zone Safety", desc: "Maintain a clear zone around picking stations. Allow Carti space to maneuver." },
-                    { icon: WrenchScrewdriverIcon, title: "Maintenance", desc: "Report any unusual noises or wheel wear immediately to the fleet manager." },
-                    { icon: MapIcon, title: "Mapping Updates", desc: "Alert admins if layout changes occur (new racks, moved pallets) so maps can be updated." },
-                    { icon: ClipboardDocumentCheckIcon, title: "Charge Management", desc: "Send Carti to charge during break times to ensure full shift coverage." },
-                    { icon: ShieldCheckIcon, title: "Weight Limits", desc: "Never exceed 100kg payload. Overloading can damage the robot and void warranty." },
-                    { icon: SparklesIcon, title: "Clean Sensors", desc: "Daily LiDAR sensor wipe down prevents navigation errors and maintains efficiency." },
+                    { icon: UserGroupIcon, title: "Zone Safety", desc: "Clear zone around picking stations. Allow Carti space to maneuver." },
+                    { icon: WrenchScrewdriverIcon, title: "Maintenance", desc: "Report unusual noises or wheel wear to fleet manager immediately." },
+                    { icon: MapIcon, title: "Mapping Updates", desc: "Alert admins of layout changes so maps can be updated." },
+                    { icon: ClipboardDocumentCheckIcon, title: "Charge Management", desc: "Send to charge during breaks to ensure full shift coverage." },
+                    { icon: ShieldCheckIcon, title: "Weight Limits", desc: "Never exceed 100kg. Overloading damages robot and voids warranty." },
+                    { icon: SparklesIcon, title: "Clean Sensors", desc: "Daily LiDAR wipe prevents navigation errors and maintains efficiency." },
                 ].map((item, i) => (
                     <motion.div 
                         key={i}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: i * 0.05 }}
-                        className="bg-bear-blue/5 p-5 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
+                        className="bg-bear-blue/5 p-3 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
-                        <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <item.icon className="w-5 h-5 text-bear-blue" />
+                        <div className="flex items-start gap-2">
+                            <div className="w-8 h-8 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <item.icon className="w-4 h-4 text-bear-blue" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                                <p className="text-sm text-gray-300 leading-relaxed">{item.desc}</p>
+                                <h3 className="font-bold text-white mb-1 text-xs">{item.title}</h3>
+                                <p className="text-xs text-gray-300 leading-snug">{item.desc}</p>
                             </div>
                         </div>
                     </motion.div>
                 ))}
             </div>
 
-            <div className="bg-gradient-to-r from-yellow-500/10 to-amber-500/10 p-5 rounded-xl border border-yellow-500/30 flex items-start gap-4">
-                <div className="bg-yellow-500/20 p-3 rounded-lg flex-shrink-0">
-                    <LightBulbIcon className="w-6 h-6 text-yellow-500" />
+            <div className="bg-gradient-to-r from-yellow-500/10 to-amber-500/10 p-3 rounded-xl border border-yellow-500/30 flex items-center gap-3">
+                <div className="bg-yellow-500/20 p-2 rounded-lg flex-shrink-0">
+                    <LightBulbIcon className="w-5 h-5 text-yellow-500" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-white mb-2">Fleet Manager Contact</h3>
-                    <p className="text-gray-300 text-sm leading-relaxed">For any operational questions, issues, or emergencies, contact your fleet manager immediately.</p>
+                    <h3 className="font-bold text-white text-sm">Fleet Manager Contact</h3>
+                    <p className="text-gray-300 text-xs leading-snug">For operational questions, issues, or emergencies, contact fleet manager immediately.</p>
                 </div>
             </div>
         </div>
@@ -808,53 +808,53 @@ function ModuleBestPractices() {
 
 function ModuleQuickTips() {
     return (
-        <div className="space-y-6 h-full flex flex-col">
-            <div className="bear-glass-card p-6 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Troubleshooting</h2>
-                <p className="text-gray-300 text-sm">Common situations and solutions</p>
+        <div className="space-y-4 h-full flex flex-col">
+            <div className="bear-glass-card p-5 flex flex-col justify-center">
+                <h2 className="text-xl font-bold text-white mb-1">Troubleshooting</h2>
+                <p className="text-gray-300 text-xs">Common situations and solutions</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
-                <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 p-5 rounded-xl border-2 border-yellow-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <ExclamationTriangleIcon className="w-6 h-6 text-yellow-500" />
+            <div className="grid grid-cols-2 gap-3 flex-1">
+                <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 p-4 rounded-xl border-2 border-yellow-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <ExclamationTriangleIcon className="w-5 h-5 text-yellow-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Obstacle Detected</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">If Carti stops and flashes yellow, check for objects in its path. Clear the way and it will resume.</p>
+                    <h3 className="font-bold text-white mb-1 text-sm">Obstacle Detected</h3>
+                    <p className="text-xs text-gray-300 leading-snug">If Carti flashes yellow, check path. Clear objects and it will resume.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 p-5 rounded-xl border-2 border-red-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <BoltIcon className="w-6 h-6 text-red-500" />
+                <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 p-4 rounded-xl border-2 border-red-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-red-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <BoltIcon className="w-5 h-5 text-red-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">System Error</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">If the status light turns red, press the E-Stop, wait 5 seconds, then release to reboot.</p>
+                    <h3 className="font-bold text-white mb-1 text-sm">System Error</h3>
+                    <p className="text-xs text-gray-300 leading-snug">Red status light? Press E-Stop, wait 5 seconds, release to reboot.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-bear-blue/10 to-cyan-600/5 p-5 rounded-xl border-2 border-bear-blue/30 flex flex-col">
-                    <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-3">
-                        <MapIcon className="w-6 h-6 text-bear-blue" />
+                <div className="bg-gradient-to-br from-bear-blue/10 to-cyan-600/5 p-4 rounded-xl border-2 border-bear-blue/30 flex flex-col">
+                    <div className="w-9 h-9 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-2">
+                        <MapIcon className="w-5 h-5 text-bear-blue" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Navigation Issue</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Lost position? Return to home station, restart the system, and allow re-mapping if needed.</p>
+                    <h3 className="font-bold text-white mb-1 text-sm">Navigation Issue</h3>
+                    <p className="text-xs text-gray-300 leading-snug">Lost position? Return to home, restart, allow re-mapping if needed.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 p-5 rounded-xl border-2 border-green-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <CheckCircleIcon className="w-6 h-6 text-green-500" />
+                <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 p-4 rounded-xl border-2 border-green-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-green-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <CheckCircleIcon className="w-5 h-5 text-green-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Need Help?</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Contact your fleet manager for any technical issues or operational questions.</p>
+                    <h3 className="font-bold text-white mb-1 text-sm">Need Help?</h3>
+                    <p className="text-xs text-gray-300 leading-snug">Contact fleet manager for technical issues or operational questions.</p>
                 </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-6 rounded-xl border border-green-500/30 flex items-start gap-4">
-                <div className="bg-green-500/20 p-3 rounded-lg flex-shrink-0">
-                    <SparklesIcon className="w-7 h-7 text-green-400" />
+            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-3 rounded-xl border border-green-500/30 flex items-center gap-3">
+                <div className="bg-green-500/20 p-2 rounded-lg flex-shrink-0">
+                    <SparklesIcon className="w-6 h-6 text-green-400" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-white mb-2 text-lg">You're Certified!</h3>
-                    <p className="text-gray-200 text-sm leading-relaxed">You're now ready to operate Carti 100. Welcome to the logistics team!</p>
+                    <h3 className="font-bold text-white text-sm">You're Certified!</h3>
+                    <p className="text-gray-200 text-xs leading-snug">You're ready to operate Carti 100. Welcome to the logistics team!</p>
                 </div>
             </div>
         </div>

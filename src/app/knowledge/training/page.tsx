@@ -710,48 +710,48 @@ function ModuleUsingServi() {
 
 function ModuleSafetyCommunication() {
     return (
-        <div className="space-y-6 h-full flex flex-col">
-            <div className="bear-glass-card p-6 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Safety & Communication</h2>
-                <p className="text-gray-300 text-sm">Working safely with customers around</p>
+        <div className="space-y-4 h-full flex flex-col">
+            <div className="bear-glass-card p-5 flex flex-col justify-center">
+                <h2 className="text-xl font-bold text-white mb-1">Safety & Communication</h2>
+                <p className="text-gray-300 text-xs">Working safely with customers around</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
+            <div className="grid grid-cols-2 gap-3 flex-1">
                 {[
-                    { icon: UserGroupIcon, title: "Alert Customers", desc: "Say 'Robot coming through' or 'Excuse me' before Servi approaches tables." },
-                    { icon: ShieldCheckIcon, title: "Safe Distance", desc: "Keep 1 meter clearance around Servi when it's moving. Never reach under the robot." },
-                    { icon: MapIcon, title: "Clear Pathways", desc: "Move chairs, bags, and obstacles out of Servi's path before sending it." },
-                    { icon: ClockIcon, title: "Peak Hours", desc: "During busy times, coordinate with team to manage Servi routes efficiently." },
-                    { icon: SparklesIcon, title: "Professional", desc: "Explain to curious customers that Servi is your helper - builds positive perception." },
-                    { icon: BoltIcon, title: "Emergency Stop", desc: "Red button on base. Press in emergency. Twist clockwise to resume operations." },
+                    { icon: UserGroupIcon, title: "Alert Customers", desc: "Say 'Robot coming through' before Servi approaches tables." },
+                    { icon: ShieldCheckIcon, title: "Safe Distance", desc: "Keep 1 meter clearance when moving. Never reach under." },
+                    { icon: MapIcon, title: "Clear Pathways", desc: "Move chairs, bags, and obstacles before sending." },
+                    { icon: ClockIcon, title: "Peak Hours", desc: "Coordinate with team to manage routes efficiently." },
+                    { icon: SparklesIcon, title: "Professional", desc: "Explain Servi is your helper - builds positive perception." },
+                    { icon: BoltIcon, title: "Emergency Stop", desc: "Red button on base. Press in emergency. Twist to resume." },
                 ].map((item, i) => (
                     <motion.div 
                         key={i}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: i * 0.05 }}
-                        className="bg-bear-blue/5 p-5 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
+                        className="bg-bear-blue/5 p-3 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
-                        <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <item.icon className="w-5 h-5 text-bear-blue" />
+                        <div className="flex items-start gap-2">
+                            <div className="w-8 h-8 bg-bear-blue/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <item.icon className="w-4 h-4 text-bear-blue" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                                <p className="text-sm text-gray-300 leading-relaxed">{item.desc}</p>
+                                <h3 className="font-bold text-white mb-1 text-xs">{item.title}</h3>
+                                <p className="text-xs text-gray-300 leading-snug">{item.desc}</p>
                             </div>
                         </div>
                     </motion.div>
                 ))}
             </div>
 
-            <div className="bg-gradient-to-r from-red-500/10 to-orange-500/10 p-5 rounded-xl border border-red-500/30 flex items-start gap-4">
-                <div className="bg-red-500/20 p-3 rounded-lg flex-shrink-0">
-                    <ShieldCheckIcon className="w-6 h-6 text-red-500" />
+            <div className="bg-gradient-to-r from-red-500/10 to-orange-500/10 p-3 rounded-xl border border-red-500/30 flex items-center gap-3">
+                <div className="bg-red-500/20 p-2 rounded-lg flex-shrink-0">
+                    <ShieldCheckIcon className="w-5 h-5 text-red-500" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-white mb-2">Safety First</h3>
-                    <p className="text-gray-300 text-sm leading-relaxed">If you see a potential hazard, stop Servi immediately and assess the situation. Customer safety is always priority.</p>
+                    <h3 className="font-bold text-white text-sm">Safety First</h3>
+                    <p className="text-gray-300 text-xs leading-snug">Stop Servi immediately if you see any hazard. Customer safety is priority.</p>
                 </div>
             </div>
         </div>
@@ -810,53 +810,53 @@ function ModuleBestPractices() {
 
 function ModuleQuickTips() {
     return (
-        <div className="space-y-6 h-full flex flex-col">
-            <div className="bear-glass-card p-6 flex flex-col justify-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Quick Tips</h2>
-                <p className="text-gray-300 text-sm">Common situations and simple solutions</p>
+        <div className="space-y-4 h-full flex flex-col">
+            <div className="bear-glass-card p-5 flex flex-col justify-center">
+                <h2 className="text-xl font-bold text-white mb-1">Quick Tips</h2>
+                <p className="text-gray-300 text-xs">Common situations and simple solutions</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 flex-1">
-                <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 p-5 rounded-xl border-2 border-yellow-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <BoltIcon className="w-6 h-6 text-yellow-500" />
+            <div className="grid grid-cols-2 gap-3 flex-1">
+                <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 p-4 rounded-xl border-2 border-yellow-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <BoltIcon className="w-5 h-5 text-yellow-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Low Battery</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Servi will automatically return to the charger. If it seems lost, send it to "Home" on the screen.</p>
+                    <h3 className="font-bold text-white mb-1 text-sm">Low Battery</h3>
+                    <p className="text-xs text-gray-300 leading-snug">Auto-returns to charger. If lost, send to "Home" on screen.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 p-5 rounded-xl border-2 border-red-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <ExclamationTriangleIcon className="w-6 h-6 text-red-500" />
+                <div className="bg-gradient-to-br from-red-500/10 to-red-600/5 p-4 rounded-xl border-2 border-red-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-red-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <ExclamationTriangleIcon className="w-5 h-5 text-red-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Servi Won't Move</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Check if the red emergency button on the base is pressed. Twist it clockwise to release.</p>
+                    <h3 className="font-bold text-white mb-1 text-sm">Won't Move</h3>
+                    <p className="text-xs text-gray-300 leading-snug">Check red E-stop button on base. Twist clockwise to release.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-bear-blue/10 to-cyan-600/5 p-5 rounded-xl border-2 border-bear-blue/30 flex flex-col">
-                    <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-3">
-                        <ClockIcon className="w-6 h-6 text-bear-blue" />
+                <div className="bg-gradient-to-br from-bear-blue/10 to-cyan-600/5 p-4 rounded-xl border-2 border-bear-blue/30 flex flex-col">
+                    <div className="w-9 h-9 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-2">
+                        <ClockIcon className="w-5 h-5 text-bear-blue" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Screen Not Working</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Wipe it with a clean cloth first. Still not working? Restart Servi by holding the power button for 10 seconds.</p>
+                    <h3 className="font-bold text-white mb-1 text-sm">Screen Issue</h3>
+                    <p className="text-xs text-gray-300 leading-snug">Wipe with clean cloth. Still not working? Hold power button 10 seconds.</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 p-5 rounded-xl border-2 border-green-500/30 flex flex-col">
-                    <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center mb-3">
-                        <CheckCircleIcon className="w-6 h-6 text-green-500" />
+                <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 p-4 rounded-xl border-2 border-green-500/30 flex flex-col">
+                    <div className="w-9 h-9 bg-green-500/20 rounded-lg flex items-center justify-center mb-2">
+                        <CheckCircleIcon className="w-5 h-5 text-green-500" />
                     </div>
-                    <h3 className="font-bold text-white mb-2">Need Help?</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">Your manager and team are always there for you. Don't hesitate to ask questions.</p>
+                    <h3 className="font-bold text-white mb-1 text-sm">Need Help?</h3>
+                    <p className="text-xs text-gray-300 leading-snug">Manager and team are always there. Don't hesitate to ask.</p>
                 </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-6 rounded-xl border border-green-500/30 flex items-start gap-4">
-                <div className="bg-green-500/20 p-3 rounded-lg flex-shrink-0">
-                    <SparklesIcon className="w-7 h-7 text-green-400" />
+            <div className="bg-gradient-to-r from-green-500/15 to-emerald-500/10 p-3 rounded-xl border border-green-500/30 flex items-center gap-3">
+                <div className="bg-green-500/20 p-2 rounded-lg flex-shrink-0">
+                    <SparklesIcon className="w-6 h-6 text-green-400" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-white mb-2 text-lg">You're Ready!</h3>
-                    <p className="text-gray-200 text-sm leading-relaxed">Working with Servi Plus will feel natural within a few shifts. Welcome to the team!</p>
+                    <h3 className="font-bold text-white text-sm">You're Ready!</h3>
+                    <p className="text-gray-200 text-xs leading-snug">Working with Servi will feel natural within a few shifts. Welcome to the team!</p>
                 </div>
             </div>
         </div>

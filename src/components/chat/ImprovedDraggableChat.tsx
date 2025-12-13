@@ -77,11 +77,19 @@ export function ImprovedDraggableChat() {
       return JSON.parse(savedPosition);
     }
     
-    // Default positions: desktop = closer to logo, mobile = centered top
+    // Default positions: desktop = closer to logo, mobile = bottom left above nav
     const isMobileDevice = window.innerWidth < 1024;
+    if (isMobileDevice) {
+      // Position above the home icon (bottom left) with breathing space
+      // Bottom nav is ~80px (64px height + padding), icon is 56px, add 16px spacing
+      return {
+        x: 16, // 16px from left edge
+        y: window.innerHeight - 80 - 56 - 16, // Above bottom nav with breathing space
+      };
+    }
     return {
-      x: isMobileDevice ? (window.innerWidth / 2) - 28 : 160, // Center on mobile, close to logo on desktop
-      y: 16, // Top of header for both
+      x: 160, // Close to logo on desktop
+      y: 16, // Top of header on desktop
     };
   });
   const [isDraggingIcon, setIsDraggingIcon] = useState(false);

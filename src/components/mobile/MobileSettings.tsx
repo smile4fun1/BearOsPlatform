@@ -72,7 +72,7 @@ export function MobileSettings({
   ];
   
   return (
-    <div className="lg:hidden h-full">
+    <div className="lg:hidden h-full flex flex-col overflow-hidden">
       <AnimatePresence mode="wait">
         {currentView === 'main' && (
           <motion.div
@@ -81,33 +81,11 @@ export function MobileSettings({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className="h-full overflow-y-auto mobile-scroll"
+            className="flex-1 overflow-y-auto mobile-scroll"
           >
-            {/* Header */}
-            <div className="px-6 py-8 border-b border-white/10">
-              <h1 className="text-2xl font-bold text-white mb-2">Settings</h1>
-              <p className="text-sm text-gray-400">Manage your account and preferences</p>
-            </div>
-            
             {/* Settings List */}
-            <div className="py-4">
+            <div className="py-6">
               <SettingsList sections={sections} />
-            </div>
-            
-            {/* Role Badge */}
-            <div className="mx-6 mb-6 p-4 bg-white/5 border border-white/10 rounded-xl flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-500/20">
-                  <Key className="w-5 h-5 text-purple-400" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-white">Account Role</div>
-                  <div className="text-xs text-gray-400">{userData.role}</div>
-                </div>
-              </div>
-              <span className="px-3 py-1 rounded-full bg-bear-blue/20 text-bear-blue text-xs font-medium border border-bear-blue/30">
-                {userData.role}
-              </span>
             </div>
           </motion.div>
         )}

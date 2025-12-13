@@ -24,16 +24,16 @@ interface SettingsListProps {
 
 export function SettingsList({ sections }: SettingsListProps) {
   return (
-    <div className="lg:hidden">
+    <div className="lg:hidden w-full">
       {sections.map((section, sectionIndex) => (
-        <div key={section.id} className="mb-6">
+        <div key={section.id} className="mb-4">
           {section.title && (
-            <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <h3 className="px-6 mb-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               {section.title}
             </h3>
           )}
           
-          <div className="bg-white/5 border-y border-white/10">
+          <div className="bg-white/5 border-y border-white/10 w-full">
             {section.items.map((item, itemIndex) => {
               const Icon = item.icon;
               const isLast = itemIndex === section.items.length - 1;
@@ -46,7 +46,7 @@ export function SettingsList({ sections }: SettingsListProps) {
                   className={`w-full flex items-center gap-4 px-6 py-4 active:bg-white/10 transition-colors ${
                     !isLast ? 'border-b border-white/5' : ''
                   }`}
-                  style={{ minHeight: '56px' }} // 56px = 44px touch target + padding
+                  style={{ minHeight: '64px' }} // Larger touch target for better UX
                 >
                   {/* Icon */}
                   <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-bear-blue/20 flex items-center justify-center">
@@ -88,9 +88,9 @@ interface SettingsDetailProps {
 
 export function SettingsDetail({ title, onBack, children }: SettingsDetailProps) {
   return (
-    <div className="lg:hidden h-full flex flex-col bg-[#020511]">
+    <div className="lg:hidden fixed inset-0 z-50 flex flex-col bg-[#020511]">
       {/* Header */}
-      <div className="flex-shrink-0 px-4 py-4 border-b border-white/10 bg-[#0F1117]/50 backdrop-blur-sm">
+      <div className="flex-shrink-0 px-4 py-4 border-b border-white/10 bg-[#0F1117]/95 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
@@ -104,7 +104,7 @@ export function SettingsDetail({ title, onBack, children }: SettingsDetailProps)
       </div>
       
       {/* Content */}
-      <div className="flex-1 overflow-y-auto mobile-scroll">
+      <div className="flex-1 overflow-y-auto mobile-scroll pb-20">
         {children}
       </div>
     </div>

@@ -834,7 +834,7 @@ export default function ConnectPage() {
 
       {/* Main Chat Area */}
       <div 
-        className="flex-1 flex flex-col min-w-0 bg-[#020511] relative overflow-hidden"
+        className="flex-1 flex flex-col min-w-0 bg-[#020511] relative overflow-hidden w-full"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -850,13 +850,14 @@ export default function ConnectPage() {
         )}
 
         {/* Header */}
-        <header className="h-14 sm:h-16 px-3 sm:px-6 border-b border-white/5 flex items-center justify-between bg-[#0F1117]/50 backdrop-blur-sm">
+        <header className="h-14 sm:h-16 px-3 sm:px-6 border-b border-white/5 flex items-center justify-between bg-[#0F1117]/50 backdrop-blur-sm flex-shrink-0">
           <button 
-            onClick={() => setShowSidebar(!showSidebar)}
-            className="p-2 -ml-2 rounded-lg hover:bg-white/5 lg:hidden"
+            onClick={() => setShowSidebar(true)}
+            className="p-2 -ml-2 rounded-lg hover:bg-white/5 lg:hidden active:bg-white/10"
             style={{ minWidth: '44px', minHeight: '44px' }}
+            aria-label="Open channels"
           >
-            <Hash className="w-6 h-6 text-gray-400" />
+            <Hash className="w-6 h-6 text-bear-blue" />
           </button>
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <Hash className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 hidden lg:block" />

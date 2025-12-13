@@ -197,6 +197,8 @@ export function PartnerDashboard({ partner }: { partner: Partner }) {
           View Technical Manuals
         </Link>
       </div>
+
+      <div className="mb-10" />
     </div>
   );
 }

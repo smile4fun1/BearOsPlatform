@@ -77,7 +77,7 @@ export function MyRobotsView() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#020511] via-[#040a1c] to-[#050814] text-white overflow-x-hidden">
       <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
         {/* Header with decorative elements */}
         <div className="relative mb-6 sm:mb-8 lg:mb-12">
@@ -238,7 +238,7 @@ export function MyRobotsView() {
               >
                 <Link
                   href={`/robots/${robot.id}`}
-                  className="group block bear-glass-card p-5 relative overflow-hidden"
+                  className="group block bear-glass-card p-5 relative overflow-hidden h-full min-h-[320px] flex flex-col"
                 >
                   {/* Robot Image Background */}
                   <div className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
@@ -282,7 +282,7 @@ export function MyRobotsView() {
                   </div>
 
                   {/* Quick Stats */}
-                  <div className="space-y-3">
+                  <div className="space-y-3 flex-1">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-white/60">Model</span>
                       <span className="font-medium text-bear-blue">{robot.model}</span>

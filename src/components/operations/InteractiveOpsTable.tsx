@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Fragment, useMemo } from "react";
+import { useState, Fragment, useMemo, useEffect, useRef } from "react";
 import { ChevronDown, ChevronUp, ExternalLink, Info, Search, Filter } from "lucide-react";
 import { OpsDataPoint } from "@/lib/types";
 import { AnimatedCounter } from "../AnimatedCounter";
@@ -15,6 +15,8 @@ export function InteractiveOpsTable({ operations }: InteractiveOpsTableProps) {
   const [sortField, setSortField] = useState<keyof OpsDataPoint | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [filter, setFilter] = useState("");
+  const [visibleCount, setVisibleCount] = useState(5);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const handleSort = (field: keyof OpsDataPoint) => {
     if (sortField === field) {
@@ -51,6 +53,29 @@ export function InteractiveOpsTable({ operations }: InteractiveOpsTableProps) {
     );
   }, [operations, sortField, sortDirection, filter]);
 
+  // Lazy loading with Intersection Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < filteredOps.length) {
+          setVisibleCount(prev => Math.min(prev + 5, filteredOps.length));
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [visibleCount, filteredOps.length]);
+
+  // Reset visible count when filter changes
+  useEffect(() => {
+    setVisibleCount(5);
+  }, [filter]);
+
   const SortButton = ({ field, label, className = "" }: { field: keyof OpsDataPoint; label: string; className?: string }) => (
     <button
       onClick={() => handleSort(field)}
@@ -85,7 +110,7 @@ export function InteractiveOpsTable({ operations }: InteractiveOpsTableProps) {
 
       {/* Mobile Card View */}
       <div className="block lg:hidden space-y-3">
-        {filteredOps.slice(0, 15).map((op) => (
+        {filteredOps.slice(0, visibleCount).map((op) => (
           <div
             key={op.id}
             onClick={() => setSelectedRow(selectedRow === op.id ? null : op.id)}
@@ -194,7 +219,7 @@ export function InteractiveOpsTable({ operations }: InteractiveOpsTableProps) {
             </tr>
           </thead>
           <tbody>
-            {filteredOps.slice(0, 20).map((op) => (
+            {filteredOps.slice(0, visibleCount).map((op) => (
               <Fragment key={op.id}>
                 <tr
                   onClick={() => setSelectedRow(selectedRow === op.id ? null : op.id)}
@@ -324,6 +349,22 @@ export function InteractiveOpsTable({ operations }: InteractiveOpsTableProps) {
           </tbody>
         </table>
       </div>
+
+      {/* Load More Trigger */}
+      {visibleCount < filteredOps.length && (
+        <div ref={loadMoreRef} className="flex items-center justify-center py-8">
+          <div className="flex items-center gap-2 text-sm text-white/40">
+            <div className="w-2 h-2 bg-bear-blue/50 rounded-full animate-pulse" />
+            <span>Loading more...</span>
+          </div>
+        </div>
+      )}
+
+      {visibleCount >= filteredOps.length && filteredOps.length > 5 && (
+        <div className="flex items-center justify-center py-6 text-sm text-white/30">
+          <span>All {filteredOps.length} records loaded</span>
+        </div>
+      )}
     </div>
   );
 }

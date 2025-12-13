@@ -320,6 +320,8 @@ export default function SupportPage() {
 
       </div>
 
+      <div className="mb-10" />
+
       <SystemStatus
         isOpen={isSystemStatusOpen}
         onClose={() => setIsSystemStatusOpen(false)}

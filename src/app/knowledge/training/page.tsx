@@ -21,9 +21,7 @@ import {
   Lightbulb as LightBulbIcon,
   ArrowRight as ArrowRightIcon,
   AlertTriangle as ExclamationTriangleIcon,
-  ChevronLeft as ChevronLeftIcon,
-  Menu as MenuIcon,
-  LayoutDashboard as LayoutIcon
+  ChevronLeft as ChevronLeftIcon
 } from 'lucide-react';
 
 export default function TrainingPage() {
@@ -116,7 +114,8 @@ export default function TrainingPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const completeModule = (moduleId: number) => {
+  const handleNext = () => {
+    const moduleId = currentModule;
     if (!completedModules.includes(moduleId)) {
       setCompletedModules(prev => [...prev, moduleId]);
     }
@@ -126,7 +125,14 @@ export default function TrainingPage() {
     } else {
       const nextId = moduleId + 1;
       setCurrentModule(nextId);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Optional: scroll top if content is very long, but with fixed footer it might not be needed
+      // window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleBack = () => {
+    if (currentModule > 1) {
+        setCurrentModule(currentModule - 1);
     }
   };
 
@@ -177,11 +183,11 @@ export default function TrainingPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-80px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start h-full">
             
-            {/* Sidebar Navigation - Smart Sticky */}
-            <aside className="hidden lg:block col-span-3 sticky top-24">
+            {/* Sidebar Navigation */}
+            <aside className="hidden lg:block col-span-3 h-full overflow-y-auto pr-2 custom-scrollbar">
                 <nav className="space-y-2">
                     {modules.map((module, idx) => {
                         const isActive = currentModule === module.id;
@@ -222,23 +228,66 @@ export default function TrainingPage() {
             </aside>
 
             {/* Main Content Area */}
-            <div className="col-span-12 lg:col-span-9 min-h-[600px]">
+            <div className="col-span-12 lg:col-span-9 h-full flex flex-col">
                 <AnimatePresence mode="wait">
                     {!trainingStarted ? (
-                        <ModuleWelcome key="welcome" onComplete={startTraining} />
+                        <div className="h-full">
+                             <ModuleWelcome onComplete={startTraining} />
+                        </div>
                     ) : (
                         <motion.div
-                            key={currentModule}
-                            initial={{ opacity: 0, y: 20 }}
+                            key="content-card"
+                            initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="bg-[#0f1423] border border-white/10 rounded-3xl shadow-2xl flex flex-col h-full overflow-hidden relative"
                         >
-                            {currentModule === 1 && <ModuleMeetServi onComplete={() => completeModule(1)} />}
-                            {currentModule === 2 && <ModuleGettingStarted onComplete={() => completeModule(2)} />}
-                            {currentModule === 3 && <ModuleUsingServi onComplete={() => completeModule(3)} />}
-                            {currentModule === 4 && <ModuleBestPractices onComplete={() => completeModule(4)} />}
-                            {currentModule === 5 && <ModuleQuickTips onComplete={() => completeModule(5)} />}
+                            {/* Scrollable Content */}
+                            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={currentModule}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        {currentModule === 1 && <ModuleMeetServi />}
+                                        {currentModule === 2 && <ModuleGettingStarted />}
+                                        {currentModule === 3 && <ModuleUsingServi />}
+                                        {currentModule === 4 && <ModuleBestPractices />}
+                                        {currentModule === 5 && <ModuleQuickTips />}
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+
+                            {/* Fixed Footer Action Bar */}
+                            <div className="p-6 border-t border-white/5 bg-[#0a0f1c]/50 backdrop-blur-md flex items-center justify-between">
+                                <button 
+                                    onClick={handleBack}
+                                    disabled={currentModule <= 1}
+                                    className={`text-sm font-medium px-6 py-3 rounded-xl transition-colors ${
+                                        currentModule <= 1 
+                                            ? 'text-gray-600 cursor-not-allowed' 
+                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    }`}
+                                >
+                                    Back
+                                </button>
+
+                                <div className="flex items-center gap-4">
+                                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wider hidden sm:block">
+                                        Step {currentModule} of {modules.length - 1}
+                                    </span>
+                                    <button 
+                                        onClick={handleNext} 
+                                        className="btn-primary"
+                                    >
+                                        {currentModule === modules.length - 1 ? 'Complete Training' : 'Continue'} 
+                                        {currentModule === modules.length - 1 ? <CheckCircleIcon className="w-5 h-5" /> : <ChevronRightIcon className="w-5 h-5" />}
+                                    </button>
+                                </div>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -318,7 +367,7 @@ export default function TrainingPage() {
 
 function ModuleWelcome({ onComplete }: { onComplete: () => void }) {
   return (
-    <div className="bear-glass-card p-8 lg:p-12 text-center h-full flex flex-col justify-center items-center relative overflow-hidden">
+    <div className="bg-[#0f1423] border border-white/10 rounded-3xl p-8 lg:p-12 text-center h-full flex flex-col justify-center items-center relative overflow-hidden shadow-2xl">
         <div className="absolute inset-0 bg-gradient-to-b from-bear-blue/5 to-transparent pointer-events-none" />
         
         <motion.div 
@@ -359,7 +408,7 @@ function ModuleWelcome({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-function ModuleMeetServi({ onComplete }: { onComplete: () => void }) {
+function ModuleMeetServi() {
     return (
         <div className="space-y-6">
             <div className="bear-glass-card p-8 relative overflow-hidden">
@@ -404,17 +453,11 @@ function ModuleMeetServi({ onComplete }: { onComplete: () => void }) {
                     </motion.div>
                 ))}
             </div>
-
-            <div className="flex justify-end pt-4">
-                <button onClick={onComplete} className="btn-primary">
-                    Continue <ChevronRightIcon className="w-5 h-5" />
-                </button>
-            </div>
         </div>
     );
 }
 
-function ModuleGettingStarted({ onComplete }: { onComplete: () => void }) {
+function ModuleGettingStarted() {
     return (
         <div className="space-y-6">
             <div className="bear-glass-card p-8">
@@ -472,17 +515,11 @@ function ModuleGettingStarted({ onComplete }: { onComplete: () => void }) {
                     </motion.div>
                 </div>
             </div>
-
-            <div className="flex justify-end pt-4">
-                <button onClick={onComplete} className="btn-primary">
-                    Continue <ChevronRightIcon className="w-5 h-5" />
-                </button>
-            </div>
         </div>
     );
 }
 
-function ModuleUsingServi({ onComplete }: { onComplete: () => void }) {
+function ModuleUsingServi() {
     return (
         <div className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
@@ -548,17 +585,11 @@ function ModuleUsingServi({ onComplete }: { onComplete: () => void }) {
                     ))}
                 </div>
             </div>
-
-            <div className="flex justify-end pt-4">
-                <button onClick={onComplete} className="btn-primary">
-                    Continue <ChevronRightIcon className="w-5 h-5" />
-                </button>
-            </div>
         </div>
     );
 }
 
-function ModuleBestPractices({ onComplete }: { onComplete: () => void }) {
+function ModuleBestPractices() {
     return (
         <div className="space-y-6">
             <div className="bear-glass-card p-8">
@@ -592,17 +623,11 @@ function ModuleBestPractices({ onComplete }: { onComplete: () => void }) {
                     <p className="text-gray-300">If something doesn't feel right, tell your manager. It's always better to ask than to guess.</p>
                 </div>
             </div>
-
-            <div className="flex justify-end pt-4">
-                <button onClick={onComplete} className="btn-primary">
-                    Continue <ChevronRightIcon className="w-5 h-5" />
-                </button>
-            </div>
         </div>
     );
 }
 
-function ModuleQuickTips({ onComplete }: { onComplete: () => void }) {
+function ModuleQuickTips() {
     return (
         <div className="space-y-6">
             <div className="bear-glass-card p-8">
@@ -634,15 +659,6 @@ function ModuleQuickTips({ onComplete }: { onComplete: () => void }) {
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div className="flex justify-end pt-4">
-                <button 
-                    onClick={onComplete} 
-                    className="px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-full shadow-lg shadow-green-500/30 hover:scale-105 transition-all flex items-center gap-2"
-                >
-                    Complete Training <CheckCircleIcon className="w-5 h-5" />
-                </button>
             </div>
         </div>
     );

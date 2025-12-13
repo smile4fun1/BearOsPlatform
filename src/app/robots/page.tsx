@@ -3,7 +3,6 @@
 import { useRole } from '@/lib/roleContext';
 import { RobotsManagement } from "@/components/robots/RobotsManagement";
 import { MyRobotsView } from "@/components/robots/MyRobotsView";
-import { Footer } from "@/components/Footer";
 
 export const dynamic = 'force-dynamic';
 
@@ -15,18 +14,8 @@ export default function RobotsPage() {
   const isInternalUser = role === 'internal_admin' || role === 'internal_rfe';
   
   if (isInternalUser) {
-    return (
-      <>
-        <RobotsManagement />
-        <Footer />
-      </>
-    );
+    return <RobotsManagement />;
   }
   
-  return (
-    <>
-      <MyRobotsView />
-      <Footer />
-    </>
-  );
+  return <MyRobotsView />;
 }

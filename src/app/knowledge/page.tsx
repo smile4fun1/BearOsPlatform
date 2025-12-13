@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -8,10 +8,10 @@ import Image from 'next/image';
 import { 
   Search, Sparkles, Book, ChevronRight, ArrowRight, Bot, 
   ChevronDown, Zap, Wrench, Wifi, Battery, MapPin, Settings,
-  HelpCircle, GraduationCap
+  HelpCircle, GraduationCap, Send, User, MessageSquare
 } from 'lucide-react';
 import { faqData, categories } from '@/lib/bearKnowledge';
-import { aiClient } from '@/lib/aiClient';
+import { aiClient, Message } from '@/lib/aiClient';
 
 // Category icons
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -23,14 +23,28 @@ const categoryIcons: Record<string, React.ReactNode> = {
   'troubleshooting': <Settings className="w-6 h-6" />,
 };
 
+interface ChatMessage extends Message {
+  id: string;
+  sources?: string[];
+  suggestedQuestions?: string[];
+}
+
 function KnowledgeContent() {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState('');
   const [isAiMode, setIsAiMode] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const [aiResponse, setAiResponse] = useState<{ answer: string; sources: string[] } | null>(null);
+  
+  // Chat State
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
+  
+  // Standard Search State
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // Handle URL search parameter
   useEffect(() => {
@@ -39,6 +53,13 @@ function KnowledgeContent() {
       setQuery(urlQuery);
     }
   }, [searchParams]);
+
+  // Scroll to bottom of chat
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages, isSearching]);
 
   const filteredFaqs = faqData.filter(faq => {
     if (activeCategory && faq.category !== activeCategory) return false;
@@ -51,16 +72,88 @@ function KnowledgeContent() {
     );
   });
 
-  const handleAiSearch = async () => {
-    if (!query) return;
+  const handleAiSearch = async (overrideQuery?: string) => {
+    const searchQuery = overrideQuery || query;
+    if (!searchQuery.trim()) return;
+
     setIsSearching(true);
-    setAiResponse(null);
+    
+    // If it's a new top-level search (using main input), reset chat
+    const isNewConversation = !!overrideQuery || query === searchQuery;
+    
+    let newHistory: ChatMessage[] = isNewConversation 
+      ? [{ role: 'user', content: searchQuery, id: Date.now().toString() }]
+      : [...chatMessages, { role: 'user', content: searchQuery, id: Date.now().toString() }];
+    
+    if (isNewConversation) {
+        setChatMessages(newHistory);
+        setCurrentSuggestions([]);
+    } else {
+        setChatMessages(prev => [...prev, { role: 'user', content: searchQuery, id: Date.now().toString() }]);
+        setChatInput(''); // Clear chat input
+    }
+
     try {
-      const response = await aiClient.ask(query);
-      setAiResponse(response);
+      // Prepare history for API (exclude IDs and extra fields)
+      const apiHistory = newHistory.map(({ role, content }) => ({ role, content }));
+      
+      // We pass empty query because we're passing the full history which includes the latest query
+      const response = await aiClient.ask('', apiHistory);
+      
+      const botMessage: ChatMessage = {
+        role: 'assistant',
+        content: response.answer,
+        sources: response.sources,
+        suggestedQuestions: response.suggestedQuestions,
+        id: (Date.now() + 1).toString()
+      };
+
+      setChatMessages(prev => [...prev, botMessage]);
+      setCurrentSuggestions(response.suggestedQuestions || []);
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleChatSubmit = () => {
+    if (!chatInput.trim()) return;
+    handleAiSearch(chatInput);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    // If interacting via chat input (bottom), treat as chat
+    // If interacting via top search, treat as chat
+    // Just call handleAiSearch with the suggestion
+    
+    // We want to append this to the current chat
+    setChatInput('');
+    
+    // Manually update state to show user selection immediately
+    const userMsg: ChatMessage = { role: 'user', content: suggestion, id: Date.now().toString() };
+    setChatMessages(prev => [...prev, userMsg]);
+    
+    setIsSearching(true);
+    
+    // Call API
+    (async () => {
+        try {
+            const apiHistory = [...chatMessages, userMsg].map(({ role, content }) => ({ role, content }));
+            const response = await aiClient.ask('', apiHistory);
+            
+            const botMessage: ChatMessage = {
+                role: 'assistant',
+                content: response.answer,
+                sources: response.sources,
+                suggestedQuestions: response.suggestedQuestions,
+                id: (Date.now() + 1).toString()
+            };
+
+            setChatMessages(prev => [...prev, botMessage]);
+            setCurrentSuggestions(response.suggestedQuestions || []);
+        } finally {
+            setIsSearching(false);
+        }
+    })();
   };
 
   return (
@@ -175,7 +268,7 @@ function KnowledgeContent() {
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}
-                    onClick={handleAiSearch}
+                    onClick={() => handleAiSearch()}
                     disabled={isSearching}
                     className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:scale-110 disabled:opacity-50 disabled:scale-100 transition-all shadow-lg shadow-purple-500/50 focus:outline-none focus:ring-0 focus-visible:outline-none"
                     style={{ outline: 'none' }}
@@ -207,61 +300,149 @@ function KnowledgeContent() {
           </div>
         </motion.div>
 
-        {/* AI Response Area */}
+        {/* AI Chat Interface */}
         <AnimatePresence>
-          {isAiMode && (isSearching || aiResponse) && (
+          {isAiMode && chatMessages.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: -10, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: 'auto' }}
-              exit={{ opacity: 0, y: -10, height: 0 }}
-              className="mb-10 max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="mb-10 max-w-4xl mx-auto"
             >
-              <div className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 border border-purple-500/20 rounded-3xl p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 rounded-xl bg-purple-500/20">
-                    <Bot className="w-5 h-5 text-purple-400" />
-                  </div>
-                  <span className="font-semibold text-purple-300 text-sm uppercase tracking-wider">Bear AI Response</span>
-                </div>
+              {/* Chat Container */}
+              <div className="bg-[#0A0F1C] border border-purple-500/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col min-h-[500px] max-h-[700px]">
                 
-                {isSearching ? (
-                  <div className="flex items-center gap-3 text-gray-400">
-                    {[0, 1, 2].map((i) => (
-                      <motion.span 
-                        key={i}
-                        className="w-2 h-2 bg-purple-400 rounded-full"
-                        animate={{ scale: [1, 1.3, 1] }}
-                        transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }}
-                      />
+                {/* Header */}
+                <div className="p-4 border-b border-white/5 bg-white/5 flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-purple-500/20">
+                    <Bot className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-white text-sm">Bear AI Assistant</h3>
+                        <p className="text-xs text-gray-400">Powered by Bear Knowledge Base</p>
+                    </div>
+                </div>
+
+                {/* Messages Area */}
+                <div 
+                    ref={chatContainerRef}
+                    className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
+                >
+                    {chatMessages.map((msg) => (
+                        <div key={msg.id} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                            {/* Avatar */}
+                            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                                msg.role === 'user' ? 'bg-bear-blue' : 'bg-purple-500/20'
+                            }`}>
+                                {msg.role === 'user' ? (
+                                    <User className="w-4 h-4 text-white" />
+                                ) : (
+                                    <Sparkles className="w-4 h-4 text-purple-400" />
+                                )}
+                            </div>
+
+                            {/* Message Bubble */}
+                            <div className={`flex flex-col max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                                <div className={`px-5 py-3.5 rounded-2xl leading-relaxed whitespace-pre-wrap ${
+                                    msg.role === 'user' 
+                                        ? 'bg-bear-blue text-white rounded-tr-sm' 
+                                        : 'bg-white/5 text-gray-200 border border-white/10 rounded-tl-sm'
+                                }`}>
+                                    {msg.content.split(/(\*\*.*?\*\*)/g).map((part, i) => 
+                                        part.startsWith('**') && part.endsWith('**') 
+                                        ? <strong key={i} className={`font-semibold ${msg.role === 'user' ? 'text-white' : 'text-purple-300'}`}>{part.slice(2, -2)}</strong> 
+                                        : part
+                                    )}
+                                </div>
+                                
+                                {/* Sources (Assistant Only) */}
+                                {msg.role === 'assistant' && msg.sources && msg.sources.length > 0 && (
+                                    <div className="mt-2 flex flex-wrap gap-2">
+                                        {msg.sources.map((source, i) => (
+                                            <span key={i} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/5 text-[10px] text-gray-500">
+                                                <Book className="w-3 h-3" />
+                                                {source}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     ))}
-                    <span className="ml-2">Analyzing documentation...</span>
-                  </div>
-                ) : (
-                  <>
-                    <div className="text-gray-200 leading-relaxed whitespace-pre-wrap mb-6 text-lg font-light">
-                      {aiResponse?.answer.split(/(\*\*.*?\*\*)/g).map((part, i) => 
-                        part.startsWith('**') && part.endsWith('**') 
-                          ? <strong key={i} className="text-white font-semibold">{part.slice(2, -2)}</strong> 
-                          : part
-                      )}
+
+                    {/* Loading Indicator */}
+                    {isSearching && (
+                        <div className="flex gap-4">
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                                <Sparkles className="w-4 h-4 text-purple-400" />
+                            </div>
+                            <div className="flex items-center gap-1.5 p-3 rounded-2xl bg-white/5 border border-white/10 rounded-tl-sm">
+                                <motion.div 
+                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"
+                                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                    transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+                                />
+                                <motion.div 
+                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"
+                                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                    transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+                                />
+                                <motion.div 
+                                    className="w-1.5 h-1.5 bg-purple-400 rounded-full"
+                                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                    transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Suggestions & Input Area */}
+                <div className="p-4 border-t border-white/5 bg-[#0A0F1C]">
+                    
+                    {/* Suggested Questions Chips */}
+                    {!isSearching && currentSuggestions.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                            {currentSuggestions.map((suggestion, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                    className="px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium hover:bg-purple-500/20 hover:border-purple-500/30 transition-all text-left"
+                                >
+                                    {suggestion}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Chat Input */}
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={chatInput}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleChatSubmit()}
+                            placeholder="Ask a follow-up question..."
+                            disabled={isSearching}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white placeholder:text-gray-500 focus:outline-none focus:border-purple-500/50 focus:bg-white/10 transition-all disabled:opacity-50"
+                        />
+                        <button
+                            onClick={handleChatSubmit}
+                            disabled={!chatInput.trim() || isSearching}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600 disabled:opacity-50 disabled:hover:bg-purple-500 transition-colors"
+                        >
+                            <Send className="w-4 h-4" />
+                        </button>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {aiResponse?.sources.map((source, i) => (
-                        <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-400">
-                          <Book className="w-3 h-3" />
-                          {source}
-                        </span>
-                      ))}
-                    </div>
-                  </>
-                )}
+                </div>
+
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Training Banner - BearEmeaSupport Featured Course Style */}
-        {!query && !isAiMode && (
+        {(!isAiMode || (isAiMode && chatMessages.length === 0)) && !query && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -311,7 +492,7 @@ function KnowledgeContent() {
         )}
 
         {/* Categories - Modern Horizontal Scroll Design */}
-        {!query && !isAiMode && (
+        {(!isAiMode || (isAiMode && chatMessages.length === 0)) && !query && (
           <motion.div 
             className="mb-10"
             initial={{ opacity: 0, y: 20 }}
@@ -425,112 +606,114 @@ function KnowledgeContent() {
         )}
 
         {/* FAQ Results - Modern Clean Accordion */}
-        <motion.div 
-          className="space-y-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          {filteredFaqs.length > 0 ? (
-            filteredFaqs.map((faq, index) => (
-              <motion.div
-                key={faq.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.03 }}
-                className={`group rounded-2xl border transition-all duration-300 overflow-hidden ${
-                  expandedFaq === faq.id 
-                    ? 'bg-white/10 border-bear-blue/50 shadow-xl shadow-bear-blue/10' 
-                    : 'bg-white/5 border-white/10 hover:bg-white/[0.07] hover:border-white/20'
-                }`}
-              >
-                {/* Question Button */}
-                <button
-                  onClick={() => setExpandedFaq(expandedFaq === faq.id ? null : faq.id)}
-                  className="w-full p-5 sm:p-6 flex items-start justify-between gap-4 text-left focus:outline-none focus:ring-0 focus-visible:outline-none"
-                  style={{ outline: 'none' }}
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${
-                        expandedFaq === faq.id 
-                          ? 'bg-bear-blue text-white shadow-sm' 
-                          : 'bg-white/10 text-gray-400 group-hover:bg-white/15'
-                      }`}>
-                        {faq.category.replace('-', ' ')}
-                      </span>
-                    </div>
-                    <h3 className={`text-base sm:text-lg font-bold leading-snug transition-colors ${
-                      expandedFaq === faq.id ? 'text-white' : 'text-white/90 group-hover:text-white'
-                    }`}>
-                      {faq.question}
-                    </h3>
-                  </div>
-                  <motion.div
-                    animate={{ rotate: expandedFaq === faq.id ? 180 : 0 }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                    className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-300 ${
-                      expandedFaq === faq.id 
-                        ? 'bg-bear-blue text-white shadow-lg shadow-bear-blue/30' 
-                        : 'bg-white/5 text-gray-500 group-hover:bg-white/10 group-hover:text-gray-400'
-                    }`}
-                  >
-                    <ChevronDown className="w-5 h-5" />
-                  </motion.div>
-                </button>
-                
-                {/* Answer Content */}
-                <AnimatePresence>
-                  {expandedFaq === faq.id && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: 'easeInOut' }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-5 sm:px-6 pb-5 sm:pb-6">
-                        {/* Divider */}
-                        <div className="h-px bg-gradient-to-r from-transparent via-bear-blue/30 to-transparent mb-5" />
-                        
-                        {/* Answer Text */}
-                        <div className="relative">
-                          {/* Subtle background accent */}
-                          <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gradient-to-b from-bear-blue via-bear-blue/50 to-transparent rounded-full" />
-                          
-                          <div className="pl-4">
-                            <p className="text-gray-300 text-sm sm:text-base leading-relaxed whitespace-pre-line">
-                              {faq.answer}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))
-          ) : (
+        {(!isAiMode || (isAiMode && chatMessages.length === 0)) && (
             <motion.div 
-              className="text-center py-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+            className="space-y-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
             >
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/5 mb-6">
-                <Search className="w-10 h-10 text-gray-600" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">No results found</h3>
-              <p className="text-gray-500 mb-6">Try adjusting your search or enable AI mode for smarter answers.</p>
-              <button
-                onClick={() => setIsAiMode(true)}
-                className="btn-primary"
-              >
-                <Sparkles className="w-4 h-4" />
-                Try AI Search
-              </button>
+            {filteredFaqs.length > 0 ? (
+                filteredFaqs.map((faq, index) => (
+                <motion.div
+                    key={faq.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.03 }}
+                    className={`group rounded-2xl border transition-all duration-300 overflow-hidden ${
+                    expandedFaq === faq.id 
+                        ? 'bg-white/10 border-bear-blue/50 shadow-xl shadow-bear-blue/10' 
+                        : 'bg-white/5 border-white/10 hover:bg-white/[0.07] hover:border-white/20'
+                    }`}
+                >
+                    {/* Question Button */}
+                    <button
+                    onClick={() => setExpandedFaq(expandedFaq === faq.id ? null : faq.id)}
+                    className="w-full p-5 sm:p-6 flex items-start justify-between gap-4 text-left focus:outline-none focus:ring-0 focus-visible:outline-none"
+                    style={{ outline: 'none' }}
+                    >
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2.5">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${
+                            expandedFaq === faq.id 
+                            ? 'bg-bear-blue text-white shadow-sm' 
+                            : 'bg-white/10 text-gray-400 group-hover:bg-white/15'
+                        }`}>
+                            {faq.category.replace('-', ' ')}
+                        </span>
+                        </div>
+                        <h3 className={`text-base sm:text-lg font-bold leading-snug transition-colors ${
+                        expandedFaq === faq.id ? 'text-white' : 'text-white/90 group-hover:text-white'
+                        }`}>
+                        {faq.question}
+                        </h3>
+                    </div>
+                    <motion.div
+                        animate={{ rotate: expandedFaq === faq.id ? 180 : 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-300 ${
+                        expandedFaq === faq.id 
+                            ? 'bg-bear-blue text-white shadow-lg shadow-bear-blue/30' 
+                            : 'bg-white/5 text-gray-500 group-hover:bg-white/10 group-hover:text-gray-400'
+                        }`}
+                    >
+                        <ChevronDown className="w-5 h-5" />
+                    </motion.div>
+                    </button>
+                    
+                    {/* Answer Content */}
+                    <AnimatePresence>
+                    {expandedFaq === faq.id && (
+                        <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                        >
+                        <div className="px-5 sm:px-6 pb-5 sm:pb-6">
+                            {/* Divider */}
+                            <div className="h-px bg-gradient-to-r from-transparent via-bear-blue/30 to-transparent mb-5" />
+                            
+                            {/* Answer Text */}
+                            <div className="relative">
+                            {/* Subtle background accent */}
+                            <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gradient-to-b from-bear-blue via-bear-blue/50 to-transparent rounded-full" />
+                            
+                            <div className="pl-4">
+                                <p className="text-gray-300 text-sm sm:text-base leading-relaxed whitespace-pre-line">
+                                {faq.answer}
+                                </p>
+                            </div>
+                            </div>
+                        </div>
+                        </motion.div>
+                    )}
+                    </AnimatePresence>
+                </motion.div>
+                ))
+            ) : (
+                <motion.div 
+                className="text-center py-20"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                >
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/5 mb-6">
+                    <Search className="w-10 h-10 text-gray-600" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">No results found</h3>
+                <p className="text-gray-500 mb-6">Try adjusting your search or enable AI mode for smarter answers.</p>
+                <button
+                    onClick={() => setIsAiMode(true)}
+                    className="btn-primary"
+                >
+                    <Sparkles className="w-4 h-4" />
+                    Try AI Search
+                </button>
+                </motion.div>
+            )}
             </motion.div>
-          )}
-        </motion.div>
+        )}
       </div>
     </div>
   );

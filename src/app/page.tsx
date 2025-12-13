@@ -294,7 +294,7 @@ export default function Dashboard() {
           {/* Secondary Actions */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-6">
             <div 
-              className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer min-h-[130px] sm:min-h-[140px] flex flex-col justify-between"}}}}
+              className="bear-glass-card p-5 sm:p-6 lg:p-7 group cursor-pointer min-h-[130px] sm:min-h-[140px] flex flex-col justify-between"
             >
               <Link href="/connect" className="block h-full flex flex-col justify-between">
                 <div className="flex items-center gap-4 mb-4">
@@ -364,7 +364,7 @@ export default function Dashboard() {
             {['Robot Won\'t Start', 'Connection Issues', 'Maintenance Guide'].map((topic, i) => (
               <Link href="/knowledge" key={topic}>
                 <div 
-                  className="bear-glass-card p-5 sm:p-6 flex items-center justify-between group cursor-pointer h-full min-h-[70px] sm:min-h-[80px]"}}}}}
+                  className="bear-glass-card p-5 sm:p-6 flex items-center justify-between group cursor-pointer h-full min-h-[70px] sm:min-h-[80px]"}
                 >
                   <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                     <div className="p-2.5 sm:p-3 rounded-xl bg-bear-blue/10 group-hover:bg-bear-blue/20 transition-colors flex-shrink-0">
@@ -386,4 +386,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
 

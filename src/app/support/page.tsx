@@ -148,7 +148,7 @@ export default function SupportPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {quickLinks.map((link, index) => (
             <div
-              key={link.title}}}}
+              key={link.title}
             >
               <div 
                 onClick={() => link.href ? router.push(link.href) : link.action?.()}
@@ -182,7 +182,7 @@ export default function SupportPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
           
           {/* Troubleshooting Section */}
-          <div}}}
+          <div
             className="lg:col-span-2 rounded-3xl border border-white/10 bg-[#0F1117]/30 backdrop-blur-xl p-8 relative overflow-hidden"
           >
             <div className="relative z-10">
@@ -228,7 +228,7 @@ export default function SupportPage() {
           </div>
 
           {/* Resources List */}
-          <div}}}
+          <div
             className="rounded-3xl border border-white/10 bg-[#0F1117]/30 backdrop-blur-xl p-8"
           >
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
@@ -272,7 +272,7 @@ export default function SupportPage() {
         </div>
 
         {/* Contact CTA */}
-        <div}}}
+        <div
           className="rounded-3xl bg-gradient-to-r from-bear-blue to-blue-600 p-1 mb-12"
         >
           <div className="bg-[#0b1021] rounded-[22px] p-8 md:p-12 text-center relative overflow-hidden">
@@ -316,5 +316,6 @@ export default function SupportPage() {
     </div>
   );
 }
+
 
 

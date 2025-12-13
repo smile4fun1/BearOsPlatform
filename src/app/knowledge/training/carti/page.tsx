@@ -208,7 +208,7 @@ export default function TrainingPage() {
                     </div>
                     <div className="w-32 h-2 bg-white/5 rounded-full overflow-hidden">
                         <div 
-                            className="h-full bg-gradient-to-r from-bear-blue to-cyan-400"}%` }}}
+                            className="h-full bg-gradient-to-r from-bear-blue to-cyan-400"}%` 
                         />
                     </div>
                 </div>
@@ -267,14 +267,14 @@ export default function TrainingPage() {
                              <ModuleWelcome onComplete={startTraining} />
                     ) : (
                         <div
-                            key="content-card"}}}
+                            key="content-card"
                             className="bg-[#0f1423] border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden relative h-[calc(100vh-200px)] max-h-[700px]"
                         >
                             {/* Content - FIXED HEIGHT NO SCROLL */}
                             <div className="flex-1 p-6 lg:p-8 overflow-hidden">
                                 <AnimatePresence mode="wait">
                                     <div
-                                        key={currentModule}}}}}
+                                        key={currentModule}
                                     >
                                         {currentModule === 0 && <WelcomeContent onComplete={handleNext} />}
                                         {currentModule === 1 && <ModuleMeetCarti />}
@@ -326,11 +326,11 @@ export default function TrainingPage() {
       {/* Restart Confirmation Modal */}
       <AnimatePresence>
         {showRestartConfirm && (
-            <div}}}
+            <div
               className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4"
               onClick={cancelRestart}
             >
-            <div}}}
+            <div
               className="bg-[#0a0f1c] border border-white/10 rounded-3xl p-8 lg:p-12 max-w-lg w-full relative shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -342,7 +342,7 @@ export default function TrainingPage() {
               </button>
 
               <div className="text-center relative z-10">
-                <div}}}
+                <div
                     className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-orange-500/30"
                 >
                   <ExclamationTriangleIcon className="w-12 h-12 text-white" />
@@ -378,11 +378,11 @@ export default function TrainingPage() {
       {/* Congrats Modal */}
       <AnimatePresence>
         {showCongrats && (
-          <div}}}
+          <div
             className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4"
             onClick={() => setShowCongrats(false)}
           >
-            <div}}}
+            <div
               className="bg-[#0a0f1c] border border-white/10 rounded-3xl p-8 lg:p-12 max-w-lg w-full relative shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -399,7 +399,7 @@ export default function TrainingPage() {
               </button>
 
               <div className="text-center relative z-10">
-                <div}}}
+                <div
                     className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/30"
                 >
                   <CheckCircleIcon className="w-12 h-12 text-white" />
@@ -519,7 +519,7 @@ function ModuleMeetCarti() {
                     { icon: BoltIcon, title: "Auto-Charging", desc: "Intelligent battery management ensures continuous operation with minimal downtime.", bg: "bg-bear-blue/10", border: "border-bear-blue/20" },
                 ].map((item, i) => (
                     <div 
-                        key={i}}}}
+                        key={i
                         className={`${item.bg} border ${item.border} p-5 rounded-xl hover:bg-bear-blue/15 transition-all flex flex-col`}
                     >
                         <div className="w-10 h-10 bg-bear-blue/20 rounded-lg flex items-center justify-center mb-3 flex-shrink-0">
@@ -571,7 +571,7 @@ function ModuleGettingStarted() {
                     },
                 ].map((step, i) => (
                     <div 
-                        key={i}}}}
+                        key={i
                         className="flex gap-4 bg-white/5 p-5 rounded-xl border border-white/10 hover:bg-white/10 transition-all"
                     >
                         <div className="flex-shrink-0 w-10 h-10 bg-bear-blue rounded-full flex items-center justify-center font-bold text-lg shadow-lg shadow-bear-blue/20">
@@ -584,7 +584,7 @@ function ModuleGettingStarted() {
                     </div>
                 ))}
 
-                <div}}}
+                <div
                     className="flex gap-4 bg-green-500/10 p-5 rounded-xl border border-green-500/20"
                 >
                     <div className="flex-shrink-0 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/20">
@@ -685,7 +685,7 @@ function ModuleWarehouseSafety() {
                     { icon: BoltIcon, title: "Emergency Protocol", desc: "Hit E-Stop immediately if someone is at risk. Report all incidents to supervisor." },
                     ].map((item, i) => (
                     <div 
-                        key={i}}}}
+                        key={i
                         className="bg-bear-blue/5 p-4 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
                         <div className="flex items-start gap-3">
@@ -732,7 +732,7 @@ function ModuleBestPractices() {
                     { icon: SparklesIcon, title: "Clean Sensors", desc: "Daily LiDAR sensor wipe down prevents navigation errors and maintains efficiency." },
                 ].map((item, i) => (
                     <div 
-                        key={i}}}}
+                        key={i
                         className="bg-bear-blue/5 p-4 rounded-xl border border-bear-blue/20 hover:bg-bear-blue/10 transition-all flex flex-col"
                     >
                         <div className="flex items-start gap-3">
@@ -815,4 +815,5 @@ function ModuleQuickTips() {
         </div>
     );
 }
+
 

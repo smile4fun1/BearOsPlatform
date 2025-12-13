@@ -1,8 +1,7 @@
 'use client';
 
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { useEffect, useRef } from 'react';
 
 interface MobileSheetProps {
   isOpen: boolean;
@@ -14,29 +13,20 @@ interface MobileSheetProps {
   className?: string;
 }
 
+/**
+ * Mobile bottom sheet component
+ * iOS-inspired drawer that slides up from the bottom
+ */
 export function MobileSheet({
   isOpen,
   onClose,
   children,
   title,
-  snapPoints = ['full'],
   showDragHandle = true,
-  className = ''
+  className = '',
 }: MobileSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
-  
-  // Close on escape key
-  useEffect(() => {
-    if (!isOpen) return;
-    
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [isOpen, onClose]);
-  
+
   // Prevent body scroll when sheet is open
   useEffect(() => {
     if (isOpen) {
@@ -48,30 +38,31 @@ export function MobileSheet({
       document.body.style.overflow = '';
     };
   }, [isOpen]);
-  
-  const handleDrag = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    // Close if dragged down more than 150px
-    if (info.offset.y > 150) {
-      onClose();
-    }
-  };
-  
+
+  // Close on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
   return (
-    <AnimatePresence>
+    <>
       {isOpen && (
         <>
           {/* Backdrop */}
-          <div}}}}
+          <div
             className="fixed inset-0 bg-black/80 z-[100] lg:hidden"
             onClick={onClose}
           />
           
           {/* Sheet */}
           <div
-            ref={sheetRef}}}}}
-            drag="y"}
-            dragElastic={{ top: 0, bottom: 0.5 }}
-            onDragEnd={handleDrag}
+            ref={sheetRef}
             className={`fixed inset-x-0 bottom-0 z-[101] bg-[#0F1117] border-t border-white/10 rounded-t-2xl shadow-2xl lg:hidden flex flex-col ${className}`}
             style={{ maxHeight: '90vh' }}
             onClick={(e) => e.stopPropagation()}
@@ -103,7 +94,6 @@ export function MobileSheet({
           </div>
         </>
       )}
-    </AnimatePresence>
+    </>
   );
 }
-

@@ -1,13 +1,13 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
 interface TouchTargetProps {
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
-  minSize?: number; // Minimum size in pixels (default 44)
+  minWidth?: number;
+  minHeight?: number;
   disabled?: boolean;
+  style?: React.CSSProperties;
 }
 
 /**
@@ -18,21 +18,23 @@ export function TouchTarget({
   children, 
   onClick, 
   className = '', 
-  minSize = 44,
-  disabled = false 
+  minWidth = 44,
+  minHeight = 44,
+  disabled = false,
+  style = {}
 }: TouchTargetProps) {
   return (
     <button
       onClick={onClick}
-      disabled={disabled} : { scale: 0.95 }}
+      disabled={disabled}
       className={`relative inline-flex items-center justify-center ${className}`}
       style={{
-        minWidth: `${minSize}px`,
-        minHeight: `${minSize}px`,
+        minWidth: `${minWidth}px`,
+        minHeight: `${minHeight}px`,
+        ...style,
       }}
     >
       {children}
     </button>
   );
 }
-

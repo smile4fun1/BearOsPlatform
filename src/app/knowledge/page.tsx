@@ -170,7 +170,7 @@ function KnowledgeContent() {
           className="mb-6 sm:mb-8 lg:mb-10 text-center"
         >
           <div 
-            className="inline-block px-4 py-2 rounded-full bg-bear-blue/20 text-bear-blue text-sm font-semibold mb-6"}}}
+            className="inline-block px-4 py-2 rounded-full bg-bear-blue/20 text-bear-blue text-sm font-semibold mb-6"
           >
             SUPPORT & DOCUMENTATION
           </div>
@@ -185,7 +185,7 @@ function KnowledgeContent() {
 
         {/* Search Bar - Premium Design */}
         <div 
-          className="relative mb-10 max-w-4xl mx-auto"}}}
+          className="relative mb-10 max-w-4xl mx-auto"
         >
           {/* Search Container */}
           <div className={`group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl border transition-all duration-500 shadow-2xl ${
@@ -258,7 +258,7 @@ function KnowledgeContent() {
                 
                 {/* Search/Ask Button */}
                 {isAiMode && query && (
-                  <button}}}
+                  <button
                     onClick={() => handleAiSearch()}
                     disabled={isSearching}
                     className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:scale-110 disabled:opacity-50 disabled:scale-100 transition-all shadow-lg shadow-purple-500/50 focus:outline-none focus:ring-0 focus-visible:outline-none"
@@ -294,7 +294,7 @@ function KnowledgeContent() {
         {/* AI Chat Interface */}
         <>
           {isAiMode && chatMessages.length > 0 && (
-            <div}}}
+            <div
               className="mb-10 max-w-4xl mx-auto"
             >
               {/* Chat Container */}
@@ -426,7 +426,7 @@ function KnowledgeContent() {
         {/* Training Banner - BearEmeaSupport Featured Course Style */}
         {(!isAiMode || (isAiMode && chatMessages.length === 0)) && !query && (
           <div className="mb-10 grid gap-6 md:grid-cols-2">
-            <div}}}
+            <div
             >
               <Link href="/knowledge/training" className="block group h-full">
                 <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-bear-blue/20 via-purple-500/10 to-bear-blue/20 border border-white/10 p-8 hover:border-bear-blue/50 transition-all duration-500 hover:shadow-2xl hover:shadow-bear-blue/10 h-full">
@@ -469,7 +469,7 @@ function KnowledgeContent() {
               </Link>
             </div>
 
-            <div}}}
+            <div
             >
               <Link href="/knowledge/training/carti" className="block group h-full">
                 <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-bear-blue/20 via-purple-500/10 to-bear-blue/20 border border-white/10 p-8 hover:border-bear-blue/50 transition-all duration-500 hover:shadow-2xl hover:shadow-bear-blue/10 h-full">
@@ -517,7 +517,7 @@ function KnowledgeContent() {
         {/* Categories - Modern Horizontal Scroll Design */}
         {(!isAiMode || (isAiMode && chatMessages.length === 0)) && !query && (
           <div 
-            className="mb-10"}}}
+            className="mb-10"
           >
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 px-1">
               <HelpCircle className="w-5 h-5 text-bear-blue" />
@@ -530,7 +530,7 @@ function KnowledgeContent() {
                 {categories.map((cat, index) => (
                   <button
                     key={cat.id}
-                    onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}}}}}
+                    onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
                     className={`group relative flex-shrink-0 w-[140px] h-[140px] rounded-2xl border transition-all duration-300 focus:outline-none focus:ring-0 overflow-hidden ${
                       activeCategory === cat.id
                         ? 'bg-bear-blue/20 border-bear-blue shadow-lg shadow-bear-blue/20'
@@ -568,7 +568,7 @@ function KnowledgeContent() {
               {categories.map((cat, index) => (
                 <button
                   key={cat.id}
-                  onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}}}}}}
+                  onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}}
                   className={`group relative h-[100px] rounded-2xl border transition-all duration-300 focus:outline-none focus:ring-0 overflow-hidden ${
                     activeCategory === cat.id
                       ? 'bg-bear-blue/20 border-bear-blue shadow-xl shadow-bear-blue/20'
@@ -619,12 +619,12 @@ function KnowledgeContent() {
         {/* FAQ Results - Modern Clean Accordion */}
         {(!isAiMode || (isAiMode && chatMessages.length === 0)) && (
             <div 
-            className="space-y-3"}}}
+            className="space-y-3"
             >
             {filteredFaqs.length > 0 ? (
                 filteredFaqs.map((faq, index) => (
                 <div
-                    key={faq.id}}}}
+                    key={faq.id
                     className={`group rounded-2xl border transition-all duration-300 overflow-hidden ${
                     expandedFaq === faq.id 
                         ? 'bg-white/10 border-bear-blue/50 shadow-xl shadow-bear-blue/10' 
@@ -667,7 +667,7 @@ function KnowledgeContent() {
                     {/* Answer Content */}
                     <>
                     {expandedFaq === faq.id && (
-                        <div}}}}
+                        <div
                         className="overflow-hidden"
                         >
                         <div className="px-5 sm:px-6 pb-5 sm:pb-6">
@@ -729,6 +729,7 @@ export default function KnowledgePage() {
     </Suspense>
   );
 }
+
 
 
 

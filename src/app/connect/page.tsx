@@ -147,7 +147,7 @@ function RobotMentionDropdown({
   if (results.length === 0) return null;
 
   return (
-    <div}}}
+    <div
       className="absolute bottom-full left-0 mb-2 w-80 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50"
     >
       <div className="p-2 border-b border-white/5">
@@ -211,12 +211,12 @@ function RobotSearchModal({
   }, [searchQuery]);
 
   return (
-    <div}}}
+    <div
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
       style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
-      <div}}}}
+      <div}
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl h-[550px] max-h-[75vh] flex flex-col overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -902,7 +902,7 @@ export default function ConnectPage() {
         <AnimatePresence>
           {showNotifications && (
             <div
-              ref={notificationsRef}}}}
+              ref={$1}
               className="absolute top-16 right-4 w-80 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
             >
               <div className="p-4 border-b border-white/10 flex items-center justify-between">
@@ -933,7 +933,7 @@ export default function ConnectPage() {
         <AnimatePresence>
           {showChannelMenu && (
             <div
-              ref={channelMenuRef}}}}
+              ref={$1}
               className="absolute top-16 right-4 w-64 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40"
             >
               <div className="p-2">
@@ -1005,7 +1005,7 @@ export default function ConnectPage() {
         <AnimatePresence>
           {showFilesPanel && (
             <div
-              ref={filesPanelRef}}}}
+              ref={$1}
               className="absolute top-16 right-4 w-96 bg-[#1a1f36] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-40 max-h-[500px] flex flex-col"
             >
               <div className="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
@@ -1055,7 +1055,7 @@ export default function ConnectPage() {
         <div className="flex-1 overflow-y-auto p-4 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 lg:mb-0" style={{ marginBottom: 'calc(232px + env(safe-area-inset-bottom, 0px))' }}>
           {currentMessages.map((msg) => (
             <div 
-              key={msg.id}}}
+              key={msg.id}
               className={`flex gap-2 sm:gap-4 group relative ${msg.isBot ? 'bg-bear-blue/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-bear-blue/20' : ''}`}
               onMouseEnter={() => setHoveredMessageId(msg.id)}
               onMouseLeave={() => setHoveredMessageId(null)}
@@ -1171,7 +1171,7 @@ export default function ConnectPage() {
               {/* Full Emoji Picker for Reactions */}
               <AnimatePresence>
                 {showReactionPicker === msg.id && (
-                  <div}}}
+                  <div
                     className="absolute top-full left-0 mt-2 z-50"
                   >
                     <div className="relative">
@@ -1219,7 +1219,7 @@ export default function ConnectPage() {
 
             <AnimatePresence>
               {showEmojiPicker && (
-                <div}}}
+                <div
                   className="absolute bottom-full left-0 mb-2 z-50"
                 >
                   <EmojiPicker 
@@ -1419,11 +1419,11 @@ function CreateChannelModal({
   };
 
   return (
-    <div}}}
+    <div
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div}}}
+      <div
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
@@ -1606,11 +1606,11 @@ function ChannelSettingsModal({
   const [description, setDescription] = useState('');
 
   return (
-    <div}}}
+    <div
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div}}}
+      <div
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-lg p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -1692,11 +1692,11 @@ function MembersModal({
   );
 
   return (
-    <div}}}
+    <div
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div}}}
+      <div
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-lg max-h-[600px] flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -1762,11 +1762,11 @@ function PinnedMessagesModal({
   onUnpin: (msgId: string) => void;
 }) {
   return (
-    <div}}}
+    <div
       className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div}}}
+      <div
         className="bg-[#1a1f36] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[600px] flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -1822,4 +1822,5 @@ function PinnedMessagesModal({
     </div>
   );
 }
+
 

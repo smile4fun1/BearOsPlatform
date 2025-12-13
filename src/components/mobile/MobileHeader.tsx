@@ -78,7 +78,7 @@ export function MobileHeader({ onMenuClick, showMenu = true }: MobileHeaderProps
       {/* Search Bar */}
       <AnimatePresence>
         {showSearch && (
-          <div}}}
+          <div
             className="overflow-hidden border-t border-white/10"
           >
             <div className="px-4 py-3">
@@ -95,4 +95,5 @@ export function MobileHeader({ onMenuClick, showMenu = true }: MobileHeaderProps
     </header>
   );
 }
+
 

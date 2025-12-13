@@ -25,7 +25,7 @@ const StatCard = memo(function StatCard({ stat, index }: { stat: any; index: num
   const colors = colorClasses[stat.color] || colorClasses['bear-blue'];
 
   return (
-    <div}}}
+    <div
       className={`rounded-2xl border border-white/10 bg-gradient-to-br ${colors.bg} p-4 sm:p-5 lg:p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer group`}
     >
       <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
@@ -72,7 +72,7 @@ export default function FleetPage() {
     return (
       <div className="flex items-center justify-center h-full min-h-screen px-4">
         <div 
-          className="text-center bear-glass-card p-8 sm:p-12 max-w-md w-full"}}}
+          className="text-center bear-glass-card p-8 sm:p-12 max-w-md w-full"
         >
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-rose-500/20 flex items-center justify-center mx-auto mb-5 sm:mb-6">
             <AlertTriangle className="w-7 h-7 sm:w-8 sm:h-8 text-rose-400" />
@@ -145,7 +145,7 @@ export default function FleetPage() {
 
       {/* Quick Access Card */}
       <section 
-        className="mb-6 sm:mb-8 lg:mb-10 bear-glass-card p-4 sm:p-5 lg:p-6"}}}
+        className="mb-6 sm:mb-8 lg:mb-10 bear-glass-card p-4 sm:p-5 lg:p-6"
       >
         <div className="flex items-center justify-between mb-2 sm:mb-3">
           <h3 className="font-bold text-white flex items-center gap-2 text-sm sm:text-base">
@@ -216,6 +216,7 @@ export default function FleetPage() {
     </div>
   );
 }
+
 
 
 

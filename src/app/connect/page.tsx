@@ -107,7 +107,7 @@ function MessageContent({ content }: { content: string }) {
             <Link
               key={i}
               href={`/robots/${part.robot.id}`}
-              className="inline-flex items-center gap-1 px-1.5 py-0.5 mx-0.5 rounded bg-bear-blue/20 text-bear-blue hover:bg-bear-blue/30 transition-colors text-sm font-medium"
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 mx-0.5 rounded bg-bear-blue/20 text-bear-blue lg:hover:bg-bear-blue/30 active:bg-bear-blue/30 transition-colors text-sm font-medium"
             >
               <Bot className="w-3 h-3" />
               {part.robot.name}
@@ -834,7 +834,7 @@ export default function ConnectPage() {
 
       {/* Main Chat Area */}
       <div 
-        className="flex-1 flex flex-col min-w-0 bg-[#020511] relative overflow-hidden w-full"
+        className="flex-1 flex flex-col min-w-0 bg-[#020511] relative w-full lg:overflow-hidden"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -853,7 +853,7 @@ export default function ConnectPage() {
         <header className="h-14 sm:h-16 px-3 sm:px-6 border-b border-white/5 flex items-center justify-between bg-[#0F1117]/50 backdrop-blur-sm flex-shrink-0">
           <button 
             onClick={() => setShowSidebar(true)}
-            className="p-2 -ml-2 rounded-lg hover:bg-white/5 lg:hidden active:bg-white/10"
+            className="p-2 -ml-2 rounded-lg lg:hover:bg-white/5 lg:hidden active:bg-white/10"
             style={{ minWidth: '44px', minHeight: '44px' }}
             aria-label="Open channels"
           >
@@ -876,10 +876,10 @@ export default function ConnectPage() {
           <div className="flex items-center gap-2 sm:gap-4 text-gray-400">
             <button
               onClick={() => setShowFilesPanel(!showFilesPanel)}
-              className="p-2 hover:bg-white/5 rounded-lg transition-colors relative"
+              className="p-2 lg:hover:bg-white/5 active:bg-white/5 rounded-lg transition-colors relative"
               title="Channel files"
             >
-              <FolderOpen className="w-4 h-4 sm:w-5 sm:h-5 hover:text-white transition-colors" />
+              <FolderOpen className="w-4 h-4 sm:w-5 sm:h-5 lg:hover:text-white active:text-white transition-colors" />
               {channelFiles[activeChannel]?.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-bear-blue text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                   {channelFiles[activeChannel].length}
@@ -888,10 +888,10 @@ export default function ConnectPage() {
             </button>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2 hover:bg-white/5 rounded-lg transition-colors relative"
+              className="p-2 lg:hover:bg-white/5 active:bg-white/5 rounded-lg transition-colors relative"
               title="Notifications"
             >
-              <Bell className="w-4 h-4 sm:w-5 sm:h-5 hover:text-white transition-colors" />
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5 lg:hover:text-white active:text-white transition-colors" />
               {notifications.filter(n => n.unread).length > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                   {notifications.filter(n => n.unread).length}
@@ -900,10 +900,10 @@ export default function ConnectPage() {
             </button>
             <button
               onClick={() => setShowChannelMenu(!showChannelMenu)}
-              className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+              className="p-2 lg:hover:bg-white/5 active:bg-white/5 rounded-lg transition-colors"
               title="Channel settings"
             >
-              <MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5 hover:text-white transition-colors" />
+              <MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5 lg:hover:text-white active:text-white transition-colors" />
             </button>
           </div>
         </header>
@@ -920,13 +920,13 @@ export default function ConnectPage() {
             >
               <div className="p-4 border-b border-white/10 flex items-center justify-between">
                 <h3 className="font-bold text-white">Notifications</h3>
-                <button onClick={() => setShowNotifications(false)} className="text-gray-400 hover:text-white">
+                <button onClick={() => setShowNotifications(false)} className="text-gray-400 lg:hover:text-white active:text-white">
                   <X className="w-4 h-4" />
                 </button>
               </div>
               <div className="max-h-96 overflow-y-auto">
                 {notifications.map((notif) => (
-                  <div key={notif.id} className={`p-4 border-b border-white/5 hover:bg-white/5 cursor-pointer ${notif.unread ? 'bg-bear-blue/5' : ''}`}>
+                  <div key={notif.id} className={`p-4 border-b border-white/5 lg:hover:bg-white/5 active:bg-white/5 cursor-pointer ${notif.unread ? 'bg-bear-blue/5' : ''}`}>
                     <div className="flex items-start gap-3">
                       <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${notif.unread ? 'bg-bear-blue' : 'bg-transparent'}`} />
                       <div className="flex-1 min-w-0">
@@ -958,7 +958,7 @@ export default function ConnectPage() {
                     setShowChannelSettings(true);
                     setShowChannelMenu(false);
                   }}
-                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                  className="w-full flex items-center gap-3 p-3 lg:hover:bg-white/5 active:bg-white/10 rounded-lg transition-colors text-left"
                 >
                   <Settings className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-white">Channel Settings</span>
@@ -968,7 +968,7 @@ export default function ConnectPage() {
                     setShowMembersModal(true);
                     setShowChannelMenu(false);
                   }}
-                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                  className="w-full flex items-center gap-3 p-3 lg:hover:bg-white/5 active:bg-white/10 rounded-lg transition-colors text-left"
                 >
                   <Users className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-white">View Members</span>
@@ -978,7 +978,7 @@ export default function ConnectPage() {
                     setShowPinnedMessages(true);
                     setShowChannelMenu(false);
                   }}
-                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                  className="w-full flex items-center gap-3 p-3 lg:hover:bg-white/5 active:bg-white/10 rounded-lg transition-colors text-left"
                 >
                   <Pin className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-white">Pinned Messages</span>
@@ -990,7 +990,7 @@ export default function ConnectPage() {
                 </button>
                 <button 
                   onClick={handleMuteChannel}
-                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                  className="w-full flex items-center gap-3 p-3 lg:hover:bg-white/5 active:bg-white/10 rounded-lg transition-colors text-left"
                 >
                   <VolumeX className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-white">
@@ -1000,7 +1000,7 @@ export default function ConnectPage() {
                 <div className="my-2 border-t border-white/10" />
                 <button 
                   onClick={handleArchiveChannel}
-                  className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors text-left"
+                  className="w-full flex items-center gap-3 p-3 lg:hover:bg-white/5 active:bg-white/10 rounded-lg transition-colors text-left"
                 >
                   <Archive className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-white">Archive Channel</span>
@@ -1032,7 +1032,7 @@ export default function ConnectPage() {
                   <FolderOpen className="w-5 h-5 text-bear-blue" />
                   <h3 className="font-bold text-white">Channel Files</h3>
                 </div>
-                <button onClick={() => setShowFilesPanel(false)} className="text-gray-400 hover:text-white">
+                <button onClick={() => setShowFilesPanel(false)} className="text-gray-400 lg:hover:text-white active:text-white">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -1045,7 +1045,7 @@ export default function ConnectPage() {
                 ) : (
                   <div className="space-y-2">
                     {channelFiles[activeChannel]?.map((file, index) => (
-                      <div key={index} className="p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-colors group">
+                      <div key={index} className="p-3 bg-white/5 lg:hover:bg-white/10 active:bg-white/10 rounded-lg border border-white/10 transition-colors group">
                         <div className="flex items-start gap-3">
                           <div className="w-10 h-10 rounded-lg bg-bear-blue/20 flex items-center justify-center flex-shrink-0">
                             {file.type.includes('pdf') ? <FileText className="w-5 h-5 text-bear-blue" /> :
@@ -1057,7 +1057,7 @@ export default function ConnectPage() {
                             <p className="text-xs text-gray-400">{file.size} • {file.uploadedBy}</p>
                             <p className="text-xs text-gray-500">{file.date}</p>
                           </div>
-                          <button className="opacity-0 group-hover:opacity-100 p-2 hover:bg-white/10 rounded-lg transition-all">
+                          <button className="lg:opacity-0 lg:group-hover:opacity-100 p-2 lg:hover:bg-white/10 active:bg-white/10 rounded-lg transition-all">
                             <Download className="w-4 h-4 text-gray-400" />
                           </button>
                         </div>
@@ -1293,7 +1293,7 @@ export default function ConnectPage() {
                 <div className="flex items-center gap-1 text-gray-500">
                   <button 
                     onClick={() => fileInputRef.current?.click()}
-                    className="p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"
+                    className="p-2 lg:hover:bg-white/5 active:bg-white/5 rounded-lg transition-colors lg:hover:text-white active:text-white"
                     title="Attach file"
                     style={{ minWidth: '40px', minHeight: '40px' }}
                   >
@@ -1301,7 +1301,7 @@ export default function ConnectPage() {
                   </button>
                   <button 
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                    className="p-2 hover:bg-white/5 rounded-lg transition-colors hover:text-white"
+                    className="p-2 lg:hover:bg-white/5 active:bg-white/5 rounded-lg transition-colors lg:hover:text-white active:text-white"
                     title="Add emoji"
                     style={{ minWidth: '40px', minHeight: '40px' }}
                   >
@@ -1309,7 +1309,7 @@ export default function ConnectPage() {
                   </button>
                   <button 
                     onClick={handleRobotButtonClick}
-                    className="p-2 hover:bg-bear-blue/10 rounded-lg transition-colors hover:text-bear-blue flex items-center gap-1"
+                    className="p-2 lg:hover:bg-bear-blue/10 active:bg-bear-blue/10 rounded-lg transition-colors lg:hover:text-bear-blue active:text-bear-blue flex items-center gap-1"
                     title="Search and mention a robot"
                     style={{ minWidth: '40px', minHeight: '40px' }}
                   >
@@ -1319,7 +1319,7 @@ export default function ConnectPage() {
                 <button 
                   onClick={handleSendMessage}
                   disabled={!inputText.trim() && attachedFiles.length === 0}
-                  className="p-3 bg-bear-blue text-white rounded-xl hover:bg-bear-blue/90 transition-all active:scale-95 shadow-lg shadow-bear-blue/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-3 bg-bear-blue text-white rounded-xl lg:hover:bg-bear-blue/90 active:bg-bear-blue/90 transition-all active:scale-95 shadow-lg shadow-bear-blue/20 disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ minWidth: '44px', minHeight: '44px' }}
                 >
                   <Send className="w-5 h-5" />

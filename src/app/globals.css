@@ -406,11 +406,23 @@ textarea:focus-visible {
 
 /* Safe area insets for iPhone notch and bottom bar */
 .safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: max(env(safe-area-inset-bottom), 20px);
 }
 
 .safe-area-top {
   padding-top: env(safe-area-inset-top);
+}
+
+/* Keyboard handling for mobile inputs */
+@media (max-width: 1023px) {
+  /* Ensure viewport adjusts for keyboard */
+  html {
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    height: -webkit-fill-available;
+  }
 }
 
 /* Smooth scrolling for mobile sheet animations */

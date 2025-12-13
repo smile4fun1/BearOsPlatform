@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -166,8 +166,8 @@ function KnowledgeContent() {
       
       <div className="relative px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10 max-w-6xl mx-auto">
         {/* Hero Header - BearEmeaSupport Style */}
-        <motion.header 
-          className="mb-6 sm:mb-8 lg:mb-10 text-center"}}
+        <header 
+          className="mb-6 sm:mb-8 lg:mb-10 text-center"
         >
           <div 
             className="inline-block px-4 py-2 rounded-full bg-bear-blue/20 text-bear-blue text-sm font-semibold mb-6"}}}
@@ -292,7 +292,7 @@ function KnowledgeContent() {
         </div>
 
         {/* AI Chat Interface */}
-        <AnimatePresence>
+        <>
           {isAiMode && chatMessages.length > 0 && (
             <div}}}
               className="mb-10 max-w-4xl mx-auto"
@@ -665,7 +665,7 @@ function KnowledgeContent() {
                     </button>
                     
                     {/* Answer Content */}
-                    <AnimatePresence>
+                    <>
                     {expandedFaq === faq.id && (
                         <div}}}}
                         className="overflow-hidden"
@@ -688,7 +688,7 @@ function KnowledgeContent() {
                         </div>
                         </div>
                     )}
-                    </AnimatePresence>
+                    </>
                 </div>
                 ))
             ) : (
@@ -729,5 +729,6 @@ export default function KnowledgePage() {
     </Suspense>
   );
 }
+
 
 

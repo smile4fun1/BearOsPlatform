@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useMemo, Suspense } from 'react';
-import { motion } from 'framer-motion';
+
 import { Activity, TrendingUp, AlertTriangle, Bot, Zap, RefreshCw, ArrowRight } from "lucide-react";
 import { LazyKPICardGrid, LazyTrendPanel, LazyInteractiveIncidentRadar, LazyFleetPerformanceDashboard, LazyRobotFleetStatus, LazyInteractiveOpsTable } from "@/components/LazyComponents";
 import { composeCurationResponse } from "@/lib/dataCurator";
@@ -103,8 +103,8 @@ export default function FleetPage() {
       <div className="fixed bottom-20 left-0 w-[200px] sm:w-[300px] lg:w-[400px] h-[200px] sm:h-[300px] lg:h-[400px] bg-purple-500/3 rounded-full blur-3xl pointer-events-none opacity-30 will-change-transform" />
       
       {/* Page Header */}
-      <motion.header 
-        className="relative mb-6 sm:mb-8 lg:mb-10"}}}
+      <header 
+        className="relative mb-6 sm:mb-8 lg:mb-10"
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -134,7 +134,7 @@ export default function FleetPage() {
             </div>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       {/* Quick Stats Grid */}
       <section className="mb-6 sm:mb-8 lg:mb-10 grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
@@ -216,5 +216,6 @@ export default function FleetPage() {
     </div>
   );
 }
+
 
 

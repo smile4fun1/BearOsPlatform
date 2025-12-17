@@ -8,7 +8,7 @@ import { BearFunPopup } from "@/components/BearFunPopup";
 import { Sidebar } from "@/components/os/Sidebar";
 import { RoleProvider } from "@/lib/roleContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
 import { MobileNav } from "@/components/mobile/MobileNav";
 
 const geistSans = Geist({
